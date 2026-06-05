@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy - Gymnastics Store</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .header-buttons {
+      position: static;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .header-buttons button {
+      position: static;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-buttons">
+      <button id="back-button" type="button">Back to Home</button>
+      <button id="product-button" type="button">Go to Products</button>
+    </div>
+    <h1>Buy Now</h1>
+    <p>Complete your purchase here.</p>
+  </header>
+
+  <main>
+    <section id="checkout">
+      <h2>Checkout</h2>
+      <p>Checkout details and payment options will appear here.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Gymnastics Store</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const backButton = document.getElementById('back-button');
+      const productButton = document.getElementById('product-button');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'index.html';
+        });
+      }
+
+      if (productButton) {
+        productButton.addEventListener('click', () => {
+          window.location.href = 'product.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

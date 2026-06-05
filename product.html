@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - Gymnastics Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-buttons">
+      <button id="back-button" type="button">Back to Home</button>
+      <button id="buy-button" type="button">Buy Now</button>
+    </div>
+    <h1>Our Products</h1>
+    <p>Browse our selection of gymnastics gear and apparel.</p>
+  </header>
+
+  <main>
+    <section id="products">
+      <h2>Products</h2>
+      <p>Product listings coming soon...</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Gymnastics Store</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const backButton = document.getElementById('back-button');
+      const buyButton = document.getElementById('buy-button');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'index.html';
+        });
+      }
+
+      if (buyButton) {
+        buyButton.addEventListener('click', () => {
+          window.location.href = 'buy.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
