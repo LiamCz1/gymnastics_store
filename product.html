@@ -10,8 +10,8 @@
   <header>
     <div class="header-buttons">
       <button id="back-button" type="button">Back to Home</button>
-      <button id="buy-button" type="button">Buy Now</button>
     </div>
+    <button id="cart-button" type="button">Cart <span class="cart-badge">0</span></button>
     <h1>Our Products</h1>
     <p>Browse our selection of gymnastics gear and apparel.</p>
   </header>
@@ -19,7 +19,27 @@
   <main>
     <section id="products">
       <h2>Products</h2>
-      <p>Product listings coming soon...</p>
+      <div class="products-grid">
+        <article class="product-card">
+          <div class="product-image">No image available</div>
+          <div class="product-info">
+            <h3>Balance Beam Trainer</h3>
+            <p class="product-price">$79.99</p>
+            <p>Portable foam balance beam for home practice.</p>
+            <button class="product-buy" type="button">Buy</button>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">No image available</div>
+          <div class="product-info">
+            <h3>Gymnastics Grips</h3>
+            <p class="product-price">$24.99</p>
+            <p>Comfortable leather grips for bar work.</p>
+            <button class="product-buy" type="button">Buy</button>
+          </div>
+        </article>
+      </div>
     </section>
   </main>
 
@@ -30,7 +50,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const backButton = document.getElementById('back-button');
-      const buyButton = document.getElementById('buy-button');
+      const cartButton = document.getElementById('cart-button');
+      const cartBadge = document.querySelector('.cart-badge');
 
       if (backButton) {
         backButton.addEventListener('click', () => {
@@ -38,11 +59,34 @@
         });
       }
 
-      if (buyButton) {
-        buyButton.addEventListener('click', () => {
+      // removed header buy button; cart and product buy buttons handle navigation
+
+      // initialize cart count from localStorage
+      function getCartCount() {
+        return parseInt(localStorage.getItem('cartCount') || '0', 10);
+      }
+
+      function setCartCount(n) {
+        localStorage.setItem('cartCount', String(n));
+        if (cartBadge) cartBadge.textContent = String(n);
+      }
+
+      setCartCount(getCartCount());
+
+      if (cartButton) {
+        cartButton.addEventListener('click', () => {
           window.location.href = 'buy.html';
         });
       }
+
+      // product "Buy" buttons: add to cart and update badge
+      const productBuyButtons = document.querySelectorAll('.product-buy');
+      productBuyButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const current = getCartCount();
+          setCartCount(current + 1);
+        });
+      });
     });
   </script>
 </body>
