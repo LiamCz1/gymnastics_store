@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View My Bookings - Gymnastics Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="boxed-header">
+    <div class="header-buttons">
+      <button id="back-button" type="button">Back to Lessons</button>
+    </div>
+    <h1>View My Bookings</h1>
+    <p>See your lesson bookings and cancel them if needed.</p>
+  </header>
+
+  <main>
+    <section class="boxed-panel">
+      <div id="view-form">
+        <label for="viewer-name">Your Name:</label>
+        <div class="verify-name-group">
+          <input type="text" id="viewer-name" placeholder="Enter your name" autocomplete="off">
+          <button id="load-bookings-btn" class="verify-btn" type="button">Load Bookings</button>
+        </div>
+      </div>
+      <div id="view-bookings-list" class="bookings-list" style="display: none;">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Gymnastics Store</p>
+  </footer>
+
+  <script>
+    function getBookedSlots() {
+      try {
+        return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setBookedSlots(slots) {
+      localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
+    }
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+
+    function displayUserBookings(name) {
+      const bookingsList = document.getElementById('view-bookings-list');
+      const viewerNameInput = document.getElementById('viewer-name');
+      const normalized = name.trim().toLowerCase();
+
+      if (!normalized) {
+        bookingsList.innerHTML = '<p class="no-bookings">Please enter a name to view bookings.</p>';
+        bookingsList.style.display = 'grid';
+        return;
+      }
+
+      const bookedSlots = getBookedSlots();
+      const userBookings = bookedSlots.filter(booking => booking.bookerName && booking.bookerName.toLowerCase() === normalized);
+      viewerNameInput.value = name;
+
+      if (userBookings.length === 0) {
+        bookingsList.innerHTML = '<p class="no-bookings">No bookings found for this name.</p>';
+        bookingsList.style.display = 'grid';
+        return;
+      }
+
+      bookingsList.innerHTML = '';
+      userBookings.forEach((booking, index) => {
+        const bookingCard = document.createElement('div');
+        bookingCard.className = 'booking-card';
+
+        const date = new Date(booking.date + 'T00:00:00');
+        const displayDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        bookingCard.innerHTML = `
+          <div class="booking-details">
+            <h3>${booking.lesson}</h3>
+            <p><strong>Date:</strong> ${displayDate}</p>
+            <p><strong>Time:</strong> ${booking.time}</p>
+            <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
+          </div>
+          <button class="cancel-booking-btn" data-index="${bookedSlots.indexOf(booking)}">Cancel</button>
+        `;
+
+        bookingsList.appendChild(bookingCard);
+      });
+
+      bookingsList.style.display = 'grid';
+      bookingsList.querySelectorAll('.cancel-booking-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index, 10);
+          const slots = getBookedSlots();
+          const booking = slots[index];
+          if (!booking) {
+            alert('Booking not found.');
+            return;
+          }
+          if (confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) {
+            slots.splice(index, 1);
+            setBookedSlots(slots);
+            displayUserBookings(name);
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const viewerNameInput = document.getElementById('viewer-name');
+      const loadBookingsBtn = document.getElementById('load-bookings-btn');
+      const backButton = document.getElementById('back-button');
+      const queryName = getQueryParam('name');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'lessons.html';
+        });
+      }
+
+      if (queryName) {
+        displayUserBookings(queryName);
+      }
+
+      loadBookingsBtn.addEventListener('click', () => {
+        const name = viewerNameInput.value.trim();
+        if (!name) {
+          alert('Please enter your name');
+          return;
+        }
+        displayUserBookings(name);
+      });
+
+      viewerNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          loadBookingsBtn.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

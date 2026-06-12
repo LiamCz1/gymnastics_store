@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lessons - Gymnastics Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-buttons">
+      <button id="back-button" type="button">Back to Home</button>
+    </div>
+    <h1>Private Lessons</h1>
+    <p>Book one-on-one coaching sessions with our certified trainers.</p>
+  </header>
+
+  <main>
+    <section id="lessons">
+      <h2>Available Lessons</h2>
+      <div class="products-grid">
+        <article class="product-card">
+          <div class="product-image"><img src="images/sample 1.jpg" alt="Strength Training"></div>
+          <div class="product-info">
+            <h3>Strength Training</h3>
+            <p class="product-price">$50.00 / session</p>
+            <p>60-minute personalized strength and conditioning workout designed for gymnasts.</p>
+            <button class="lesson-book" type="button" data-id="strength-001" data-name="Strength Training" data-price="50.00">Book Now</button>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image"><img src="images/sample 2.jpg" alt="Flexibility & Stretching"></div>
+          <div class="product-info">
+            <h3>Flexibility & Stretching</h3>
+            <p class="product-price">$40.00 / session</p>
+            <p>45-minute session focusing on improving flexibility and injury prevention.</p>
+            <button class="lesson-book" type="button" data-id="flex-001" data-name="Flexibility & Stretching" data-price="40.00">Book Now</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="my-bookings">
+      <h2>My Bookings</h2>
+      <div id="booking-login" class="booking-login">
+        <label for="verify-name">Enter Your Name to View Your Bookings:</label>
+        <div class="verify-name-group">
+          <input type="text" id="verify-name" placeholder="Enter your name" autocomplete="off">
+          <button id="verify-name-btn" class="verify-btn">View Now</button>
+        </div>
+      </div>
+      <div id="owner-tools" class="owner-tools">
+        <label for="owner-code">Owner Access</label>
+        <div class="owner-access-group">
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <button id="owner-view-btn" class="verify-btn">View All Bookings</button>
+        </div>
+        <button id="reset-bookings-btn" class="reset-bookings-btn" type="button">Reset All Bookings</button>
+      </div>
+      <div id="owner-bookings" class="owner-bookings" style="display: none;">
+        <h3>Owner Booking Calendar</h3>
+        <div id="owner-calendar" class="owner-calendar"></div>
+      </div>
+      <div id="bookings-list" class="bookings-list" style="display: none;">
+        <p class="no-bookings">No bookings found</p>
+      </div>
+    </section>
+
+    <section id="payment-section" style="margin-top:2rem; padding:1.5rem; background-color:#f9f9f9; border:1px solid #e0e0e0; border-radius:10px;">
+      <h2>Payment</h2>
+      <p style="margin-bottom:1rem;">Scan the QR code below to pay via Venmo:</p>
+      <div style="text-align:center;">
+        <img src="images/venmo-qr.jpg" alt="Venmo QR Code" style="max-width:250px; height:auto; border-radius:8px;">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Gymnastics Store</p>
+  </footer>
+
+  <!-- Booking Modal -->
+  <div id="booking-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modal-title">Book Your Lesson</h2>
+      <input type="hidden" id="lesson-name" name="lesson-name">
+      
+      <div class="form-group">
+        <label for="booker-name">Your Name:</label>
+        <input type="text" id="booker-name" name="booker-name" placeholder="Enter your name" required>
+      </div>
+      
+      <div class="booking-type-selector">
+        <label>Booking Type:</label>
+        <div class="booking-options">
+          <label class="booking-option">
+            <input type="radio" name="booking-type" value="one-time" checked>
+            One-Time
+          </label>
+          <label class="booking-option">
+            <input type="radio" name="booking-type" value="weekly">
+            Every Week
+          </label>
+        </div>
+        <div id="weeks-selector" class="weeks-selector" style="display: none;">
+          <label for="num-weeks">Number of Weeks:</label>
+          <input type="number" id="num-weeks" min="1" max="12" value="4">
+        </div>
+      </div>
+
+      <div class="calendar-wrapper">
+        <div class="calendar-header">
+          <button id="prev-week" class="nav-btn">&lt;</button>
+          <span id="week-display"></span>
+          <button id="next-week" class="nav-btn">&gt;</button>
+        </div>
+        <div id="calendar-slots" class="calendar-slots"></div>
+      </div>
+
+      <button id="confirm-booking" class="submit-btn" style="display: none;">Confirm Booking</button>
+      <div id="selection-display" class="selection-display"></div>
+    </div>
+  </div>
+
+  <script>
+    const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM'];
+
+    function getBookedSlots() {
+      try {
+        return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setBookedSlots(slots) {
+      localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
+    }
+
+    function formatDateKey(date) {
+      return date.toISOString().split('T')[0]; // YYYY-MM-DD
+    }
+
+    function clearBookedSlots() {
+      localStorage.removeItem('bookedLessonSlots');
+    }
+
+    let currentWeekStart = null;
+
+    function resetBookedSlots() {
+      clearBookedSlots();
+      if (currentWeekStart) {
+        renderCalendar(currentWeekStart);
+      }
+      const bookingsList = document.getElementById('bookings-list');
+      if (bookingsList) {
+        bookingsList.innerHTML = '<p class="no-bookings">All bookings have been reset.</p>';
+        bookingsList.style.display = 'grid';
+      }
+    }
+
+    function getWeekDates(startDate) {
+      const dates = [];
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      let currentDate = new Date(startDate);
+      currentDate.setHours(0, 0, 0, 0);
+      
+      // Start from today if startDate is in the past
+      if (currentDate < today) {
+        currentDate = new Date(today);
+      }
+      
+      // Collect 7 dates starting from currentDate (skipping past dates)
+      for (let i = 0; i < 7; i++) {
+        dates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      return dates;
+    }
+
+    function renderCalendar(startDate) {
+      const weekDates = getWeekDates(startDate);
+      const calendarSlots = document.getElementById('calendar-slots');
+      const weekDisplay = document.getElementById('week-display');
+      const bookedSlots = getBookedSlots();
+
+      // Update week display
+      const startFormatted = weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const endFormatted = weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
+
+      // Clear calendar
+      calendarSlots.innerHTML = '';
+      calendarSlots.className = 'calendar-grid-view';
+
+      // Create a calendar day column for each day
+      weekDates.forEach(date => {
+        const dateKey = formatDateKey(date);
+        const dayColumn = document.createElement('div');
+        dayColumn.className = 'day-column';
+
+        // Day header
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'day-header';
+        dayHeader.innerHTML = `<div class="day-name">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div><div class="day-date">${date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}</div>`;
+        dayColumn.appendChild(dayHeader);
+
+        // Time slots for this day
+        timeSlots.forEach(time => {
+          const slotKey = `${dateKey}-${time}`;
+          const isBooked = bookedSlots.some(slot => slot.key === slotKey);
+
+          const slot = document.createElement('button');
+          slot.className = `calendar-time-slot ${isBooked ? 'booked' : 'available'}`;
+          slot.textContent = time;
+          slot.disabled = isBooked;
+
+          if (!isBooked) {
+            slot.addEventListener('click', () => selectSlot(dateKey, time, slot));
+          }
+
+          dayColumn.appendChild(slot);
+        });
+
+        calendarSlots.appendChild(dayColumn);
+      });
+    }
+
+    let selectedSlot = null;
+
+    function selectSlot(dateKey, time, element) {
+      // Remove previous selection from all slots
+      document.querySelectorAll('.calendar-time-slot.selected').forEach(el => el.classList.remove('selected'));
+      
+      // Add selection to clicked element
+      element.classList.add('selected');
+      selectedSlot = { dateKey, time };
+
+      // Update selection display
+      const date = new Date(dateKey + 'T00:00:00');
+      const displayDate = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('selection-display').textContent = `Selected: ${displayDate} at ${time}`;
+      document.getElementById('confirm-booking').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Function to display bookings for verified user
+      function displayBookings(verifiedName) {
+        const bookedSlots = getBookedSlots();
+        const bookingsList = document.getElementById('bookings-list');
+        const bookingLogin = document.getElementById('booking-login');
+
+        // Filter bookings by name (case-insensitive)
+        const userBookings = bookedSlots.filter(booking => 
+          booking.bookerName && booking.bookerName.toLowerCase() === verifiedName.toLowerCase()
+        );
+
+        if (userBookings.length === 0) {
+          bookingsList.innerHTML = '<p class="no-bookings">No bookings found for this name</p>';
+          bookingsList.style.display = 'grid';
+          return;
+        }
+
+        bookingsList.innerHTML = '';
+        userBookings.forEach((booking) => {
+          const bookingCard = document.createElement('div');
+          bookingCard.className = 'booking-card';
+          
+          const date = new Date(booking.date + 'T00:00:00');
+          const displayDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+          
+          // Find the original index in full bookedSlots array
+          const originalIndex = bookedSlots.indexOf(booking);
+          
+          bookingCard.innerHTML = `
+            <div class="booking-details">
+              <h3>${booking.lesson}</h3>
+              <p><strong>Date:</strong> ${displayDate}</p>
+              <p><strong>Time:</strong> ${booking.time}</p>
+              <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
+            </div>
+            <button class="cancel-booking-btn" data-index="${originalIndex}">Cancel</button>
+          `;
+          bookingsList.appendChild(bookingCard);
+        });
+
+        bookingsList.style.display = 'grid';
+
+        const cancelProtectedLessons = ['Strength Training', 'Flexibility & Stretching'];
+        const cancelAccessCode = 'LiaMycIaa123';
+
+        // Add event listeners to cancel buttons
+        document.querySelectorAll('.cancel-booking-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            const booking = bookedSlots[index];
+            if (!booking) {
+              alert('Booking not found.');
+              return;
+            }
+
+            if (cancelProtectedLessons.includes(booking.lesson)) {
+              const enteredCancelCode = prompt('Enter the owner cancel code to cancel this protected lesson:');
+              if (enteredCancelCode !== cancelAccessCode) {
+                alert('Unauthorized: only the owner can cancel this lesson.');
+                return;
+              }
+            }
+
+            if (confirm(`Cancel booking for ${booking.lesson} on ${booking.date}?`)) {
+              bookedSlots.splice(index, 1);
+              setBookedSlots(bookedSlots);
+              displayBookings(verifiedName);
+            }
+          });
+        });
+      }
+
+      function displayOwnerBookings() {
+        const bookedSlots = getBookedSlots();
+        const ownerCalendar = document.getElementById('owner-calendar');
+        if (!ownerCalendar) {
+          return;
+        }
+
+        ownerCalendar.innerHTML = '';
+        if (bookedSlots.length === 0) {
+          ownerCalendar.innerHTML = '<p class="no-bookings">No bookings available.</p>';
+          return;
+        }
+
+        const bookingsByDate = {};
+        bookedSlots.forEach((booking, index) => {
+          const dateKey = booking.date;
+          if (!bookingsByDate[dateKey]) {
+            bookingsByDate[dateKey] = [];
+          }
+          bookingsByDate[dateKey].push({ ...booking, index });
+        });
+
+        const sortedDates = Object.keys(bookingsByDate).sort();
+        sortedDates.forEach(dateKey => {
+          const dateHeader = document.createElement('div');
+          dateHeader.className = 'owner-calendar-date';
+          const dateObj = new Date(dateKey + 'T00:00:00');
+          dateHeader.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+          ownerCalendar.appendChild(dateHeader);
+
+          const dateList = document.createElement('div');
+          dateList.className = 'owner-date-slot-list';
+
+          bookingsByDate[dateKey].sort((a, b) => a.time.localeCompare(b.time)).forEach(booking => {
+            const bookingItem = document.createElement('div');
+            bookingItem.className = 'owner-booking-item';
+            bookingItem.innerHTML = `
+              <div class="owner-booking-info">
+                <strong>${booking.lesson}</strong>
+                <p>${booking.time} &middot; ${booking.type === 'weekly' ? 'Weekly' : 'One-Time'}</p>
+                <p>Booked by: ${booking.bookerName}</p>
+              </div>
+              <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
+            `;
+            dateList.appendChild(bookingItem);
+          });
+
+          ownerCalendar.appendChild(dateList);
+        });
+
+        ownerCalendar.querySelectorAll('.owner-cancel-booking-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            const slots = getBookedSlots();
+            const booking = slots[index];
+            if (!booking) {
+              alert('Booking not found.');
+              return;
+            }
+            if (confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) {
+              slots.splice(index, 1);
+              setBookedSlots(slots);
+              displayOwnerBookings();
+            }
+          });
+        });
+      }
+
+      const ownerCodeInput = document.getElementById('owner-code');
+      const ownerViewBtn = document.getElementById('owner-view-btn');
+      const ownerBookingsSection = document.getElementById('owner-bookings');
+
+      if (ownerViewBtn) {
+        ownerViewBtn.addEventListener('click', () => {
+          const enteredCode = ownerCodeInput.value.trim();
+          if (enteredCode !== ownerAccessCode) {
+            alert('Invalid owner code.');
+            return;
+          }
+          window.location.href = 'view booking.html';
+        });
+      }
+
+      // Name verification
+      const verifyNameBtn = document.getElementById('verify-name-btn');
+      const verifyNameInput = document.getElementById('verify-name');
+      
+      verifyNameBtn.addEventListener('click', () => {
+        const name = verifyNameInput.value.trim();
+        if (!name) {
+          alert('Please enter your name');
+          return;
+        }
+        window.location.href = `view my.html?name=${encodeURIComponent(name)}`;
+      });
+
+      verifyNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          verifyNameBtn.click();
+        }
+      });
+
+      const backButton = document.getElementById('back-button');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'index.html';
+        });
+      }
+
+      // Booking modal functionality
+      const bookingModal = document.getElementById('booking-modal');
+      const closeBtn = document.querySelector('.close');
+      const lessonNameInput = document.getElementById('lesson-name');
+      const confirmBtn = document.getElementById('confirm-booking');
+      const prevWeekBtn = document.getElementById('prev-week');
+      const nextWeekBtn = document.getElementById('next-week');
+      const weeksSelector = document.getElementById('weeks-selector');
+      const bookingTypeRadios = document.querySelectorAll('input[name="booking-type"]');
+      let currentWeekStart = new Date();
+      currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay()); // Start on Sunday
+      const resetAccessCode = 'LiaMycIaa123';
+      const ownerAccessCode = 'LiaMycIaa123';
+
+      const resetBookingsBtn = document.getElementById('reset-bookings-btn');
+      if (resetBookingsBtn) {
+        resetBookingsBtn.addEventListener('click', () => {
+          const enteredCode = prompt('Enter the owner reset code to clear all bookings:');
+          if (enteredCode !== resetAccessCode) {
+            alert('Unauthorized: only the owner can reset bookings.');
+            return;
+          }
+
+          if (confirm('Reset all bookings? This will remove all saved lesson bookings.')) {
+            resetBookedSlots();
+          }
+        });
+      }
+
+      // Show/hide weeks selector based on booking type
+      bookingTypeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          weeksSelector.style.display = radio.value === 'weekly' ? 'block' : 'none';
+        });
+      });
+
+      // Open modal when Book Now is clicked
+      const bookButtons = document.querySelectorAll('.lesson-book');
+      bookButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          lessonNameInput.value = btn.dataset.name;
+          selectedSlot = null;
+          confirmBtn.style.display = 'none';
+          document.getElementById('selection-display').textContent = '';
+          
+          // Reset to current week
+          currentWeekStart = new Date();
+          currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+          
+          renderCalendar(currentWeekStart);
+          bookingModal.style.display = 'block';
+        });
+      });
+
+      // Week navigation
+      prevWeekBtn.addEventListener('click', () => {
+        const prevWeekStart = new Date(currentWeekStart);
+        prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+        currentWeekStart = prevWeekStart;
+        renderCalendar(currentWeekStart);
+      });
+
+      nextWeekBtn.addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+        renderCalendar(currentWeekStart);
+      });
+
+      // Close modal
+      closeBtn.addEventListener('click', () => {
+        bookingModal.style.display = 'none';
+      });
+
+      // Close modal when clicking outside
+      window.addEventListener('click', (e) => {
+        if (e.target === bookingModal) {
+          bookingModal.style.display = 'none';
+        }
+      });
+
+      // Handle booking confirmation
+      confirmBtn.addEventListener('click', () => {
+        if (!selectedSlot) {
+          alert('Please select a time slot');
+          return;
+        }
+
+        const bookerName = document.getElementById('booker-name').value.trim();
+        if (!bookerName) {
+          alert('Please enter your name');
+          return;
+        }
+
+        const lessonName = lessonNameInput.value;
+        const bookingType = document.querySelector('input[name="booking-type"]:checked').value;
+        const numWeeks = bookingType === 'weekly' ? document.getElementById('num-weeks').value : '1';
+        completeBooking(lessonName, bookingType, numWeeks, bookerName);
+      });
+
+      function completeBooking(lessonName, bookingType, numWeeks, bookerName) {
+        const bookedSlots = getBookedSlots();
+
+        if (bookingType === 'one-time') {
+          const slotKey = `${selectedSlot.dateKey}-${selectedSlot.time}`;
+          bookedSlots.push({
+            key: slotKey,
+            lesson: lessonName,
+            date: selectedSlot.dateKey,
+            time: selectedSlot.time,
+            type: 'one-time',
+            bookerName: bookerName,
+            bookedAt: new Date().toISOString()
+          });
+        } else if (bookingType === 'weekly') {
+          const weeks = parseInt(numWeeks) || 4;
+          for (let i = 0; i < weeks; i++) {
+            const recurringDate = new Date(selectedSlot.dateKey);
+            recurringDate.setDate(recurringDate.getDate() + (i * 7));
+            const recurringDateKey = formatDateKey(recurringDate);
+            const recurringSlotKey = `${recurringDateKey}-${selectedSlot.time}`;
+
+            bookedSlots.push({
+              key: recurringSlotKey,
+              lesson: lessonName,
+              date: recurringDateKey,
+              time: selectedSlot.time,
+              type: 'weekly',
+              bookerName: bookerName,
+              bookedAt: new Date().toISOString()
+            });
+          }
+        }
+
+        setBookedSlots(bookedSlots);
+        alert(`Lesson booked!\n${lessonName}\n${selectedSlot.dateKey}\n${selectedSlot.time}`);
+        bookingModal.style.display = 'none';
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
