@@ -9,7 +9,10 @@
 <body>
   <header class="boxed-header">
     <div class="header-buttons">
-      <button id="back-button" type="button">Back to Lessons</button>
+      <button id="back-button" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back
+      </button>
     </div>
     <h1>Owner Booking Calendar</h1>
     <p>View and manage all lesson bookings.</p>
@@ -85,11 +88,21 @@
         bookingsByDate[dateKey].sort((a, b) => a.time.localeCompare(b.time)).forEach(booking => {
           const bookingItem = document.createElement('div');
           bookingItem.className = 'owner-booking-item';
+          let lessonPrice = booking.price;
+          if (lessonPrice === undefined) {
+            if (booking.lesson === 'Strength Training') lessonPrice = 50.00;
+            else if (booking.lesson === 'Flexibility & Stretching') lessonPrice = 40.00;
+            else lessonPrice = 0.00;
+          }
+          const totalPrice = lessonPrice * (booking.numPeople || 1);
+
           bookingItem.innerHTML = `
             <div class="owner-booking-info">
               <strong>${booking.lesson}</strong>
               <p>${booking.time} &middot; ${booking.type === 'weekly' ? 'Weekly' : 'One-Time'}</p>
-              <p>Booked by: ${booking.bookerName}</p>
+              <p>Booked by: ${booking.bookerName} (${booking.numPeople || 1} ${booking.numPeople === 1 ? 'person' : 'people'})</p>
+              <p>Email: ${booking.bookerEmail || 'N/A'} &middot; Phone: ${booking.bookerPhone || 'N/A'}</p>
+              <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
             </div>
             <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
           `;
@@ -102,8 +115,8 @@
       ownerCalendar.style.display = 'block';
 
       ownerCalendar.querySelectorAll('.owner-cancel-booking-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const index = parseInt(e.target.dataset.index, 10);
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.dataset.index, 10);
           const slots = getBookedSlots();
           const booking = slots[index];
           if (!booking) {

@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lessons - Gymnastics Store</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header>
     <div class="header-buttons">
-      <button id="back-button" type="button">Back to Home</button>
+      <button id="back-button" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back
+      </button>
     </div>
     <h1>Private Lessons</h1>
     <p>Book one-on-one coaching sessions with our certified trainers.</p>
@@ -23,9 +32,31 @@
           <div class="product-image"><img src="images/sample 1.jpg" alt="Strength Training"></div>
           <div class="product-info">
             <h3>Strength Training</h3>
-            <p class="product-price">$50.00 / session</p>
+
+            <div class="pricing-badge-container"
+              style="display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0 1rem 0;">
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">1 Person (Single)</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$45.00</span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; background: rgba(244, 63, 94, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(244, 63, 94, 0.08);">
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">2 People (Double)</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--accent);">$25.00 <span
+                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">3 People (Triple)</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$20.00 <span
+                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
+              </div>
+            </div>
+
             <p>60-minute personalized strength and conditioning workout designed for gymnasts.</p>
-            <button class="lesson-book" type="button" data-id="strength-001" data-name="Strength Training" data-price="50.00">Book Now</button>
+            <button class="lesson-book" type="button" data-id="strength-001" data-name="Strength Training"
+              data-price="45.00">Book Now</button>
           </div>
         </article>
 
@@ -33,9 +64,31 @@
           <div class="product-image"><img src="images/sample 2.jpg" alt="Flexibility & Stretching"></div>
           <div class="product-info">
             <h3>Flexibility & Stretching</h3>
-            <p class="product-price">$40.00 / session</p>
+
+            <div class="pricing-badge-container"
+              style="display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0 1rem 0;">
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">1 Person (Single)</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$45.00</span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; background: rgba(244, 63, 94, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(244, 63, 94, 0.08);">
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">2 People (Double)</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--accent);">$25.00 <span
+                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">3 People (Triple)</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$20.00 <span
+                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
+              </div>
+            </div>
+
             <p>45-minute session focusing on improving flexibility and injury prevention.</p>
-            <button class="lesson-book" type="button" data-id="flex-001" data-name="Flexibility & Stretching" data-price="40.00">Book Now</button>
+            <button class="lesson-book" type="button" data-id="flex-001" data-name="Flexibility & Stretching"
+              data-price="40.00">Book Now</button>
           </div>
         </article>
       </div>
@@ -67,11 +120,14 @@
       </div>
     </section>
 
-    <section id="payment-section" style="margin-top:2rem; padding:1.5rem; background-color:#f9f9f9; border:1px solid #e0e0e0; border-radius:10px;">
-      <h2>Payment</h2>
-      <p style="margin-bottom:1rem;">Scan the QR code below to pay via Venmo:</p>
-      <div style="text-align:center;">
-        <img src="images/venmo-qr.jpg" alt="Venmo QR Code" style="max-width:250px; height:auto; border-radius:8px;">
+    <section id="payment-section"
+      style="margin-top: 3rem; padding: 2.25rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(244, 63, 94, 0.02) 100%); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
+      <h2 style="margin-bottom: 0.5rem;">Payment</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Scan the QR code below to complete your payment
+        securely via Venmo:</p>
+      <div style="text-align: center;">
+        <img src="images/venmo-qr.jpg" alt="Venmo QR Code"
+          style="max-width: 220px; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); padding: 0.5rem; background: #ffffff;">
       </div>
     </section>
   </main>
@@ -86,12 +142,32 @@
       <span class="close">&times;</span>
       <h2 id="modal-title">Book Your Lesson</h2>
       <input type="hidden" id="lesson-name" name="lesson-name">
-      
+
       <div class="form-group">
         <label for="booker-name">Your Name:</label>
         <input type="text" id="booker-name" name="booker-name" placeholder="Enter your name" required>
       </div>
-      
+
+      <div class="form-group">
+        <label for="booker-email">Your Email Address:</label>
+        <input type="email" id="booker-email" name="booker-email" placeholder="Enter your email address" required>
+      </div>
+
+      <div class="form-group">
+        <label for="booker-phone">Your Phone Number:</label>
+        <input type="tel" id="booker-phone" name="booker-phone" placeholder="Enter your phone number" required>
+      </div>
+
+      <div class="form-group">
+        <label for="num-people">Number of People (Max 3):</label>
+        <select id="num-people" name="num-people"
+          style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; box-sizing: border-box;">
+          <option value="1">1 Person</option>
+          <option value="2">2 People</option>
+          <option value="3">3 People</option>
+        </select>
+      </div>
+
       <div class="booking-type-selector">
         <label>Booking Type:</label>
         <div class="booking-options">
@@ -124,6 +200,25 @@
     </div>
   </div>
 
+  <!-- Success Modal -->
+  <div id="success-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; text-align: center;">
+      <span class="close-success close">&times;</span>
+      <div style="font-size: 4rem; color: #28a745; margin-bottom: 1rem;">✓</div>
+      <h2>Booking Confirmed!</h2>
+      <div id="success-details"
+        style="margin: 1.5rem 0; text-align: left; background: #f8f9fa; padding: 1rem; border-radius: 8px; border: 1px solid #e9ecef; font-size: 0.95rem; line-height: 1.6;">
+      </div>
+      <div id="success-warning"
+        style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left; font-size: 0.95rem; line-height: 1.5; font-weight: bold;">
+        ⚠️ IMPORTANT: Your private lesson will be deleted if you don't pay in the next 60 minutes. Please pay via Venmo.
+        Excited to work with you soon!
+      </div>
+      <button id="success-close-btn"
+        style="width: 100%; background-color: #007bff; border-color: #007bff;">Done</button>
+    </div>
+  </div>
+
   <script>
     const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM'];
 
@@ -140,7 +235,10 @@
     }
 
     function formatDateKey(date) {
-      return date.toISOString().split('T')[0]; // YYYY-MM-DD
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
 
     function clearBookedSlots() {
@@ -163,23 +261,80 @@
 
     function getWeekDates(startDate) {
       const dates = [];
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
       let currentDate = new Date(startDate);
       currentDate.setHours(0, 0, 0, 0);
-      
-      // Start from today if startDate is in the past
-      if (currentDate < today) {
-        currentDate = new Date(today);
-      }
-      
-      // Collect 7 dates starting from currentDate (skipping past dates)
+
       for (let i = 0; i < 7; i++) {
         dates.push(new Date(currentDate));
         currentDate.setDate(currentDate.getDate() + 1);
       }
       return dates;
+    }
+
+    function parseTimeString(timeString) {
+      const match = timeString.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+      if (!match) return { hours: 0, minutes: 0 };
+      let hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      const ampm = match[3].toUpperCase();
+
+      if (ampm === 'PM' && hours < 12) {
+        hours += 12;
+      } else if (ampm === 'AM' && hours === 12) {
+        hours = 0;
+      }
+
+      return { hours, minutes };
+    }
+
+    function getLessonDateTime(dateKey, timeString) {
+      const match = parseTimeString(timeString);
+      if (!match) return null;
+
+      const lessonDate = new Date(dateKey + 'T00:00:00');
+      lessonDate.setHours(match.hours, match.minutes, 0, 0);
+      return lessonDate;
+    }
+
+    function shouldShowMeetLink(dateKey, timeString) {
+      const lessonTime = getLessonDateTime(dateKey, timeString);
+      if (!lessonTime) return false;
+
+      const now = new Date();
+      const threshold = new Date(lessonTime.getTime() - 30 * 60 * 1000);
+      return now >= threshold;
+    }
+
+    function isSlotInPast(dateKey, timeString) {
+      const now = new Date();
+      const slotDate = new Date(dateKey + 'T00:00:00');
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (slotDate < today) {
+        return true;
+      }
+      if (slotDate > today) {
+        return false;
+      }
+
+      const slotTime = parseTimeString(timeString);
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+      const slotTotalMinutes = slotTime.hours * 60 + slotTime.minutes;
+      const currentTotalMinutes = currentHours * 60 + currentMinutes;
+
+      return slotTotalMinutes <= currentTotalMinutes;
+    }
+
+    function isSlotTooFarInAdvance(dateKey) {
+      const limitDate = new Date();
+      limitDate.setMonth(limitDate.getMonth() + 3);
+      limitDate.setHours(23, 59, 59, 999);
+
+      const slotDate = new Date(dateKey + 'T00:00:00');
+      return slotDate > limitDate;
     }
 
     function renderCalendar(startDate) {
@@ -192,6 +347,32 @@
       const startFormatted = weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const endFormatted = weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
+
+      // Disable prev week button if we are at or before the current week
+      const thisWeekStart = new Date();
+      thisWeekStart.setDate(thisWeekStart.getDate() - thisWeekStart.getDay());
+      thisWeekStart.setHours(0, 0, 0, 0);
+
+      const calendarWeekStart = new Date(startDate);
+      calendarWeekStart.setHours(0, 0, 0, 0);
+
+      const prevWeekBtn = document.getElementById('prev-week');
+      if (prevWeekBtn) {
+        prevWeekBtn.disabled = calendarWeekStart <= thisWeekStart;
+      }
+
+      // Disable next week button if the next week starts beyond the 3-month limit
+      const limitDate = new Date();
+      limitDate.setMonth(limitDate.getMonth() + 3);
+      limitDate.setHours(23, 59, 59, 999);
+
+      const nextWeekStart = new Date(startDate);
+      nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+
+      const nextWeekBtn = document.getElementById('next-week');
+      if (nextWeekBtn) {
+        nextWeekBtn.disabled = nextWeekStart > limitDate;
+      }
 
       // Clear calendar
       calendarSlots.innerHTML = '';
@@ -213,13 +394,22 @@
         timeSlots.forEach(time => {
           const slotKey = `${dateKey}-${time}`;
           const isBooked = bookedSlots.some(slot => slot.key === slotKey);
+          const inPast = isSlotInPast(dateKey, time);
+          if (inPast) {
+            return; // Skip rendering slots that are in the past
+          }
+          const tooFar = isSlotTooFarInAdvance(dateKey);
 
           const slot = document.createElement('button');
-          slot.className = `calendar-time-slot ${isBooked ? 'booked' : 'available'}`;
+          slot.className = `calendar-time-slot ${isBooked ? 'booked' : (tooFar ? 'too-far' : 'available')}`;
           slot.textContent = time;
-          slot.disabled = isBooked;
+          slot.disabled = isBooked || tooFar;
 
-          if (!isBooked) {
+          if (selectedSlot && selectedSlot.dateKey === dateKey && selectedSlot.time === time) {
+            slot.classList.add('selected');
+          }
+
+          if (!isBooked && !tooFar) {
             slot.addEventListener('click', () => selectSlot(dateKey, time, slot));
           }
 
@@ -235,7 +425,7 @@
     function selectSlot(dateKey, time, element) {
       // Remove previous selection from all slots
       document.querySelectorAll('.calendar-time-slot.selected').forEach(el => el.classList.remove('selected'));
-      
+
       // Add selection to clicked element
       element.classList.add('selected');
       selectedSlot = { dateKey, time };
@@ -255,7 +445,7 @@
         const bookingLogin = document.getElementById('booking-login');
 
         // Filter bookings by name (case-insensitive)
-        const userBookings = bookedSlots.filter(booking => 
+        const userBookings = bookedSlots.filter(booking =>
           booking.bookerName && booking.bookerName.toLowerCase() === verifiedName.toLowerCase()
         );
 
@@ -269,19 +459,42 @@
         userBookings.forEach((booking) => {
           const bookingCard = document.createElement('div');
           bookingCard.className = 'booking-card';
-          
+
           const date = new Date(booking.date + 'T00:00:00');
           const displayDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-          
+
           // Find the original index in full bookedSlots array
           const originalIndex = bookedSlots.indexOf(booking);
-          
+
+          const showMeet = shouldShowMeetLink(booking.date, booking.time);
+          const meetHtml = showMeet ? `
+            <p style="margin-top: 0.5rem;">
+              <a href="https://meet.google.com/orh-dtwh-wcr" target="_blank" class="meet-link" style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #1a73e8; color: white; padding: 0.5rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:4px;"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                Join Google Meet
+              </a>
+            </p>
+          ` : '';
+
+          let lessonPrice = booking.price;
+          if (lessonPrice === undefined) {
+            if (booking.lesson === 'Strength Training') lessonPrice = 50.00;
+            else if (booking.lesson === 'Flexibility & Stretching') lessonPrice = 40.00;
+            else lessonPrice = 0.00;
+          }
+          const totalPrice = lessonPrice * (booking.numPeople || 1);
+
           bookingCard.innerHTML = `
             <div class="booking-details">
               <h3>${booking.lesson}</h3>
               <p><strong>Date:</strong> ${displayDate}</p>
               <p><strong>Time:</strong> ${booking.time}</p>
               <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
+              <p><strong>People:</strong> ${booking.numPeople || 1}</p>
+              ${booking.bookerEmail ? `<p><strong>Email:</strong> ${booking.bookerEmail}</p>` : ''}
+              ${booking.bookerPhone ? `<p><strong>Phone:</strong> ${booking.bookerPhone}</p>` : ''}
+              <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
+              ${meetHtml}
             </div>
             <button class="cancel-booking-btn" data-index="${originalIndex}">Cancel</button>
           `;
@@ -295,8 +508,8 @@
 
         // Add event listeners to cancel buttons
         document.querySelectorAll('.cancel-booking-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.dataset.index);
+          btn.addEventListener('click', () => {
+            const index = parseInt(btn.dataset.index);
             const booking = bookedSlots[index];
             if (!booking) {
               alert('Booking not found.');
@@ -356,11 +569,21 @@
           bookingsByDate[dateKey].sort((a, b) => a.time.localeCompare(b.time)).forEach(booking => {
             const bookingItem = document.createElement('div');
             bookingItem.className = 'owner-booking-item';
+            let lessonPrice = booking.price;
+            if (lessonPrice === undefined) {
+              if (booking.lesson === 'Strength Training') lessonPrice = 50.00;
+              else if (booking.lesson === 'Flexibility & Stretching') lessonPrice = 40.00;
+              else lessonPrice = 0.00;
+            }
+            const totalPrice = lessonPrice * (booking.numPeople || 1);
+
             bookingItem.innerHTML = `
               <div class="owner-booking-info">
                 <strong>${booking.lesson}</strong>
                 <p>${booking.time} &middot; ${booking.type === 'weekly' ? 'Weekly' : 'One-Time'}</p>
-                <p>Booked by: ${booking.bookerName}</p>
+                <p>Booked by: ${booking.bookerName} (${booking.numPeople || 1} ${booking.numPeople === 1 ? 'person' : 'people'})</p>
+                <p>Email: ${booking.bookerEmail || 'N/A'} &middot; Phone: ${booking.bookerPhone || 'N/A'}</p>
+                <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
               </div>
               <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
             `;
@@ -371,8 +594,8 @@
         });
 
         ownerCalendar.querySelectorAll('.owner-cancel-booking-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.dataset.index, 10);
+          btn.addEventListener('click', () => {
+            const index = parseInt(btn.dataset.index, 10);
             const slots = getBookedSlots();
             const booking = slots[index];
             if (!booking) {
@@ -399,14 +622,14 @@
             alert('Invalid owner code.');
             return;
           }
-          window.location.href = 'view booking.html';
+          window.location.href = 'view booking owner.html';
         });
       }
 
       // Name verification
       const verifyNameBtn = document.getElementById('verify-name-btn');
       const verifyNameInput = document.getElementById('verify-name');
-      
+
       verifyNameBtn.addEventListener('click', () => {
         const name = verifyNameInput.value.trim();
         if (!name) {
@@ -439,7 +662,7 @@
       const nextWeekBtn = document.getElementById('next-week');
       const weeksSelector = document.getElementById('weeks-selector');
       const bookingTypeRadios = document.querySelectorAll('input[name="booking-type"]');
-      let currentWeekStart = new Date();
+      currentWeekStart = new Date();
       currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay()); // Start on Sunday
       const resetAccessCode = 'LiaMycIaa123';
       const ownerAccessCode = 'LiaMycIaa123';
@@ -474,11 +697,11 @@
           selectedSlot = null;
           confirmBtn.style.display = 'none';
           document.getElementById('selection-display').textContent = '';
-          
+
           // Reset to current week
           currentWeekStart = new Date();
           currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
-          
+
           renderCalendar(currentWeekStart);
           bookingModal.style.display = 'block';
         });
@@ -502,10 +725,30 @@
         bookingModal.style.display = 'none';
       });
 
+      // Close success modal
+      const successModal = document.getElementById('success-modal');
+      const closeSuccessBtn = document.querySelector('.close-success');
+      const successDoneBtn = document.getElementById('success-close-btn');
+
+      const closeSuccess = () => {
+        successModal.style.display = 'none';
+        window.location.href = 'index.html';
+      };
+
+      if (closeSuccessBtn) {
+        closeSuccessBtn.addEventListener('click', closeSuccess);
+      }
+      if (successDoneBtn) {
+        successDoneBtn.addEventListener('click', closeSuccess);
+      }
+
       // Close modal when clicking outside
       window.addEventListener('click', (e) => {
         if (e.target === bookingModal) {
           bookingModal.style.display = 'none';
+        }
+        if (e.target === successModal) {
+          closeSuccess();
         }
       });
 
@@ -522,16 +765,45 @@
           return;
         }
 
+        const bookerEmail = document.getElementById('booker-email').value.trim();
+        if (!bookerEmail) {
+          alert('Please enter your email address');
+          return;
+        }
+
+        const bookerPhone = document.getElementById('booker-phone').value.trim();
+        if (!bookerPhone) {
+          alert('Please enter your phone number');
+          return;
+        }
+
         const lessonName = lessonNameInput.value;
         const bookingType = document.querySelector('input[name="booking-type"]:checked').value;
         const numWeeks = bookingType === 'weekly' ? document.getElementById('num-weeks').value : '1';
-        completeBooking(lessonName, bookingType, numWeeks, bookerName);
+        completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone);
       });
 
-      function completeBooking(lessonName, bookingType, numWeeks, bookerName) {
+      function completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone) {
         const bookedSlots = getBookedSlots();
+        const limitDate = new Date();
+        limitDate.setMonth(limitDate.getMonth() + 3);
+        limitDate.setHours(23, 59, 59, 999);
+        const numPeople = parseInt(document.getElementById('num-people').value, 10) || 1;
+
+        let pricePerPerson = 45.00;
+        if (numPeople === 2) {
+          pricePerPerson = 25.00;
+        } else if (numPeople === 3) {
+          pricePerPerson = 20.00;
+        }
 
         if (bookingType === 'one-time') {
+          const slotDate = new Date(selectedSlot.dateKey + 'T00:00:00');
+          if (slotDate > limitDate) {
+            alert('Cannot book lessons more than 3 months in advance.');
+            return;
+          }
+
           const slotKey = `${selectedSlot.dateKey}-${selectedSlot.time}`;
           bookedSlots.push({
             key: slotKey,
@@ -540,35 +812,77 @@
             time: selectedSlot.time,
             type: 'one-time',
             bookerName: bookerName,
+            bookerEmail: bookerEmail,
+            bookerPhone: bookerPhone,
+            numPeople: numPeople,
+            price: pricePerPerson,
             bookedAt: new Date().toISOString()
           });
         } else if (bookingType === 'weekly') {
           const weeks = parseInt(numWeeks) || 4;
+          const tempSlots = [];
+
           for (let i = 0; i < weeks; i++) {
-            const recurringDate = new Date(selectedSlot.dateKey);
+            const recurringDate = new Date(selectedSlot.dateKey + 'T00:00:00');
             recurringDate.setDate(recurringDate.getDate() + (i * 7));
+
+            if (recurringDate > limitDate) {
+              alert(`Cannot book recurring lessons beyond 3 months in advance. The session on ${formatDateKey(recurringDate)} is past the limit.`);
+              return;
+            }
+
             const recurringDateKey = formatDateKey(recurringDate);
             const recurringSlotKey = `${recurringDateKey}-${selectedSlot.time}`;
 
-            bookedSlots.push({
+            tempSlots.push({
               key: recurringSlotKey,
               lesson: lessonName,
               date: recurringDateKey,
               time: selectedSlot.time,
               type: 'weekly',
               bookerName: bookerName,
+              bookerEmail: bookerEmail,
+              bookerPhone: bookerPhone,
+              numPeople: numPeople,
+              price: pricePerPerson,
               bookedAt: new Date().toISOString()
             });
           }
+
+          bookedSlots.push(...tempSlots);
         }
 
         setBookedSlots(bookedSlots);
-        alert(`Lesson booked!\n${lessonName}\n${selectedSlot.dateKey}\n${selectedSlot.time}`);
         bookingModal.style.display = 'none';
-        window.location.href = 'index.html';
+
+        const weeksCount = bookingType === 'weekly' ? (parseInt(numWeeks) || 4) : 1;
+        const totalToPay = pricePerPerson * numPeople * weeksCount;
+
+        // Render success modal details
+        const successDetails = document.getElementById('success-details');
+        const displayDate = new Date(selectedSlot.dateKey + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        successDetails.innerHTML = `
+          <strong>Lesson:</strong> ${lessonName}<br>
+          <strong>Date:</strong> ${displayDate}<br>
+          <strong>Time:</strong> ${selectedSlot.time}<br>
+          <strong>Type:</strong> ${bookingType === 'weekly' ? `Weekly for ${numWeeks} weeks` : 'One-Time'}<br>
+          <strong>Name:</strong> ${bookerName}<br>
+          <strong>Email:</strong> ${bookerEmail}<br>
+          <strong>Phone:</strong> ${bookerPhone}<br>
+          <strong>People:</strong> ${numPeople}<br>
+          <strong>Price per Person:</strong> $${pricePerPerson.toFixed(2)}/session<br>
+          <strong>Total Price:</strong> $${totalToPay.toFixed(2)}
+        `;
+
+        document.getElementById('success-warning').innerHTML = `
+          ⚠️ IMPORTANT: Your private lesson will be deleted if you don't pay <strong>$${totalToPay.toFixed(2)}</strong> in the next 60 minutes. Please pay via Venmo.<br>Excited to work with you soon!
+        `;
+
+        document.getElementById('success-modal').style.display = 'block';
       }
     });
   </script>
   <script src="script.js"></script>
 </body>
+
 </html>

@@ -3,59 +3,635 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buy - Gymnastics Store</title>
+  <title>Amazon-Style Secure Checkout - Gymnastics Store</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .header-buttons {
-      position: static;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+    /* Amazon Checkout Aesthetics */
+    body {
+      background-color: #eaeded;
+      color: #0f1111;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    h1, h2, h3, h4, .checkout-logo, .step-number {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    /* Minimal secure checkout header */
+    .checkout-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #ddd;
+      padding: 0.75rem 2rem;
       display: flex;
-      gap: 0.75rem;
+      justify-content: space-between;
       align-items: center;
+      max-width: 1150px;
+      margin: 0 auto;
+    }
+
+    .checkout-header h1 {
+      font-size: 1.5rem;
+      color: #555;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    .checkout-header h1 span {
+      color: #0f1111;
+    }
+
+    .secure-lock {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #565959;
+      font-size: 0.9rem;
+    }
+
+    .checkout-logo {
+      font-weight: bold;
+      font-size: 1.6rem;
+      color: #111;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .checkout-logo span {
+      color: #ff9900;
+    }
+
+    /* Step indicator */
+    .checkout-steps {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #565959;
+      margin-top: 0.5rem;
+    }
+
+    .checkout-steps .active {
+      color: #c45500;
+    }
+
+    /* Layout grid */
+    .checkout-container {
+      max-width: 1150px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: 8fr 4fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 850px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Column sections */
+    .checkout-section {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .checkout-section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .step-number {
+      color: #c45500;
+      margin-right: 0.5rem;
+    }
+
+    /* Forms */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
       margin-bottom: 1rem;
     }
 
-    .header-buttons button {
-      position: static;
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-field label {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .form-field input, .form-field select {
+      padding: 0.5rem;
+      border: 1px solid #a6a6a6;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-field input:focus, .form-field select:focus {
+      border-color: #e77600;
+      box-shadow: 0 0 3px rgba(228, 121, 17, 0.5);
+    }
+
+    /* Cart Review list */
+    .checkout-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .checkout-item-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+      align-items: center;
+    }
+
+    .checkout-item-card:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .item-thumbnail {
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    .item-details h4 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+    }
+
+    .item-price {
+      font-weight: bold;
+      color: #b12704;
+    }
+
+    .item-quantity-row {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .quantity-select {
+      padding: 0.25rem;
+      border-radius: 4px;
+      border: 1px solid #a6a6a6;
+    }
+
+    .delete-item-link {
+      color: #007185;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .delete-item-link:hover {
+      color: #c45500;
+      text-decoration: underline;
+    }
+
+    /* Sidebar summary */
+    .summary-card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    /* Amazon Yellow Buttons */
+    .amazon-btn {
+      background: #ffd814;
+      border: 1px solid #fcd200;
+      border-radius: 20px;
+      color: #0f1111;
+      padding: 0.6rem 1rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(213,217,217,.5);
+      transition: background 0.2s;
+    }
+
+    .amazon-btn:hover {
+      background: #f7ca00;
+      border-color: #f2c200;
+    }
+
+    .amazon-btn:disabled {
+      background: #f0f2f2;
+      border-color: #e0e6e6;
+      color: #888;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .order-summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      color: #565959;
+    }
+
+    .order-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #b12704;
+      border-top: 1px solid #ddd;
+      padding-top: 0.75rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Confirmation screen overlay styling */
+    .confirmation-container {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      max-width: 600px;
+      margin: 4rem auto;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .confirmation-check {
+      font-size: 4.5rem;
+      color: #2e7d32;
+      margin-bottom: 1.5rem;
+    }
+
+    .confirmation-container h2 {
+      font-size: 1.8rem;
+      color: #0f1111;
+      margin-bottom: 1rem;
+    }
+
+    .confirmation-container p {
+      color: #565959;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .empty-cart-message {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: #565959;
+    }
+
+    .empty-cart-message h3 {
+      font-size: 1.4rem;
+      color: #0f1111;
+      margin-bottom: 0.75rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="header-buttons">
-      <button id="back-button" type="button">Back to Home</button>
-      <button id="product-button" type="button">Go to Products</button>
+  <!-- Amazon Mini Secure Checkout Header -->
+  <header class="checkout-header">
+    <a href="product.html" class="checkout-logo">
+      Gymnastics<span>Store</span>
+    </a>
+    <h1>Checkout (<span><span id="header-items-count">0</span> items</span>)</h1>
+    <div class="secure-lock">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      </svg>
+      Secure Checkout
     </div>
-    <h1>Buy Now</h1>
-    <p>Complete your purchase here.</p>
   </header>
 
-  <main>
-    <section id="checkout">
-      <h2>Checkout</h2>
-      <p>Checkout details and payment options will appear here.</p>
-    </section>
+  <main id="main-content">
+    <div class="checkout-container" id="checkout-grid" style="display: none;">
+      <!-- Left Column: Checkout details -->
+      <div>
+        <!-- Step 1: Shipping Address -->
+        <section class="checkout-section">
+          <div class="checkout-section-title">
+            <span><span class="step-number">1</span>Shipping Address</span>
+          </div>
+          <form id="shipping-form" onsubmit="event.preventDefault();">
+            <div class="form-field">
+              <label for="ship-name">Full Name</label>
+              <input type="text" id="ship-name" placeholder="John Doe" required autocomplete="name">
+            </div>
+            <div class="form-field">
+              <label for="ship-address">Address</label>
+              <input type="text" id="ship-address" placeholder="123 Gym St" required autocomplete="street-address">
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="ship-city">City</label>
+                <input type="text" id="ship-city" placeholder="Tumble Town" required autocomplete="address-level2">
+              </div>
+              <div class="form-field">
+                <label for="ship-state">State</label>
+                <input type="text" id="ship-state" placeholder="TX" required autocomplete="address-level1">
+              </div>
+            </div>
+            <div class="form-field" style="max-width: 200px;">
+              <label for="ship-zip">ZIP Code</label>
+              <input type="text" id="ship-zip" placeholder="75001" required autocomplete="postal-code">
+            </div>
+          </form>
+        </section>
+
+        <!-- Step 2: Payment Method -->
+        <section class="checkout-section">
+          <div class="checkout-section-title">
+            <span><span class="step-number">2</span>Payment Method</span>
+          </div>
+
+          <!-- Venmo Section -->
+          <div id="venmo-payment-section" style="padding: 1.25rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; text-align: center;">
+            <p style="font-weight: bold; margin-bottom: 1rem; font-size: 0.95rem;">Scan the QR code below to pay via Venmo:</p>
+            <img src="images/venmo-qr.jpg" alt="Venmo QR Code" style="max-width: 220px; height: auto; border-radius: 8px; border: 1px solid #ddd; display: block; margin: 0 auto 1.25rem auto;">
+            <div id="venmo-warning-box" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; text-align: left; max-width: 420px; margin: 0 auto; line-height: 1.4;">
+              ⚠️ Please scan and pay the Order Total shown on the right via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: Review Items -->
+        <section class="checkout-section">
+          <div class="checkout-section-title">
+            <span><span class="step-number">3</span>Review Items & Shipping</span>
+          </div>
+          <div class="checkout-items" id="cart-items-container">
+            <!-- Items loaded dynamically -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Sticky order summary -->
+      <aside class="summary-card">
+        <button id="place-order-btn" class="amazon-btn" type="button">Place your order</button>
+        <p style="font-size: 0.75rem; color: #565959; text-align: center; margin: 0.5rem 0 1rem 0; line-height: 1.3;">
+          By placing your order, you agree to Gymnastics Store's privacy notice and conditions of use.
+        </p>
+        
+        <h3 style="font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; margin-bottom: 0.75rem;">Order Summary</h3>
+        <div class="order-summary-row">
+          <span>Items (<span id="summary-items-count">0</span>):</span>
+          <span id="summary-items-price">$0.00</span>
+        </div>
+        <div class="order-summary-row">
+          <span>Shipping & handling:</span>
+          <span id="summary-shipping-price">$0.00</span>
+        </div>
+        <div class="order-summary-row" style="border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+          <span>Estimated tax:</span>
+          <span id="summary-tax-price">$0.00</span>
+        </div>
+        <div class="order-total-row">
+          <span>Order Total:</span>
+          <span id="summary-total-price">$0.00</span>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Empty Cart Screen -->
+    <div class="empty-cart-message" id="empty-cart-screen" style="display: none;">
+      <h3>Your Cart is empty.</h3>
+      <p>Please go back to the products page to select items for purchase.</p>
+      <button class="amazon-btn" style="max-width: 250px; margin-top: 1.5rem;" onclick="window.location.href='product.html'">Go to Products</button>
+    </div>
+
+    <!-- Order Placed Success Screen -->
+    <div class="confirmation-container" id="success-screen" style="display: none;">
+      <div class="confirmation-check">✓</div>
+      <h2>Thank you, your order has been placed!</h2>
+      <p id="success-payment-instructions" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 1rem; border-radius: 6px; font-size: 0.95rem; font-weight: bold; line-height: 1.5; margin-bottom: 1.5rem; text-align: center;">
+        ⚠️ Please send your Venmo payment within 60 minutes or your order will be automatically cancelled.
+      </p>
+      <p>An email confirmation has been sent to you. Your gymnastics gear will be shipped shortly after payment is received. Get ready to train!</p>
+      <button class="amazon-btn" style="max-width: 250px;" onclick="window.location.href='product.html'">Continue Shopping</button>
+    </div>
   </main>
 
-  <footer>
-    <p>&copy; 2026 Gymnastics Store</p>
+  <footer style="margin: 4rem 0 2rem 0; text-align: center; font-size: 0.85rem; color: #565959; border-top: 1px solid #ddd; padding-top: 1.5rem;">
+    <p>Conditions of Use | Privacy Notice &copy; 2026 Gymnastics Store, Inc. or its affiliates</p>
   </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const backButton = document.getElementById('back-button');
-      const productButton = document.getElementById('product-button');
+      const checkoutGrid = document.getElementById('checkout-grid');
+      const emptyCartScreen = document.getElementById('empty-cart-screen');
+      const successScreen = document.getElementById('success-screen');
+      const cartItemsContainer = document.getElementById('cart-items-container');
+      const headerItemsCount = document.getElementById('header-items-count');
+      const summaryItemsCount = document.getElementById('summary-items-count');
+      
+      const summaryItemsPrice = document.getElementById('summary-items-price');
+      const summaryShippingPrice = document.getElementById('summary-shipping-price');
+      const summaryTaxPrice = document.getElementById('summary-tax-price');
+      const summaryTotalPrice = document.getElementById('summary-total-price');
+      const placeOrderBtn = document.getElementById('place-order-btn');
 
-      if (backButton) {
-        backButton.addEventListener('click', () => {
-          window.location.href = 'index.html';
+      // Forms
+      const shippingForm = document.getElementById('shipping-form');
+
+      function getCart() {
+        try {
+          return JSON.parse(localStorage.getItem('gymCart') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function setCart(cart) {
+        localStorage.setItem('gymCart', JSON.stringify(cart));
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        localStorage.setItem('cartCount', String(count));
+      }
+
+      function renderCheckout() {
+        const cart = getCart();
+        const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        headerItemsCount.textContent = totalItemsCount;
+        summaryItemsCount.textContent = totalItemsCount;
+
+        if (cart.length === 0) {
+          checkoutGrid.style.display = 'none';
+          successScreen.style.display = 'none';
+          emptyCartScreen.style.display = 'block';
+          return;
+        }
+
+        emptyCartScreen.style.display = 'none';
+        successScreen.style.display = 'none';
+        checkoutGrid.style.display = 'grid';
+
+        // Clear container
+        cartItemsContainer.innerHTML = '';
+
+        let itemsSubtotal = 0;
+
+        cart.forEach((item, index) => {
+          const itemTotal = item.price * item.quantity;
+          itemsSubtotal += itemTotal;
+
+          const card = document.createElement('div');
+          card.className = 'checkout-item-card';
+          card.innerHTML = `
+            <img src="${item.img}" alt="${item.name}" class="item-thumbnail">
+            <div class="item-details">
+              <h4>${item.name}</h4>
+              <span class="item-price">$${item.price.toFixed(2)}</span>
+              <div class="item-quantity-row">
+                <label>Qty: 
+                  <select class="quantity-select" data-index="${index}">
+                    ${[1,2,3,4,5,6,7,8,9,10].map(q => `<option value="${q}" ${item.quantity === q ? 'selected' : ''}>${q}</option>`).join('')}
+                  </select>
+                </label>
+                <span class="delete-item-link" data-index="${index}">Delete</span>
+              </div>
+            </div>
+          `;
+          cartItemsContainer.appendChild(card);
+        });
+
+        // Calculations
+        // Free shipping for orders over $50, else $5.99
+        const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
+        const taxRate = 0.085; // 8.5%
+        const estimatedTax = (itemsSubtotal + shippingFee) * taxRate;
+        const finalTotal = itemsSubtotal + shippingFee + estimatedTax;
+
+        // Update displays
+        summaryItemsPrice.textContent = `$${itemsSubtotal.toFixed(2)}`;
+        summaryShippingPrice.textContent = shippingFee === 0.00 ? 'FREE' : `$${shippingFee.toFixed(2)}`;
+        summaryTaxPrice.textContent = `$${estimatedTax.toFixed(2)}`;
+        summaryTotalPrice.textContent = `$${finalTotal.toFixed(2)}`;
+
+        const venmoWarning = document.getElementById('venmo-warning-box');
+        if (venmoWarning) {
+          venmoWarning.innerHTML = `⚠️ Please scan and pay the exact total of <strong>$${finalTotal.toFixed(2)}</strong> via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**`;
+        }
+
+        // Attach event listeners to quantity dropdowns
+        document.querySelectorAll('.quantity-select').forEach(select => {
+          select.addEventListener('change', (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            const newQty = parseInt(e.target.value, 10);
+            const currentCart = getCart();
+            if (currentCart[index]) {
+              currentCart[index].quantity = newQty;
+              setCart(currentCart);
+              renderCheckout();
+            }
+          });
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll('.delete-item-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            const currentCart = getCart();
+            currentCart.splice(index, 1);
+            setCart(currentCart);
+            renderCheckout();
+          });
         });
       }
 
-      if (productButton) {
-        productButton.addEventListener('click', () => {
-          window.location.href = 'product.html';
-        });
-      }
+      // Handle placing order
+      placeOrderBtn.addEventListener('click', () => {
+        // Validate forms
+        if (!shippingForm.reportValidity()) {
+          return;
+        }
+
+        // Save order details to localStorage
+        const cart = getCart();
+        const shipName = document.getElementById('ship-name').value.trim();
+        const shipAddress = document.getElementById('ship-address').value.trim();
+        const shipCity = document.getElementById('ship-city').value.trim();
+        const shipState = document.getElementById('ship-state').value.trim();
+        const shipZip = document.getElementById('ship-zip').value.trim();
+        const itemsSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
+        const taxRate = 0.085;
+        const estimatedTax = (itemsSubtotal + shippingFee) * taxRate;
+        const finalTotal = itemsSubtotal + shippingFee + estimatedTax;
+
+        const order = {
+          id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+          customerName: shipName,
+          shippingAddress: `${shipAddress}, ${shipCity}, ${shipState} ${shipZip}`,
+          items: cart,
+          subtotal: itemsSubtotal,
+          shipping: shippingFee,
+          tax: estimatedTax,
+          total: finalTotal,
+          date: new Date().toISOString()
+        };
+
+        try {
+          const orders = JSON.parse(localStorage.getItem('gymOrders') || '[]');
+          orders.push(order);
+          localStorage.setItem('gymOrders', JSON.stringify(orders));
+        } catch (e) {
+          console.error('Failed to save order:', e);
+        }
+
+        // Simulating purchase completion
+        localStorage.removeItem('gymCart');
+        localStorage.setItem('cartCount', '0');
+
+        const successInstructions = document.getElementById('success-payment-instructions');
+        if (successInstructions) {
+          successInstructions.innerHTML = `⚠️ IMPORTANT: Please complete your Venmo payment of $${finalTotal.toFixed(2)} within 60 minutes, or your order will be automatically cancelled.`;
+        }
+
+        checkoutGrid.style.display = 'none';
+        emptyCartScreen.style.display = 'none';
+        successScreen.style.display = 'block';
+      });
+
+      // Initial Render
+      renderCheckout();
     });
   </script>
 </body>

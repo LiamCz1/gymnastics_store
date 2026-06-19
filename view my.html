@@ -9,7 +9,10 @@
 <body>
   <header class="boxed-header">
     <div class="header-buttons">
-      <button id="back-button" type="button">Back to Lessons</button>
+      <button id="back-button" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back
+      </button>
     </div>
     <h1>View My Bookings</h1>
     <p>See your lesson bookings and cancel them if needed.</p>
@@ -34,6 +37,40 @@
   </footer>
 
   <script>
+    function parseTimeString(timeString) {
+      const match = timeString.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+      if (!match) return { hours: 0, minutes: 0 };
+      let hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      const ampm = match[3].toUpperCase();
+
+      if (ampm === 'PM' && hours < 12) {
+        hours += 12;
+      } else if (ampm === 'AM' && hours === 12) {
+        hours = 0;
+      }
+
+      return { hours, minutes };
+    }
+
+    function getLessonDateTime(dateKey, timeString) {
+      const match = parseTimeString(timeString);
+      if (!match) return null;
+
+      const lessonDate = new Date(dateKey + 'T00:00:00');
+      lessonDate.setHours(match.hours, match.minutes, 0, 0);
+      return lessonDate;
+    }
+
+    function shouldShowMeetLink(dateKey, timeString) {
+      const lessonTime = getLessonDateTime(dateKey, timeString);
+      if (!lessonTime) return false;
+
+      const now = new Date();
+      const threshold = new Date(lessonTime.getTime() - 30 * 60 * 1000);
+      return now >= threshold;
+    }
+
     function getBookedSlots() {
       try {
         return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
@@ -80,12 +117,35 @@
         const date = new Date(booking.date + 'T00:00:00');
         const displayDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
+        const showMeet = shouldShowMeetLink(booking.date, booking.time);
+        const meetHtml = showMeet ? `
+          <p style="margin-top: 0.75rem;">
+            <a href="https://meet.google.com/orh-dtwh-wcr" target="_blank" class="meet-link" style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #1a73e8; color: white; padding: 0.6rem 1rem; border-radius: var(--radius-sm); text-decoration: none; font-size: 0.85rem; font-weight: 700; box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:4px;"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+              Join Google Meet
+            </a>
+          </p>
+        ` : '';
+
+        let lessonPrice = booking.price;
+        if (lessonPrice === undefined) {
+          if (booking.lesson === 'Strength Training') lessonPrice = 50.00;
+          else if (booking.lesson === 'Flexibility & Stretching') lessonPrice = 40.00;
+          else lessonPrice = 0.00;
+        }
+        const totalPrice = lessonPrice * (booking.numPeople || 1);
+
         bookingCard.innerHTML = `
           <div class="booking-details">
             <h3>${booking.lesson}</h3>
             <p><strong>Date:</strong> ${displayDate}</p>
             <p><strong>Time:</strong> ${booking.time}</p>
             <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
+            <p><strong>People:</strong> ${booking.numPeople || 1}</p>
+            ${booking.bookerEmail ? `<p><strong>Email:</strong> ${booking.bookerEmail}</p>` : ''}
+            ${booking.bookerPhone ? `<p><strong>Phone:</strong> ${booking.bookerPhone}</p>` : ''}
+            <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
+            ${meetHtml}
           </div>
           <button class="cancel-booking-btn" data-index="${bookedSlots.indexOf(booking)}">Cancel</button>
         `;
@@ -95,8 +155,8 @@
 
       bookingsList.style.display = 'grid';
       bookingsList.querySelectorAll('.cancel-booking-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const index = parseInt(e.target.dataset.index, 10);
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.dataset.index, 10);
           const slots = getBookedSlots();
           const booking = slots[index];
           if (!booking) {

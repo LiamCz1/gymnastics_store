@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Orders - Gymnastics Store</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .order-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      background-color: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .order-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    @media (max-width: 600px) {
+      .order-header {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    .order-meta h3 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .order-date {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .order-delete-btn {
+      background-color: var(--accent);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 2px 4px rgba(244, 63, 94, 0.15);
+    }
+
+    .order-delete-btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .order-customer-info {
+      background-color: var(--bg-main);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .order-customer-info p {
+      margin-bottom: 0.25rem;
+    }
+    .order-customer-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .order-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .order-item-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    .order-item-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .order-item-thumb {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .order-item-details {
+      flex-grow: 1;
+    }
+
+    .order-item-details h4 {
+      font-size: 0.95rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .order-item-details p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .order-item-price {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .order-summary-box {
+      align-self: flex-end;
+      width: 280px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.75rem;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .order-summary-box {
+        width: 100%;
+      }
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+
+    .summary-row.total-row {
+      color: var(--text-dark);
+      font-weight: 800;
+      font-size: 1.05rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.4rem;
+      margin-top: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="boxed-header">
+    <div class="header-buttons">
+      <button id="back-button" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Products
+      </button>
+    </div>
+    <h1>Owner Orders Dashboard</h1>
+    <p>View and manage all customer product orders.</p>
+  </header>
+
+  <main>
+    <section class="boxed-panel">
+      <!-- Authorization Gateway -->
+      <div id="owner-access-form">
+        <label for="owner-code">Owner Code:</label>
+        <div class="owner-access-group">
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <button id="load-owner-orders-btn" class="verify-btn" type="button">Load Orders</button>
+        </div>
+      </div>
+
+      <!-- Orders Dashboard Container -->
+      <div id="owner-orders-container" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h2 style="font-size: 1.4rem;">Customer Orders</h2>
+          <button id="reset-orders-btn" class="reset-bookings-btn" style="margin-top: 0; background-color: var(--accent);" type="button">Delete All Orders</button>
+        </div>
+        <div id="orders-list">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Gymnastics Store. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const ownerAccessCode = 'LiaMycIaa123';
+
+    function getOrders() {
+      try {
+        return JSON.parse(localStorage.getItem('gymOrders') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setOrders(orders) {
+      localStorage.setItem('gymOrders', JSON.stringify(orders));
+    }
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+
+    function displayOrders() {
+      const ownerAccessForm = document.getElementById('owner-access-form');
+      const ownerOrdersContainer = document.getElementById('owner-orders-container');
+      const ordersList = document.getElementById('orders-list');
+
+      ownerAccessForm.style.display = 'none';
+      ownerOrdersContainer.style.display = 'block';
+      ordersList.innerHTML = '';
+
+      const orders = getOrders();
+
+      if (orders.length === 0) {
+        ordersList.innerHTML = '<p class="no-bookings" style="text-align: center; padding: 2rem; color: var(--text-muted);">No product orders placed yet.</p>';
+        return;
+      }
+
+      // Sort by date descending
+      const sortedOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sortedOrders.forEach((order, index) => {
+        // Find index in original orders array for deletion
+        const originalIndex = orders.indexOf(order);
+        
+        const dateObj = new Date(order.date);
+        const displayDate = dateObj.toLocaleDateString('en-US', { 
+          weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' 
+        }) + ' at ' + dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        const orderCard = document.createElement('div');
+        orderCard.className = 'order-card';
+        orderCard.innerHTML = `
+          <div class="order-header">
+            <div class="order-meta">
+              <h3>Order #${order.id || 'N/A'}</h3>
+              <div class="order-date">${displayDate}</div>
+            </div>
+            <button class="order-delete-btn" data-index="${originalIndex}">Delete Order</button>
+          </div>
+          
+          <div class="order-customer-info">
+            <p><strong>Customer Name:</strong> ${order.customerName}</p>
+            <p><strong>Shipping Address:</strong> ${order.shippingAddress}</p>
+          </div>
+          
+          <div class="order-items-list">
+            ${order.items.map((item, itemIndex) => {
+              let customHtml = '';
+              if (item.customDetails) {
+                const cd = item.customDetails;
+                const textDetails = cd.textLines && cd.textLines.length > 0
+                  ? cd.textLines.map(line => `"${line.text.toUpperCase()}" (${line.placement || 'front'}, size ${line.size}px, color ${line.color}, font ${line.font})`).join('<br>')
+                  : 'None';
+                customHtml = `
+                  <div class="custom-specs" style="margin-top: 0.5rem; font-size: 0.8rem; background: #f1f5f9; padding: 0.5rem; border-radius: 4px; border: 1px solid #e2e8f0; color: #334155;">
+                    <div><strong>Base Color:</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${cd.baseColor}; vertical-align:middle; border:1px solid #ccc; margin-right:4px;"></span> ${cd.baseColor}</div>
+                    <div><strong>Accent Trim:</strong> <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background-color:${cd.accentColor}; vertical-align:middle; border:1px solid #ccc; margin-right:4px;"></span> ${cd.accentColor}</div>
+                    <div><strong>Logo:</strong> ${cd.logoUploaded ? `Yes (${cd.logoPlacement || 'front'})` : 'No'}</div>
+                    <div style="margin-top: 0.25rem;"><strong>Text Lines:</strong><br>${textDetails}</div>
+                    <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                      <button class="download-specs-btn" data-order-index="${index}" data-item-index="${itemIndex}" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background-color: var(--primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Specs (TXT)
+                      </button>
+                      <button class="download-image-btn" data-order-index="${index}" data-item-index="${itemIndex}" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background-color: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Image (PNG)
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }
+              return `
+                <div class="order-item-row" style="align-items: flex-start;">
+                  <img src="${item.img}" alt="${item.name}" class="order-item-thumb" style="width: 80px; height: 80px;">
+                  <div class="order-item-details">
+                    <h4>${item.name}</h4>
+                    <p>Price: $${item.price.toFixed(2)} &middot; Qty: ${item.quantity}</p>
+                    ${customHtml}
+                  </div>
+                  <div class="order-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          
+          <div class="order-summary-box">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span>$${order.subtotal.toFixed(2)}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping & Handling:</span>
+              <span>${order.shipping === 0 ? 'FREE' : '$' + order.shipping.toFixed(2)}</span>
+            </div>
+            <div class="summary-row">
+              <span>Estimated Tax:</span>
+              <span>$${order.tax.toFixed(2)}</span>
+            </div>
+            <div class="summary-row total-row">
+              <span>Order Total:</span>
+              <span>$${order.total.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+
+        ordersList.appendChild(orderCard);
+      });
+
+      // Attach delete handlers
+      ordersList.querySelectorAll('.order-delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index, 10);
+          const currentOrders = getOrders();
+          const targetOrder = currentOrders[index];
+          if (!targetOrder) return;
+
+          if (confirm(`Are you sure you want to delete Order #${targetOrder.id}?`)) {
+            currentOrders.splice(index, 1);
+            setOrders(currentOrders);
+            displayOrders();
+          }
+        });
+      });
+
+      // Attach download specs handler
+      ordersList.querySelectorAll('.download-specs-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetBtn = e.target.closest('.download-specs-btn');
+          if (!targetBtn) return;
+          const orderIndex = parseInt(targetBtn.dataset.orderIndex, 10);
+          const itemIndex = parseInt(targetBtn.dataset.itemIndex, 10);
+          const order = sortedOrders[orderIndex];
+          if (!order) return;
+          const item = order.items[itemIndex];
+          if (!item || !item.customDetails) return;
+
+          const cd = item.customDetails;
+          const dateObj = new Date(order.date);
+          const displayDate = dateObj.toLocaleDateString('en-US', { 
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' 
+          }) + ' at ' + dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+          let specText = `==================================================\n`;
+          specText += `GYMNASTICS STORE - CUSTOM APPAREL PRODUCTION SPEC\n`;
+          specText += `==================================================\n\n`;
+          specText += `ORDER DETAILS:\n`;
+          specText += `--------------\n`;
+          specText += `Order ID:         #${order.id || 'N/A'}\n`;
+          specText += `Order Date:       ${displayDate}\n`;
+          specText += `Customer Name:    ${order.customerName}\n`;
+          specText += `Shipping Address: ${order.shippingAddress}\n\n`;
+          
+          specText += `GARMENT SPECIFICATIONS:\n`;
+          specText += `-----------------------\n`;
+          specText += `Product Name:     ${item.name}\n`;
+          specText += `Garment Type:     ${cd.garmentType}\n`;
+          specText += `Base Color Code:  ${cd.baseColor}\n`;
+          specText += `Accent Trim Code: ${cd.accentColor}\n\n`;
+
+          specText += `LOGO SPECIFICATIONS:\n`;
+          specText += `--------------------\n`;
+          specText += `Logo Uploaded:    ${cd.logoUploaded ? 'YES' : 'NO'}\n`;
+          if (cd.logoUploaded) {
+            specText += `Logo Placement:   ${cd.logoPlacement || 'front'}\n`;
+          }
+          specText += `\n`;
+
+          specText += `TEXT LINES:\n`;
+          specText += `-----------\n`;
+          if (cd.textLines && cd.textLines.length > 0) {
+            cd.textLines.forEach((line, i) => {
+              specText += `- Line #${i + 1}:\n`;
+              specText += `  Text:       "${line.text.toUpperCase()}"\n`;
+              specText += `  Placement:  ${line.placement || 'front'}\n`;
+              specText += `  Font Style: ${line.font}\n`;
+              specText += `  Text Size:  ${line.size}px\n`;
+              specText += `  Text Color: ${line.color}\n`;
+              specText += `  Offset X:   ${line.x}px\n`;
+              specText += `  Offset Y:   ${line.y}px\n\n`;
+            });
+          } else {
+            specText += `None\n`;
+          }
+          specText += `==================================================\n`;
+
+          const blob = new Blob([specText], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `order_${order.id || 'N-A'}_item_${itemIndex + 1}_specs.txt`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+      });
+
+      // Attach download image handler
+      ordersList.querySelectorAll('.download-image-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetBtn = e.target.closest('.download-image-btn');
+          if (!targetBtn) return;
+          const orderIndex = parseInt(targetBtn.dataset.orderIndex, 10);
+          const itemIndex = parseInt(targetBtn.dataset.itemIndex, 10);
+          const order = sortedOrders[orderIndex];
+          if (!order) return;
+          const item = order.items[itemIndex];
+          if (!item) return;
+
+          const dataUrl = item.img;
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = `order_${order.id || 'N-A'}_item_${itemIndex + 1}_design.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ownerCodeInput = document.getElementById('owner-code');
+      const loadOwnerOrdersBtn = document.getElementById('load-owner-orders-btn');
+      const resetOrdersBtn = document.getElementById('reset-orders-btn');
+      const backButton = document.getElementById('back-button');
+      
+      const urlCode = getQueryParam('code');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'product.html';
+        });
+      }
+
+      if (urlCode === ownerAccessCode) {
+        displayOrders();
+      }
+
+      loadOwnerOrdersBtn.addEventListener('click', () => {
+        const code = ownerCodeInput.value.trim();
+        if (code !== ownerAccessCode) {
+          alert('Invalid owner code.');
+          return;
+        }
+        displayOrders();
+      });
+
+      ownerCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          loadOwnerOrdersBtn.click();
+        }
+      });
+
+      if (resetOrdersBtn) {
+        resetOrdersBtn.addEventListener('click', () => {
+          if (confirm('Are you sure you want to delete all customer orders? This action cannot be undone.')) {
+            setOrders([]);
+            displayOrders();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
