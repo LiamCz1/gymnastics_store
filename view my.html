@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View My Bookings - Gymnastics Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="boxed-header">
+    <div class="header-buttons">
+      <button id="back-button" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back
+      </button>
+    </div>
+    <h1>View My Bookings</h1>
+    <p>See your lesson bookings and cancel them if needed.</p>
+  </header>
+
+  <main>
+    <section class="boxed-panel">
+      <div id="view-form">
+        <label for="viewer-name">Your Name:</label>
+        <div class="verify-name-group">
+          <input type="text" id="viewer-name" placeholder="Enter your name" autocomplete="off">
+          <button id="load-bookings-btn" class="verify-btn" type="button">Load Bookings</button>
+        </div>
+      </div>
+      <div id="view-bookings-list" class="bookings-list" style="display: none;">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Gymnastics Store</p>
+  </footer>
+
+  <script>
+    function parseTimeString(timeString) {
+      const match = timeString.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+      if (!match) return { hours: 0, minutes: 0 };
+      let hours = parseInt(match[1], 10);
+      const minutes = parseInt(match[2], 10);
+      const ampm = match[3].toUpperCase();
+
+      if (ampm === 'PM' && hours < 12) {
+        hours += 12;
+      } else if (ampm === 'AM' && hours === 12) {
+        hours = 0;
+      }
+
+      return { hours, minutes };
+    }
+
+    function getLessonDateTime(dateKey, timeString) {
+      const match = parseTimeString(timeString);
+      if (!match) return null;
+
+      const lessonDate = new Date(dateKey + 'T00:00:00');
+      lessonDate.setHours(match.hours, match.minutes, 0, 0);
+      return lessonDate;
+    }
+
+    function shouldShowMeetLink(dateKey, timeString) {
+      const lessonTime = getLessonDateTime(dateKey, timeString);
+      if (!lessonTime) return false;
+
+      const now = new Date();
+      const threshold = new Date(lessonTime.getTime() - 30 * 60 * 1000);
+      return now >= threshold;
+    }
+
+    function getBookedSlots() {
+      try {
+        return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setBookedSlots(slots) {
+      localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
+    }
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+
+    function displayUserBookings(name) {
+      const bookingsList = document.getElementById('view-bookings-list');
+      const viewerNameInput = document.getElementById('viewer-name');
+      const normalized = name.trim().toLowerCase();
+
+      if (!normalized) {
+        bookingsList.innerHTML = '<p class="no-bookings">Please enter a name to view bookings.</p>';
+        bookingsList.style.display = 'grid';
+        return;
+      }
+
+      const bookedSlots = getBookedSlots();
+      const userBookings = bookedSlots.filter(booking => booking.bookerName && booking.bookerName.toLowerCase() === normalized);
+      viewerNameInput.value = name;
+
+      if (userBookings.length === 0) {
+        bookingsList.innerHTML = '<p class="no-bookings">No bookings found for this name.</p>';
+        bookingsList.style.display = 'grid';
+        return;
+      }
+
+      bookingsList.innerHTML = '';
+      userBookings.forEach((booking, index) => {
+        const bookingCard = document.createElement('div');
+        bookingCard.className = 'booking-card';
+
+        const date = new Date(booking.date + 'T00:00:00');
+        const displayDate = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        const showMeet = shouldShowMeetLink(booking.date, booking.time);
+        const meetHtml = showMeet ? `
+          <p style="margin-top: 0.75rem;">
+            <a href="https://meet.google.com/orh-dtwh-wcr" target="_blank" class="meet-link" style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: #1a73e8; color: white; padding: 0.6rem 1rem; border-radius: var(--radius-sm); text-decoration: none; font-size: 0.85rem; font-weight: 700; box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; width:16px; height:16px; margin-right:4px;"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+              Join Google Meet
+            </a>
+          </p>
+        ` : '';
+
+        let lessonPrice = booking.price;
+        if (lessonPrice === undefined) {
+          if (booking.lesson === 'Strength Training') lessonPrice = 50.00;
+          else if (booking.lesson === 'Flexibility & Stretching') lessonPrice = 40.00;
+          else lessonPrice = 0.00;
+        }
+        const totalPrice = lessonPrice * (booking.numPeople || 1);
+
+        bookingCard.innerHTML = `
+          <div class="booking-details">
+            <h3>${booking.lesson}</h3>
+            <p><strong>Date:</strong> ${displayDate}</p>
+            <p><strong>Time:</strong> ${booking.time}</p>
+            <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
+            <p><strong>People:</strong> ${booking.numPeople || 1}</p>
+            ${booking.bookerEmail ? `<p><strong>Email:</strong> ${booking.bookerEmail}</p>` : ''}
+            ${booking.bookerPhone ? `<p><strong>Phone:</strong> ${booking.bookerPhone}</p>` : ''}
+            <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
+            ${meetHtml}
+          </div>
+          <button class="cancel-booking-btn" data-index="${bookedSlots.indexOf(booking)}">Cancel</button>
+        `;
+
+        bookingsList.appendChild(bookingCard);
+      });
+
+      bookingsList.style.display = 'grid';
+      bookingsList.querySelectorAll('.cancel-booking-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.dataset.index, 10);
+          const slots = getBookedSlots();
+          const booking = slots[index];
+          if (!booking) {
+            alert('Booking not found.');
+            return;
+          }
+          if (confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) {
+            slots.splice(index, 1);
+            setBookedSlots(slots);
+            displayUserBookings(name);
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const viewerNameInput = document.getElementById('viewer-name');
+      const loadBookingsBtn = document.getElementById('load-bookings-btn');
+      const backButton = document.getElementById('back-button');
+      const queryName = getQueryParam('name');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'lessons.html';
+        });
+      }
+
+      if (queryName) {
+        displayUserBookings(queryName);
+      }
+
+      loadBookingsBtn.addEventListener('click', () => {
+        const name = viewerNameInput.value.trim();
+        if (!name) {
+          alert('Please enter your name');
+          return;
+        }
+        displayUserBookings(name);
+      });
+
+      viewerNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          loadBookingsBtn.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
