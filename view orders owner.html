@@ -160,15 +160,18 @@
   </style>
 </head>
 <body>
-  <header class="boxed-header">
-    <div class="header-buttons">
-      <button id="back-button" type="button">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Back to Products
-      </button>
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">
+      Gymnastics<span>Store</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(99, 102, 241, 0.15);">Owner Portal</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="view booking owner.html">Bookings Calendar</a></li>
+      <li><a href="view orders owner.html" class="active">Customer Orders</a></li>
+      <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
     </div>
-    <h1>Owner Orders Dashboard</h1>
-    <p>View and manage all customer product orders.</p>
   </header>
 
   <main>
@@ -482,5 +485,6 @@
       }
     });
   </script>
+  <script src="script.js"></script>
 </body>
 </html>

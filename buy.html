@@ -5,339 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Amazon-Style Secure Checkout - Gymnastics Store</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-
-    /* Amazon Checkout Aesthetics */
-    body {
-      background-color: #eaeded;
-      color: #0f1111;
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-
-    h1, h2, h3, h4, .checkout-logo, .step-number {
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    }
-
-    /* Minimal secure checkout header */
-    .checkout-header {
-      background-color: #ffffff;
-      border-bottom: 1px solid #ddd;
-      padding: 0.75rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1150px;
-      margin: 0 auto;
-    }
-
-    .checkout-header h1 {
-      font-size: 1.5rem;
-      color: #555;
-      font-weight: 400;
-      margin: 0;
-    }
-
-    .checkout-header h1 span {
-      color: #0f1111;
-    }
-
-    .secure-lock {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #565959;
-      font-size: 0.9rem;
-    }
-
-    .checkout-logo {
-      font-weight: bold;
-      font-size: 1.6rem;
-      color: #111;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .checkout-logo span {
-      color: #ff9900;
-    }
-
-    /* Step indicator */
-    .checkout-steps {
-      display: flex;
-      gap: 1.5rem;
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #565959;
-      margin-top: 0.5rem;
-    }
-
-    .checkout-steps .active {
-      color: #c45500;
-    }
-
-    /* Layout grid */
-    .checkout-container {
-      max-width: 1150px;
-      margin: 1.5rem auto;
-      padding: 0 1rem;
-      display: grid;
-      grid-template-columns: 8fr 4fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    @media (max-width: 850px) {
-      .checkout-container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Column sections */
-    .checkout-section {
-      background: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .checkout-section-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .step-number {
-      color: #c45500;
-      margin-right: 0.5rem;
-    }
-
-    /* Forms */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    @media (max-width: 600px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      margin-bottom: 1rem;
-    }
-
-    .form-field label {
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-
-    .form-field input, .form-field select {
-      padding: 0.5rem;
-      border: 1px solid #a6a6a6;
-      border-radius: 4px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .form-field input:focus, .form-field select:focus {
-      border-color: #e77600;
-      box-shadow: 0 0 3px rgba(228, 121, 17, 0.5);
-    }
-
-    /* Cart Review list */
-    .checkout-items {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .checkout-item-card {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 1rem;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 1rem;
-      align-items: center;
-    }
-
-    .checkout-item-card:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .item-thumbnail {
-      width: 75px;
-      height: 75px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-
-    .item-details h4 {
-      margin: 0 0 0.25rem 0;
-      font-size: 1rem;
-    }
-
-    .item-price {
-      font-weight: bold;
-      color: #b12704;
-    }
-
-    .item-quantity-row {
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 0.85rem;
-    }
-
-    .quantity-select {
-      padding: 0.25rem;
-      border-radius: 4px;
-      border: 1px solid #a6a6a6;
-    }
-
-    .delete-item-link {
-      color: #007185;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .delete-item-link:hover {
-      color: #c45500;
-      text-decoration: underline;
-    }
-
-    /* Sidebar summary */
-    .summary-card {
-      background: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 1.5rem;
-      position: sticky;
-      top: 1.5rem;
-    }
-
-    /* Amazon Yellow Buttons */
-    .amazon-btn {
-      background: #ffd814;
-      border: 1px solid #fcd200;
-      border-radius: 20px;
-      color: #0f1111;
-      padding: 0.6rem 1rem;
-      font-size: 0.95rem;
-      font-weight: 500;
-      cursor: pointer;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(213,217,217,.5);
-      transition: background 0.2s;
-    }
-
-    .amazon-btn:hover {
-      background: #f7ca00;
-      border-color: #f2c200;
-    }
-
-    .amazon-btn:disabled {
-      background: #f0f2f2;
-      border-color: #e0e6e6;
-      color: #888;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .order-summary-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-      color: #565959;
-    }
-
-    .order-total-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #b12704;
-      border-top: 1px solid #ddd;
-      padding-top: 0.75rem;
-      margin-top: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    /* Confirmation screen overlay styling */
-    .confirmation-container {
-      text-align: center;
-      padding: 3rem 1.5rem;
-      max-width: 600px;
-      margin: 4rem auto;
-      background: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-
-    .confirmation-check {
-      font-size: 4.5rem;
-      color: #2e7d32;
-      margin-bottom: 1.5rem;
-    }
-
-    .confirmation-container h2 {
-      font-size: 1.8rem;
-      color: #0f1111;
-      margin-bottom: 1rem;
-    }
-
-    .confirmation-container p {
-      color: #565959;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-
-    .empty-cart-message {
-      text-align: center;
-      padding: 3rem 1.5rem;
-      color: #565959;
-    }
-
-    .empty-cart-message h3 {
-      font-size: 1.4rem;
-      color: #0f1111;
-      margin-bottom: 0.75rem;
-    }
-  </style>
 </head>
-<body>
-  <!-- Amazon Mini Secure Checkout Header -->
-  <header class="checkout-header">
-    <a href="product.html" class="checkout-logo">
+<body class="checkout-body">
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">
       Gymnastics<span>Store</span>
     </a>
-    <h1>Checkout (<span><span id="header-items-count">0</span> items</span>)</h1>
-    <div class="secure-lock">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-      </svg>
-      Secure Checkout
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Shop</a></li>
+      <li><a href="lessons.html">Lessons</a></li>
+      <li><a href="view my.html">My Bookings</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+      <a href="buy.html" class="cart-nav-btn" aria-label="View Cart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        Cart <span class="cart-badge" id="nav-cart-badge">0</span>
+      </a>
     </div>
   </header>
 
@@ -383,9 +72,9 @@
           </div>
 
           <!-- Venmo Section -->
-          <div id="venmo-payment-section" style="padding: 1.25rem; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; text-align: center;">
+          <div id="venmo-payment-section" style="padding: 1.25rem; border-radius: 6px; text-align: center;">
             <p style="font-weight: bold; margin-bottom: 1rem; font-size: 0.95rem;">Scan the QR code below to pay via Venmo:</p>
-            <img src="images/venmo-qr.jpg" alt="Venmo QR Code" style="max-width: 220px; height: auto; border-radius: 8px; border: 1px solid #ddd; display: block; margin: 0 auto 1.25rem auto;">
+            <img src="images/venmo-qr.jpg" alt="Venmo QR Code" style="max-width: 220px; height: auto; border-radius: 8px; display: block; margin: 0 auto 1.25rem auto;">
             <div id="venmo-warning-box" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; text-align: left; max-width: 420px; margin: 0 auto; line-height: 1.4;">
               ⚠️ Please scan and pay the Order Total shown on the right via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**
             </div>
@@ -405,12 +94,12 @@
 
       <!-- Right Column: Sticky order summary -->
       <aside class="summary-card">
-        <button id="place-order-btn" class="amazon-btn" type="button">Place your order</button>
-        <p style="font-size: 0.75rem; color: #565959; text-align: center; margin: 0.5rem 0 1rem 0; line-height: 1.3;">
+        <button id="place-order-btn" class="checkout-btn" type="button">Place your order</button>
+        <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin: 0.5rem 0 1rem 0; line-height: 1.3;">
           By placing your order, you agree to Gymnastics Store's privacy notice and conditions of use.
         </p>
         
-        <h3 style="font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; margin-bottom: 0.75rem;">Order Summary</h3>
+        <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem; color: var(--text-dark);">Order Summary</h3>
         <div class="order-summary-row">
           <span>Items (<span id="summary-items-count">0</span>):</span>
           <span id="summary-items-price">$0.00</span>
@@ -419,7 +108,7 @@
           <span>Shipping & handling:</span>
           <span id="summary-shipping-price">$0.00</span>
         </div>
-        <div class="order-summary-row" style="border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+        <div class="order-summary-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
           <span>Estimated tax:</span>
           <span id="summary-tax-price">$0.00</span>
         </div>
@@ -434,7 +123,7 @@
     <div class="empty-cart-message" id="empty-cart-screen" style="display: none;">
       <h3>Your Cart is empty.</h3>
       <p>Please go back to the products page to select items for purchase.</p>
-      <button class="amazon-btn" style="max-width: 250px; margin-top: 1.5rem;" onclick="window.location.href='product.html'">Go to Products</button>
+      <button class="checkout-btn" style="max-width: 250px; margin-top: 1.5rem;" onclick="window.location.href='product.html'">Go to Products</button>
     </div>
 
     <!-- Order Placed Success Screen -->
@@ -445,11 +134,11 @@
         ⚠️ Please send your Venmo payment within 60 minutes or your order will be automatically cancelled.
       </p>
       <p>An email confirmation has been sent to you. Your gymnastics gear will be shipped shortly after payment is received. Get ready to train!</p>
-      <button class="amazon-btn" style="max-width: 250px;" onclick="window.location.href='product.html'">Continue Shopping</button>
+      <button class="checkout-btn" style="max-width: 250px;" onclick="window.location.href='product.html'">Continue Shopping</button>
     </div>
   </main>
 
-  <footer style="margin: 4rem 0 2rem 0; text-align: center; font-size: 0.85rem; color: #565959; border-top: 1px solid #ddd; padding-top: 1.5rem;">
+  <footer>
     <p>Conditions of Use | Privacy Notice &copy; 2026 Gymnastics Store, Inc. or its affiliates</p>
   </footer>
 

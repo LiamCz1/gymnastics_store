@@ -147,9 +147,27 @@
 </head>
 
 <body>
-  <header>
-    <h1>Gymnastics Store</h1>
-    <p>Premium training gear, apparel, and expert private coaching.</p>
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">
+      Gymnastics<span>Store</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Shop</a></li>
+      <li><a href="lessons.html">Lessons</a></li>
+      <li><a href="view my.html">My Bookings</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+      <a href="buy.html" class="cart-nav-btn" aria-label="View Cart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        Cart <span class="cart-badge" id="nav-cart-badge">0</span>
+      </a>
+    </div>
   </header>
 
   <main>
@@ -209,13 +227,3 @@
 </body>
 
 </html>
-<!-- git status, Shows changes made and shows the status of the changes,  -->
-<!-- git add .  -->
-<!-- git commit -m "v10" -->
-<!-- git push  fist time must use this command  git push --set-upstream origin v10-->
-<!-- must commpare and pull requaest in git hub -->
-<!-- make a pull requaest in github and this will check the code for conflicts -->
-<!-- if there are no conflicts then the code will be merged -->
-<!-- delete branch after merge -->
-<!-- once you dellet branch go back to main git checkout main  -->
-<!-- once your in main you need to do a git pull to get the latest changes -->

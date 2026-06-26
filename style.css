@@ -656,7 +656,7 @@ button:active, .btn:active {
 footer {
   text-align: center;
   padding: 2.5rem 1rem;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-top: 1px solid var(--border-color);
   color: var(--text-muted);
   font-size: 0.9rem;
@@ -682,3 +682,453 @@ footer {
 .color-swatch.active {
   transform: scale(1.1);
 }
+
+/* ==========================================
+   Antigravity Premium Design Touch-ups
+   ========================================== */
+
+/* Theme Transition */
+body, header, section, div, button, input, select, article, h1, h2, h3, h4, p, span, a {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Dark Mode Variables Override */
+[data-theme="dark"] {
+  --primary: #818cf8;
+  --primary-hover: #6366f1;
+  --primary-light: #1e1b4b;
+  --accent: #fb7185;
+  --accent-hover: #f43f5e;
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --text-dark: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode specific elements */
+[data-theme="dark"] .modal-content {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal {
+  background-color: rgba(15, 23, 42, 0.6);
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] select {
+  background-color: #0f172a;
+  color: var(--text-dark);
+}
+
+[data-theme="dark"] .booking-type-selector,
+[data-theme="dark"] .owner-tools,
+[data-theme="dark"] .booking-login {
+  background-color: #0f172a;
+}
+
+[data-theme="dark"] .verify-name-group input,
+[data-theme="dark"] .owner-access-group input {
+  background-color: #1e293b;
+}
+
+[data-theme="dark"] .owner-calendar-date {
+  background-color: #1e293b;
+}
+
+/* Glassmorphism Navigation Header */
+header.app-header {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+[data-theme="dark"] header.app-header {
+  background-color: rgba(30, 41, 59, 0.85);
+}
+
+@media (max-width: 768px) {
+  header.app-header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary) 20%, var(--accent) 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: var(--transition);
+}
+
+.nav-brand:hover {
+  transform: scale(1.02);
+}
+
+.nav-brand span {
+  color: var(--accent);
+  -webkit-text-fill-color: var(--accent);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 600px) {
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  transition: var(--transition);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+.nav-links a:hover {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.nav-links a.active {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-toggle-btn {
+  background-color: transparent;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.cart-nav-btn {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cart-nav-btn:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+}
+
+.cart-nav-btn .cart-badge {
+  margin: 0;
+  display: inline-block;
+}
+
+/* Booking Calendar Layout Grid Styling */
+.calendar-wrapper {
+  margin-top: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background-color: var(--bg-main);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+#week-display {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+.nav-btn {
+  background-color: var(--bg-card);
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  box-shadow: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.calendar-grid-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.75rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 800px) {
+  .calendar-grid-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.day-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--bg-main);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  min-width: 100px;
+}
+
+.day-header {
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 0.5rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.day-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+
+.day-date {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-top: 0.15rem;
+}
+
+.boxed-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-sm);
+  margin-top: 1.5rem;
+}
+
+/* Cohesive Secure Checkout Layout */
+.checkout-body {
+  background-color: var(--bg-main) !important;
+  color: var(--text-dark) !important;
+}
+
+.checkout-header {
+  background-color: var(--bg-card) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.checkout-header h1 {
+  color: var(--text-muted) !important;
+}
+
+.checkout-header h1 span {
+  color: var(--text-dark) !important;
+}
+
+.checkout-container {
+  max-width: 1150px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 850px) {
+  .checkout-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkout-section {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.checkout-section-title {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.checkout-section-title .step-number {
+  color: var(--primary) !important;
+}
+
+.checkout-item-card {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.checkout-item-card:last-child {
+  border-bottom: none !important;
+}
+
+.item-thumbnail {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.item-price {
+  color: var(--accent) !important;
+}
+
+.summary-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.order-total-row {
+  color: var(--accent) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+.order-summary-row {
+  color: var(--text-muted) !important;
+}
+
+.checkout-btn {
+  background-color: var(--primary);
+  border: none;
+  border-radius: 30px;
+  color: #ffffff;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.15);
+  transition: var(--transition);
+}
+
+.checkout-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.25);
+}
+
+.checkout-btn:disabled {
+  background-color: var(--border-color) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.confirmation-container {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.confirmation-container h2 {
+  color: var(--text-dark) !important;
+}
+
+.confirmation-container p {
+  color: var(--text-muted) !important;
+}
+
+.empty-cart-message {
+  color: var(--text-muted) !important;
+}
+
+.empty-cart-message h3 {
+  color: var(--text-dark) !important;
+}
+
+#venmo-payment-section {
+  background-color: var(--bg-main) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
