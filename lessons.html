@@ -4,14 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lessons - Gymnastics Store</title>
+  <title>APEX GYM | Private Coaching & Lessons</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 
 <body>
   <header class="app-header">
     <a href="index.html" class="nav-brand">
-      Gymnastics<span>Store</span>
+      APEX<span>GYM</span>
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -45,20 +51,8 @@
               style="display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0 1rem 0;">
               <div
                 style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">1 Person (Single)</span>
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Price</span>
                 <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$45.00</span>
-              </div>
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; background: rgba(244, 63, 94, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(244, 63, 94, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">2 People (Double)</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--accent);">$25.00 <span
-                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
-              </div>
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">3 People (Triple)</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$20.00 <span
-                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
               </div>
             </div>
 
@@ -77,20 +71,8 @@
               style="display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0 1rem 0;">
               <div
                 style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">1 Person (Single)</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$45.00</span>
-              </div>
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; background: rgba(244, 63, 94, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(244, 63, 94, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">2 People (Double)</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--accent);">$25.00 <span
-                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
-              </div>
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">3 People (Triple)</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$20.00 <span
-                    style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">/ pp</span></span>
+                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Price</span>
+                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$40.00</span>
               </div>
             </div>
 
@@ -141,7 +123,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Gymnastics Store</p>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
 
   <!-- Booking Modal -->
@@ -166,15 +148,7 @@
         <input type="tel" id="booker-phone" name="booker-phone" placeholder="Enter your phone number" required>
       </div>
 
-      <div class="form-group">
-        <label for="num-people">Number of People (Max 3):</label>
-        <select id="num-people" name="num-people"
-          style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; box-sizing: border-box;">
-          <option value="1">1 Person</option>
-          <option value="2">2 People</option>
-          <option value="3">3 People</option>
-        </select>
-      </div>
+      <input type="hidden" id="num-people" name="num-people" value="1">
 
       <div class="booking-type-selector">
         <label>Booking Type:</label>
@@ -254,6 +228,7 @@
     }
 
     let currentWeekStart = null;
+    let selectedLessonPrice = 45.00;
 
     function resetBookedSlots() {
       clearBookedSlots();
@@ -498,7 +473,6 @@
               <p><strong>Date:</strong> ${displayDate}</p>
               <p><strong>Time:</strong> ${booking.time}</p>
               <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
-              <p><strong>People:</strong> ${booking.numPeople || 1}</p>
               ${booking.bookerEmail ? `<p><strong>Email:</strong> ${booking.bookerEmail}</p>` : ''}
               ${booking.bookerPhone ? `<p><strong>Phone:</strong> ${booking.bookerPhone}</p>` : ''}
               <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
@@ -589,7 +563,7 @@
               <div class="owner-booking-info">
                 <strong>${booking.lesson}</strong>
                 <p>${booking.time} &middot; ${booking.type === 'weekly' ? 'Weekly' : 'One-Time'}</p>
-                <p>Booked by: ${booking.bookerName} (${booking.numPeople || 1} ${booking.numPeople === 1 ? 'person' : 'people'})</p>
+                <p>Booked by: ${booking.bookerName}</p>
                 <p>Email: ${booking.bookerEmail || 'N/A'} &middot; Phone: ${booking.bookerPhone || 'N/A'}</p>
                 <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
               </div>
@@ -702,6 +676,7 @@
       bookButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           lessonNameInput.value = btn.dataset.name;
+          selectedLessonPrice = parseFloat(btn.dataset.price) || 45.00;
           selectedSlot = null;
           confirmBtn.style.display = 'none';
           document.getElementById('selection-display').textContent = '';
@@ -797,13 +772,7 @@
         limitDate.setMonth(limitDate.getMonth() + 3);
         limitDate.setHours(23, 59, 59, 999);
         const numPeople = parseInt(document.getElementById('num-people').value, 10) || 1;
-
-        let pricePerPerson = 45.00;
-        if (numPeople === 2) {
-          pricePerPerson = 25.00;
-        } else if (numPeople === 3) {
-          pricePerPerson = 20.00;
-        }
+        const pricePerPerson = selectedLessonPrice;
 
         if (bookingType === 'one-time') {
           const slotDate = new Date(selectedSlot.dateKey + 'T00:00:00');
@@ -877,8 +846,6 @@
           <strong>Name:</strong> ${bookerName}<br>
           <strong>Email:</strong> ${bookerEmail}<br>
           <strong>Phone:</strong> ${bookerPhone}<br>
-          <strong>People:</strong> ${numPeople}<br>
-          <strong>Price per Person:</strong> $${pricePerPerson.toFixed(2)}/session<br>
           <strong>Total Price:</strong> $${totalToPay.toFixed(2)}
         `;
 

@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amazon-Style Secure Checkout - Gymnastics Store</title>
+  <title>APEX GYM | Secure Checkout</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 <body class="checkout-body">
   <header class="app-header">
     <a href="index.html" class="nav-brand">
-      Gymnastics<span>Store</span>
+      APEX<span>GYM</span>
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -139,7 +145,7 @@
   </main>
 
   <footer>
-    <p>Conditions of Use | Privacy Notice &copy; 2026 Gymnastics Store, Inc. or its affiliates</p>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
 
   <script>
@@ -148,7 +154,7 @@
       const emptyCartScreen = document.getElementById('empty-cart-screen');
       const successScreen = document.getElementById('success-screen');
       const cartItemsContainer = document.getElementById('cart-items-container');
-      const headerItemsCount = document.getElementById('header-items-count');
+      const headerItemsCount = document.getElementById('nav-cart-badge');
       const summaryItemsCount = document.getElementById('summary-items-count');
       
       const summaryItemsPrice = document.getElementById('summary-items-price');
@@ -323,5 +329,6 @@
       renderCheckout();
     });
   </script>
+  <script src="script.js"></script>
 </body>
 </html>

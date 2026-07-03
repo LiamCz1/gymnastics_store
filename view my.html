@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View My Bookings - Gymnastics Store</title>
+  <title>APEX GYM | View My Bookings</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 <body>
   <header class="app-header">
     <a href="index.html" class="nav-brand">
-      Gymnastics<span>Store</span>
+      APEX<span>GYM</span>
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -45,7 +51,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Gymnastics Store</p>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
 
   <script>
@@ -153,7 +159,6 @@
             <p><strong>Date:</strong> ${displayDate}</p>
             <p><strong>Time:</strong> ${booking.time}</p>
             <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
-            <p><strong>People:</strong> ${booking.numPeople || 1}</p>
             ${booking.bookerEmail ? `<p><strong>Email:</strong> ${booking.bookerEmail}</p>` : ''}
             ${booking.bookerPhone ? `<p><strong>Phone:</strong> ${booking.bookerPhone}</p>` : ''}
             <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>

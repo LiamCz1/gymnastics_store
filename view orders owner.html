@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Owner Orders - Gymnastics Store</title>
+  <title>APEX GYM | Owner Orders Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
   <style>
     .order-card {
       border: 1px solid var(--border-color);
@@ -162,11 +168,12 @@
 <body>
   <header class="app-header">
     <a href="index.html" class="nav-brand">
-      Gymnastics<span>Store</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(99, 102, 241, 0.15);">Owner Portal</span>
+      APEX<span>GYM</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(225, 29, 72, 0.15);">Owner Portal</span>
     </a>
     <ul class="nav-links">
       <li><a href="view booking owner.html">Bookings Calendar</a></li>
       <li><a href="view orders owner.html" class="active">Customer Orders</a></li>
+      <li><a href="view settings owner.html">Custom Messages</a></li>
       <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
     </ul>
     <div class="nav-actions">
@@ -199,7 +206,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Gymnastics Store. All rights reserved.</p>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
 
   <script>
@@ -456,7 +463,8 @@
         });
       }
 
-      if (urlCode === ownerAccessCode) {
+      if (urlCode === ownerAccessCode || sessionStorage.getItem('ownerAuthorized') === 'true') {
+        sessionStorage.setItem('ownerAuthorized', 'true');
         displayOrders();
       }
 
@@ -466,6 +474,7 @@
           alert('Invalid owner code.');
           return;
         }
+        sessionStorage.setItem('ownerAuthorized', 'true');
         displayOrders();
       });
 

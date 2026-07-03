@@ -4,152 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gymnastics Store & Lessons</title>
+  <title>APEX GYM | Premium Gymnastics Store & Private Lessons</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Hero Section specific style */
-    .hero-section {
-      text-align: center;
-      padding: 5rem 2rem;
-      background: radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.08) 0px, transparent 50%),
-        linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-      margin-bottom: 2.5rem;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
-    }
-
-    .hero-section::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .hero-title {
-      font-size: 3.5rem;
-      line-height: 1.15;
-      margin-bottom: 1.25rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, var(--primary) 20%, var(--accent) 80%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 1.25rem;
-      color: var(--text-muted);
-      max-width: 650px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* Landing grid cards */
-    .landing-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    @media (max-width: 768px) {
-      .landing-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .landing-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 2.5rem;
-      text-align: left;
-      box-shadow: var(--shadow-sm);
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-    }
-
-    .landing-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary-light);
-    }
-
-    .card-icon {
-      width: 60px;
-      height: 60px;
-      background-color: var(--primary-light);
-      color: var(--primary);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-      transition: var(--transition);
-    }
-
-    .landing-card:hover .card-icon {
-      background-color: var(--primary);
-      color: #ffffff;
-      transform: scale(1.05);
-    }
-
-    .landing-card.lessons-card .card-icon {
-      background-color: #ffe4e6;
-      color: var(--accent);
-    }
-
-    .landing-card.lessons-card:hover .card-icon {
-      background-color: var(--accent);
-      color: #ffffff;
-    }
-
-    .card-title {
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .card-text {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 2rem;
-      line-height: 1.6;
-      flex-grow: 1;
-    }
-
-    .card-btn {
-      align-self: flex-start;
-      width: 100%;
-      padding: 0.85rem 1.5rem;
-    }
-
-    .landing-card.lessons-card .card-btn {
-      background-color: var(--accent);
-      box-shadow: 0 2px 4px 0 rgba(244, 63, 94, 0.15);
-    }
-
-    .landing-card.lessons-card .card-btn:hover {
-      background-color: var(--accent-hover);
-      box-shadow: 0 4px 6px 0 rgba(244, 63, 94, 0.25);
-    }
-  </style>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 
 <body>
+  <!-- Promo banner -->
+  <div class="promo-banner" id="home-promo-banner">
+    Summer Sale — Up to 30% off Competition Gear &middot; Use code FLIP30
+  </div>
+
+  <!-- Sticky Header -->
   <header class="app-header">
     <a href="index.html" class="nav-brand">
-      Gymnastics<span>Store</span>
+      APEX<span>GYM</span>
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -160,67 +34,106 @@
     <div class="nav-actions">
       <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
       <a href="buy.html" class="cart-nav-btn" aria-label="View Cart">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
           <circle cx="9" cy="21" r="1"></circle>
           <circle cx="20" cy="21" r="1"></circle>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
         Cart <span class="cart-badge" id="nav-cart-badge">0</span>
       </a>
+      <button class="btn" type="button" onclick="window.location.href='lessons.html'"
+        style="padding: 0.45rem 1rem; font-size: 0.85rem; border-radius: var(--radius-md);">Get Started</button>
     </div>
   </header>
 
-  <main>
-    <!-- Hero Header section -->
-    <div class="hero-section">
-      <h2 class="hero-title">Elevate Your Training</h2>
-      <p class="hero-subtitle">Discover professional gymnastics equipment designed for home safety, alongside
-        personalized scheduling for strength, tumbling, and flexibility lessons.</p>
-    </div>
-
-    <!-- Dual Option Selection -->
-    <div class="landing-grid">
-      <!-- Card 1: Equipment Shop -->
-      <section class="landing-card">
-        <div>
-          <div class="card-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-          </div>
-          <h3 class="card-title">Shop Equipment</h3>
-          <p class="card-text">Upgrade your training with our selection of home gymnastics equipment, including foam
-            balance beams, leather grips, and custom training accessories.</p>
+  <main style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1rem;">
+    <!-- Side-by-side Hero Section -->
+    <section class="hero-grid-layout"
+      style="background: none; border: none; box-shadow: none; padding: 0; margin-top: 4rem;">
+      <div class="hero-left-content">
+        <span class="hero-overline" id="home-hero-overline">Premium Training Gear & Expert Coaching</span>
+        <h1 class="hero-title-main" id="home-hero-title">Train Like<br>A Champion</h1>
+        <p class="hero-description-text" id="home-hero-desc">Competition-grade equipment, performance apparel, and private coaching from
+          USAG-certified coaches — everything you need to reach elite level.</p>
+        <div class="hero-cta-group">
+          <button class="btn" type="button" onclick="window.location.href='product.html'"
+            style="padding: 0.9rem 2.2rem; font-size: 1rem; border-radius: 99px;">Shop Now</button>
+          <button class="btn btn-secondary" type="button" onclick="window.location.href='lessons.html'"
+            style="padding: 0.9rem 2.2rem; font-size: 1rem; border-radius: 99px;">Book Coaching</button>
         </div>
-        <button id="shop-button" class="card-btn" type="button">Explore Products</button>
-      </section>
-
-      <!-- Card 2: Private Lessons -->
-      <section class="landing-card lessons-card">
-        <div>
-          <div class="card-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          </div>
-          <h3 class="card-title">Book Private Lessons</h3>
-          <p class="card-text">Reserve customized coaching sessions for tumbling, strength training, conditioning, and
-            flexibility. Schedule weekly sessions up to 3 months in advance.</p>
+      </div>
+      <div class="hero-right-visual">
+        <div class="hero-photo-wrapper">
+          <img class="hero-photo" src="images/hero.jpg" alt="Gymnast performing flip">
         </div>
-        <button id="shop-button1" class="card-btn" type="button">Book Lessons Now</button>
-      </section>
+      </div>
+    </section>
+
+    <!-- Stats Showcase -->
+    <div class="stats-grid-layout">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-athletes-coached">0</div>
+        <div class="stat-desc">Athletes Coached</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">98%</div>
+        <div class="stat-desc">Satisfaction Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">30s Yrs</div>
+        <div class="stat-desc">In Business</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">Rated #1</div>
+        <div class="stat-desc">Gymnastics Retailer</div>
+      </div>
     </div>
   </main>
 
+  <!-- Scrolling Brand Value Ribbon -->
+  <div class="ticker-ribbon">
+    <div class="ticker-wrapper" id="home-ticker-wrapper">
+      <span class="ticker-item">USAG Certified Equipment</span>
+      <span class="ticker-item">Olympic-Grade Materials</span>
+      <span class="ticker-item">Expert Coaching — All Levels</span>
+      <span class="ticker-item">30-Day Returns</span>
+      <span class="ticker-item">12-Month Warranty</span>
+      <span class="ticker-item">Free Shipping Over $250</span>
+      <!-- Seamless scrolling duplicates -->
+      <span class="ticker-item">USAG Certified Equipment</span>
+      <span class="ticker-item">Olympic-Grade Materials</span>
+      <span class="ticker-item">Expert Coaching — All Levels</span>
+      <span class="ticker-item">30-Day Returns</span>
+      <span class="ticker-item">12-Month Warranty</span>
+      <span class="ticker-item">Free Shipping Over $250</span>
+    </div>
+  </div>
+
+  <main style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1rem; flex: 1;">
+    <!-- Featured Collection Switcher -->
+    <section class="collection-section"
+      style="background: none; border: none; box-shadow: none; padding: 0; margin-bottom: 5rem;">
+      <div class="collection-header-row">
+        <div class="collection-titles">
+          <p class="hero-overline" style="margin-bottom: 0.25rem;">THE COLLECTION</p>
+          <h2 style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--text-dark);">Shop by Category
+          </h2>
+        </div>
+        <div class="collection-tabs">
+          <button class="collection-tab-btn active" data-category="gear" type="button">Gear</button>
+          <button class="collection-tab-btn" data-category="apparel" type="button">Apparel</button>
+          <button class="collection-tab-btn" data-category="packages" type="button">Packages</button>
+        </div>
+      </div>
+      <div class="collection-grid" id="collection-items-grid">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+    </section>
+  </main>
+
   <footer>
-    <p>&copy; 2026 Gymnastics Store. All rights reserved.</p>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
 
   <script src="script.js"></script>

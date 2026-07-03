@@ -4,8 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products - Gymnastics Store</title>
+  <title>APEX GYM | Shop Equipment & Apparel</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
   <!-- Google Fonts for custom apparel typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +25,7 @@
 <body>
   <header class="app-header">
     <a href="index.html" class="nav-brand">
-      Gymnastics<span>Store</span>
+      APEX<span>GYM</span>
     </a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
@@ -107,7 +113,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Gymnastics Store</p>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
 
   <!-- Apparel Customizer Modal -->
@@ -1271,6 +1277,7 @@
       }
     });
   </script>
+  <script src="script.js"></script>
 </body>
 
 </html>

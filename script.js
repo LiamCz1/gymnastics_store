@@ -1,11 +1,155 @@
-// Check theme on initial load to prevent screen flash
+// Check theme on initial load to prevent screen flash - default to dark
 (function() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
+  const savedTheme = localStorage.getItem('theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
 })();
 
+// Collection Database
+const collectionData = {
+  gear: [
+    {
+      name: "Balance Beam Trainer",
+      price: 79.99,
+      desc: "Portable foam balance beam for home practice.",
+      badge: "Best Seller",
+      img: "images/balance_beam.png",
+      actionUrl: "product.html"
+    },
+    {
+      name: "Gymnastics Grips",
+      price: 24.99,
+      desc: "Comfortable leather grips for bar work.",
+      badge: "New",
+      img: "images/grips.png",
+      actionUrl: "product.html"
+    },
+    {
+      name: "Advanced Chalk Ball Set",
+      price: 12.99,
+      desc: "Non-slip chalk ball set for bars and vaulting.",
+      badge: "Popular",
+      img: "images/sample 1.jpg",
+      actionUrl: "product.html"
+    }
+  ],
+  apparel: [
+    {
+      name: "Custom Gymnastics Leotard",
+      price: 39.99,
+      desc: "Design your own leotard with personalized colors and custom texts.",
+      badge: "Best Seller",
+      img: "images/sample 2.jpg",
+      actionUrl: "product.html"
+    },
+    {
+      name: "APEX Training Hoodie",
+      price: 45.99,
+      desc: "Heavyweight athletic cotton hoodie for warmups.",
+      badge: "New",
+      img: "images/sample 1.jpg",
+      actionUrl: "product.html"
+    },
+    {
+      name: "Performance Dry-Fit Tee",
+      price: 29.99,
+      desc: "Breathable mesh dry-fit training tee.",
+      badge: "Deal",
+      img: "images/sample 2.jpg",
+      actionUrl: "product.html"
+    }
+  ],
+  packages: [
+    {
+      name: "Starter Gym Package",
+      price: 99.99,
+      desc: "Beam trainer, grips, and gym chalk essentials bundle.",
+      badge: "Save 15%",
+      img: "images/sample 1.jpg",
+      actionUrl: "product.html"
+    },
+    {
+      name: "Premium Training Setup",
+      price: 249.99,
+      desc: "Extended foam beam, advanced grips, slider blocks, and dry chalk bundle.",
+      badge: "Most Popular",
+      img: "images/balance_beam.png",
+      actionUrl: "product.html"
+    },
+    {
+      name: "Elite Coaching Bundle",
+      price: 399.99,
+      desc: "Complete safety gear kit plus credit for 4 USAG-certified private lessons.",
+      badge: "Premium",
+      img: "images/sample 2.jpg",
+      actionUrl: "product.html"
+    }
+  ]
+};
+
+// Renders the collection items dynamically
+function renderCollection(category) {
+  const grid = document.getElementById('collection-items-grid');
+  if (!grid) return;
+
+  const items = collectionData[category] || [];
+  grid.innerHTML = '';
+
+  items.forEach(item => {
+    const card = document.createElement('article');
+    card.className = 'collection-card';
+    card.innerHTML = `
+      <span class="badge">${item.badge}</span>
+      <div class="collection-card-image">
+        <img src="${item.img}" alt="${item.name}">
+      </div>
+      <div class="collection-card-info">
+        <h3>${item.name}</h3>
+        <p>${item.desc}</p>
+        <p class="collection-card-price">$${item.price.toFixed(2)}</p>
+        <button class="btn collection-card-btn" type="button" onclick="window.location.href='${item.actionUrl}'">View Details</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  const currentTheme = localStorage.getItem('theme') || 'light';
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+
+  // Home page customizable messages
+  const promoEl = document.getElementById('home-promo-banner');
+  const overlineEl = document.getElementById('home-hero-overline');
+  const titleEl = document.getElementById('home-hero-title');
+  const descEl = document.getElementById('home-hero-desc');
+
+  if (promoEl) {
+    const savedPromo = localStorage.getItem('homePromoMsg');
+    if (savedPromo !== null) promoEl.innerHTML = savedPromo;
+  }
+  if (overlineEl) {
+    const savedOverline = localStorage.getItem('homeOverlineMsg');
+    if (savedOverline !== null) overlineEl.innerHTML = savedOverline;
+  }
+  if (titleEl) {
+    const savedTitle = localStorage.getItem('homeTitleMsg');
+    if (savedTitle !== null) titleEl.innerHTML = savedTitle;
+  }
+  if (descEl) {
+    const savedDesc = localStorage.getItem('homeDescMsg');
+    if (savedDesc !== null) descEl.innerHTML = savedDesc;
+  }
+  
+  const tickerEl = document.getElementById('home-ticker-wrapper');
+  if (tickerEl) {
+    const savedTicker = localStorage.getItem('homeTickerMsg');
+    if (savedTicker !== null) {
+      const items = savedTicker.split('\n').map(item => item.trim()).filter(item => item.length > 0);
+      if (items.length > 0) {
+        const duplicated = [...items, ...items];
+        tickerEl.innerHTML = duplicated.map(item => `<span class="ticker-item">${item}</span>`).join('');
+      }
+    }
+  }
   
   // Theme toggle button logic
   const themeToggleBtn = document.getElementById('theme-toggle');
@@ -70,6 +214,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (lessonsBtn) {
     lessonsBtn.addEventListener('click', () => { window.location.href = 'lessons.html'; });
   }
+
+  // Category Tabs Switcher
+  const tabs = document.querySelectorAll('.collection-tab-btn');
+  if (tabs.length > 0) {
+    // Initial render
+    renderCollection('gear');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Toggle active class
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Render category items
+        const cat = tab.dataset.category;
+        renderCollection(cat);
+      });
+    });
+  }
+
+  updateAthletesCoachedStat();
 });
 
 function updateGlobalCartBadge() {
@@ -82,5 +247,28 @@ function updateGlobalCartBadge() {
     } else {
       badge.style.display = 'none';
     }
+  }
+}
+
+function updateAthletesCoachedStat() {
+  const statEl = document.getElementById('stat-athletes-coached');
+  if (!statEl) return;
+
+  const baseCount = 25000;
+  try {
+    const slots = JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+    const uniqueBookers = new Set();
+    slots.forEach(slot => {
+      if (slot.bookerName) {
+        const name = slot.bookerName.trim().toLowerCase();
+        if (name) {
+          uniqueBookers.add(name);
+        }
+      }
+    });
+    const totalCount = baseCount + uniqueBookers.size;
+    statEl.textContent = totalCount.toLocaleString();
+  } catch (e) {
+    statEl.textContent = baseCount.toLocaleString();
   }
 }
