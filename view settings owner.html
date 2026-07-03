@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | Owner Settings Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+  <style>
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 650px;
+      margin-top: 1.5rem;
+    }
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .settings-group label {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+    .settings-group textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .settings-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .placeholder-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .save-settings-btn {
+      align-self: flex-start;
+      background-color: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2);
+      transition: var(--transition);
+    }
+    .save-settings-btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .status-toast {
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">
+      APEX<span>GYM</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(225, 29, 72, 0.15);">Owner Portal</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="view booking owner.html">Bookings Calendar</a></li>
+      <li><a href="view orders owner.html">Customer Orders</a></li>
+      <li><a href="view settings owner.html" class="active">Custom Messages</a></li>
+      <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1rem; margin-top: 4rem;">
+    <section class="boxed-panel">
+      <!-- Authorization Gateway -->
+      <div id="owner-access-form">
+        <label for="owner-code">Owner Code:</label>
+        <div class="owner-access-group">
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <button id="load-owner-settings-btn" class="verify-btn" type="button">Access Settings</button>
+        </div>
+      </div>
+
+      <!-- Settings Dashboard Container -->
+      <div id="owner-settings-container" style="display: none;">
+        <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h2 style="font-size: 1.4rem;">Customize Home Page Messages</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Modify the announcement banner and hero messaging displayed on the home page.</p>
+        </div>
+
+        <div id="status-toast" class="status-toast">Home page settings saved successfully!</div>
+
+        <form class="settings-form" id="settings-form" onsubmit="event.preventDefault();">
+          <div class="settings-group">
+            <label for="promo-msg-input">Promo Banner Announcement Message</label>
+            <textarea id="promo-msg-input" placeholder="Enter custom promo banner message"></textarea>
+            <div class="placeholder-hint">Supports HTML. E.g., bold tags, links, or special entities.</div>
+          </div>
+
+          <div class="settings-group">
+            <label for="overline-msg-input">Hero Section Overline Title</label>
+            <textarea id="overline-msg-input" placeholder="Enter custom hero overline text" style="min-height: 70px;"></textarea>
+            <div class="placeholder-hint">Main text displayed above the large headline.</div>
+          </div>
+
+          <div class="settings-group">
+            <label for="title-msg-input">Hero Section Main Headline</label>
+            <textarea id="title-msg-input" placeholder="Enter custom hero headline" style="min-height: 80px;"></textarea>
+            <div class="placeholder-hint">Supports HTML line breaks (<code>&lt;br&gt;</code>).</div>
+          </div>
+
+          <div class="settings-group">
+            <label for="desc-msg-input">Hero Section Subtitle / Description Text</label>
+            <textarea id="desc-msg-input" placeholder="Enter custom hero description text" style="min-height: 100px;"></textarea>
+            <div class="placeholder-hint">Detailed paragraph explanation below the headline.</div>
+          </div>
+
+          <div class="settings-group">
+            <label for="ticker-msg-input">Brand Value Scrolling Ticker Items</label>
+            <textarea id="ticker-msg-input" placeholder="Enter custom ticker items (one per line)" style="min-height: 120px;"></textarea>
+            <div class="placeholder-hint">Enter each brand value or ticker message on its own line.</div>
+          </div>
+
+          <button id="save-settings-btn" class="save-settings-btn" type="submit">Save Settings</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const ownerAccessCode = 'LiaMycIaa123';
+    
+    const defaultPromo = `Summer Sale — Up to 30% off Competition Gear &middot; Use code FLIP30`;
+    const defaultOverline = `Premium Training Gear & Expert Coaching`;
+    const defaultTitle = `Train Like<br>A Champion`;
+    const defaultDesc = `Competition-grade equipment, performance apparel, and private coaching from USAG-certified coaches — everything you need to reach elite level.`;
+    const defaultTicker = `USAG Certified Equipment\nOlympic-Grade Materials\nExpert Coaching — All Levels\n30-Day Returns\n12-Month Warranty\nFree Shipping Over $250`;
+
+    function displaySettings() {
+      document.getElementById('owner-access-form').style.display = 'none';
+      document.getElementById('owner-settings-container').style.display = 'block';
+
+      // Load saved messages or fallback to defaults
+      document.getElementById('promo-msg-input').value = localStorage.getItem('homePromoMsg') !== null ? localStorage.getItem('homePromoMsg') : defaultPromo;
+      document.getElementById('overline-msg-input').value = localStorage.getItem('homeOverlineMsg') !== null ? localStorage.getItem('homeOverlineMsg') : defaultOverline;
+      document.getElementById('title-msg-input').value = localStorage.getItem('homeTitleMsg') !== null ? localStorage.getItem('homeTitleMsg') : defaultTitle;
+      document.getElementById('desc-msg-input').value = localStorage.getItem('homeDescMsg') !== null ? localStorage.getItem('homeDescMsg') : defaultDesc;
+      document.getElementById('ticker-msg-input').value = localStorage.getItem('homeTickerMsg') !== null ? localStorage.getItem('homeTickerMsg') : defaultTicker;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ownerCodeInput = document.getElementById('owner-code');
+      const loadOwnerSettingsBtn = document.getElementById('load-owner-settings-btn');
+      const saveSettingsBtn = document.getElementById('save-settings-btn');
+      const statusToast = document.getElementById('status-toast');
+
+      // Check sessionStorage for authentication
+      if (sessionStorage.getItem('ownerAuthorized') === 'true') {
+        displaySettings();
+      }
+
+      loadOwnerSettingsBtn.addEventListener('click', () => {
+        const code = ownerCodeInput.value.trim();
+        if (code !== ownerAccessCode) {
+          alert('Invalid owner code.');
+          return;
+        }
+        sessionStorage.setItem('ownerAuthorized', 'true');
+        displaySettings();
+      });
+
+      ownerCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          loadOwnerSettingsBtn.click();
+        }
+      });
+
+      saveSettingsBtn.addEventListener('click', () => {
+        const promo = document.getElementById('promo-msg-input').value.trim();
+        const overline = document.getElementById('overline-msg-input').value.trim();
+        const title = document.getElementById('title-msg-input').value.trim();
+        const desc = document.getElementById('desc-msg-input').value.trim();
+        const ticker = document.getElementById('ticker-msg-input').value.trim();
+
+        localStorage.setItem('homePromoMsg', promo);
+        localStorage.setItem('homeOverlineMsg', overline);
+        localStorage.setItem('homeTitleMsg', title);
+        localStorage.setItem('homeDescMsg', desc);
+        localStorage.setItem('homeTickerMsg', ticker);
+
+        // Show status toast
+        statusToast.style.display = 'block';
+        setTimeout(() => {
+          statusToast.style.display = 'none';
+        }, 3000);
+      });
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
