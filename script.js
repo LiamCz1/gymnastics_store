@@ -234,6 +234,83 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Contact Modal and Form Handler
+  const contactModal = document.getElementById('contact-modal');
+  const openContactModalBtn = document.getElementById('open-contact-modal-btn');
+  const closeContactModalBtn = document.getElementById('close-contact-modal-btn');
+  const contactForm = document.getElementById('contact-form');
+
+  if (openContactModalBtn && contactModal) {
+    openContactModalBtn.addEventListener('click', () => {
+      contactModal.style.display = 'block';
+    });
+  }
+
+  if (closeContactModalBtn && contactModal) {
+    closeContactModalBtn.addEventListener('click', () => {
+      contactModal.style.display = 'none';
+    });
+  }
+
+  window.addEventListener('click', (e) => {
+    if (e.target === contactModal) {
+      contactModal.style.display = 'none';
+    }
+  });
+
+  if (contactForm) {
+    const contactSubmitBtn = document.getElementById('contact-submit-btn');
+    const successBanner = document.getElementById('contact-success-banner');
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
+
+      const originalBtnText = contactSubmitBtn.textContent;
+      contactSubmitBtn.disabled = true;
+      contactSubmitBtn.textContent = 'Sending message...';
+
+      const formData = {
+        formType: 'General Customer Message',
+        name: name,
+        email: email,
+        message: message
+      };
+
+      fetch('https://formspree.io/f/mgojroae', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        if (response.ok) {
+          successBanner.style.display = 'block';
+          contactForm.reset();
+          setTimeout(() => {
+            successBanner.style.display = 'none';
+            contactModal.style.display = 'none';
+          }, 3000);
+        } else {
+          throw new Error('Formspree response not OK');
+        }
+      })
+      .catch(error => {
+        console.error('Failed to submit contact message:', error);
+        alert('There was a problem sending your message. Please try again.');
+      })
+      .finally(() => {
+        contactSubmitBtn.disabled = false;
+        contactSubmitBtn.textContent = originalBtnText;
+      });
+    });
+  }
+
   updateAthletesCoachedStat();
 });
 

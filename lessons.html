@@ -164,7 +164,7 @@
         </div>
         <div id="weeks-selector" class="weeks-selector" style="display: none;">
           <label for="num-weeks">Number of Weeks:</label>
-          <input type="number" id="num-weeks" min="1" max="12" value="4">
+          <input type="number" id="num-weeks" name="num-weeks" min="1" max="12" value="4">
         </div>
       </div>
 
@@ -196,12 +196,67 @@
         ⚠️ IMPORTANT: Your private lesson will be deleted if you don't pay in the next 60 minutes. Please pay via Venmo.
         Excited to work with you soon!
       </div>
+      
+      <!-- Calendar Reminder Section -->
+      <div style="margin-bottom: 1.5rem; text-align: center;">
+        <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem;">Set a reminder (starts in 30m):</p>
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+          <a id="calendar-google-btn" target="_blank" class="btn" style="flex: 1; padding: 0.6rem 1.2rem; font-size: 0.85rem; background-color: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: inline-flex; text-decoration: none; align-items: center; justify-content: center; gap: 0.35rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Google Calendar
+          </a>
+          <button id="calendar-ics-btn" type="button" class="btn" style="flex: 1; padding: 0.6rem 1.2rem; font-size: 0.85rem; background-color: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download .ics
+          </button>
+        </div>
+      </div>
+
       <button id="success-close-btn"
         style="width: 100%; background-color: #007bff; border-color: #007bff;">Done</button>
     </div>
   </div>
 
   <script>
+    function formatGoogleCalendarDate(date) {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    }
+
+    function downloadICSFile(subject, description, location, startDate, endDate) {
+      const formatICSDate = (date) => {
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      };
+
+      const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//APEX GYM//Booking Confirmation//EN',
+        'BEGIN:VEVENT',
+        `UID:${Date.now()}@apexgym.com`,
+        `DTSTAMP:${formatICSDate(new Date())}`,
+        `DTSTART:${formatICSDate(startDate)}`,
+        `DTEND:${formatICSDate(endDate)}`,
+        `SUMMARY:${subject}`,
+        `DESCRIPTION:${description.replace(/\n/g, '\\n')}`,
+        `LOCATION:${location}`,
+        'BEGIN:VALARM',
+        'TRIGGER:-PT30M',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:Reminder',
+        'END:VALARM',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `${subject.replace(/\s+/g, '_')}_lesson.ics`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM'];
 
     function getBookedSlots() {
@@ -774,86 +829,155 @@
         const numPeople = parseInt(document.getElementById('num-people').value, 10) || 1;
         const pricePerPerson = selectedLessonPrice;
 
+        // Validation checks
         if (bookingType === 'one-time') {
           const slotDate = new Date(selectedSlot.dateKey + 'T00:00:00');
           if (slotDate > limitDate) {
             alert('Cannot book lessons more than 3 months in advance.');
             return;
           }
-
-          const slotKey = `${selectedSlot.dateKey}-${selectedSlot.time}`;
-          bookedSlots.push({
-            key: slotKey,
-            lesson: lessonName,
-            date: selectedSlot.dateKey,
-            time: selectedSlot.time,
-            type: 'one-time',
-            bookerName: bookerName,
-            bookerEmail: bookerEmail,
-            bookerPhone: bookerPhone,
-            numPeople: numPeople,
-            price: pricePerPerson,
-            bookedAt: new Date().toISOString()
-          });
         } else if (bookingType === 'weekly') {
           const weeks = parseInt(numWeeks) || 4;
-          const tempSlots = [];
-
           for (let i = 0; i < weeks; i++) {
             const recurringDate = new Date(selectedSlot.dateKey + 'T00:00:00');
             recurringDate.setDate(recurringDate.getDate() + (i * 7));
-
             if (recurringDate > limitDate) {
               alert(`Cannot book recurring lessons beyond 3 months in advance. The session on ${formatDateKey(recurringDate)} is past the limit.`);
               return;
             }
-
-            const recurringDateKey = formatDateKey(recurringDate);
-            const recurringSlotKey = `${recurringDateKey}-${selectedSlot.time}`;
-
-            tempSlots.push({
-              key: recurringSlotKey,
-              lesson: lessonName,
-              date: recurringDateKey,
-              time: selectedSlot.time,
-              type: 'weekly',
-              bookerName: bookerName,
-              bookerEmail: bookerEmail,
-              bookerPhone: bookerPhone,
-              numPeople: numPeople,
-              price: pricePerPerson,
-              bookedAt: new Date().toISOString()
-            });
           }
-
-          bookedSlots.push(...tempSlots);
         }
-
-        setBookedSlots(bookedSlots);
-        bookingModal.style.display = 'none';
 
         const weeksCount = bookingType === 'weekly' ? (parseInt(numWeeks) || 4) : 1;
         const totalToPay = pricePerPerson * numPeople * weeksCount;
-
-        // Render success modal details
-        const successDetails = document.getElementById('success-details');
         const displayDate = new Date(selectedSlot.dateKey + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        successDetails.innerHTML = `
-          <strong>Lesson:</strong> ${lessonName}<br>
-          <strong>Date:</strong> ${displayDate}<br>
-          <strong>Time:</strong> ${selectedSlot.time}<br>
-          <strong>Type:</strong> ${bookingType === 'weekly' ? `Weekly for ${numWeeks} weeks` : 'One-Time'}<br>
-          <strong>Name:</strong> ${bookerName}<br>
-          <strong>Email:</strong> ${bookerEmail}<br>
-          <strong>Phone:</strong> ${bookerPhone}<br>
-          <strong>Total Price:</strong> $${totalToPay.toFixed(2)}
-        `;
 
-        document.getElementById('success-warning').innerHTML = `
-          ⚠️ IMPORTANT: Your private lesson will be deleted if you don't pay <strong>$${totalToPay.toFixed(2)}</strong> in the next 60 minutes. Please pay via Venmo.<br>Excited to work with you soon!
-        `;
+        const originalConfirmText = confirmBtn.textContent;
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Confirming...';
 
-        document.getElementById('success-modal').style.display = 'block';
+        const formData = {
+          bookingType: 'Coaching Lesson Reservation',
+          lessonName: lessonName,
+          date: displayDate,
+          time: selectedSlot.time,
+          duration: bookingType === 'weekly' ? `Weekly for ${numWeeks} weeks` : 'One-Time',
+          name: bookerName,
+          email: bookerEmail,
+          phone: bookerPhone,
+          attendees: numPeople,
+          pricePerLesson: `$${pricePerPerson.toFixed(2)}`,
+          totalPrice: `$${totalToPay.toFixed(2)}`
+        };
+
+        fetch('https://formspree.io/f/mgojroae', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          if (response.ok) {
+            if (bookingType === 'one-time') {
+              const slotKey = `${selectedSlot.dateKey}-${selectedSlot.time}`;
+              bookedSlots.push({
+                key: slotKey,
+                lesson: lessonName,
+                date: selectedSlot.dateKey,
+                time: selectedSlot.time,
+                type: 'one-time',
+                bookerName: bookerName,
+                bookerEmail: bookerEmail,
+                bookerPhone: bookerPhone,
+                numPeople: numPeople,
+                price: pricePerPerson,
+                bookedAt: new Date().toISOString()
+              });
+            } else if (bookingType === 'weekly') {
+              const weeks = parseInt(numWeeks) || 4;
+              const tempSlots = [];
+
+              for (let i = 0; i < weeks; i++) {
+                const recurringDate = new Date(selectedSlot.dateKey + 'T00:00:00');
+                recurringDate.setDate(recurringDate.getDate() + (i * 7));
+                const recurringDateKey = formatDateKey(recurringDate);
+                const recurringSlotKey = `${recurringDateKey}-${selectedSlot.time}`;
+
+                tempSlots.push({
+                  key: recurringSlotKey,
+                  lesson: lessonName,
+                  date: recurringDateKey,
+                  time: selectedSlot.time,
+                  type: 'weekly',
+                  bookerName: bookerName,
+                  bookerEmail: bookerEmail,
+                  bookerPhone: bookerPhone,
+                  numPeople: numPeople,
+                  price: pricePerPerson,
+                  bookedAt: new Date().toISOString()
+                });
+              }
+
+              bookedSlots.push(...tempSlots);
+            }
+
+            setBookedSlots(bookedSlots);
+            bookingModal.style.display = 'none';
+
+            // Generate dates for Calendar Event
+            const startEventDate = getLessonDateTime(selectedSlot.dateKey, selectedSlot.time);
+            const durationMinutes = lessonName.includes('Flexibility') ? 45 : 60;
+            const endEventDate = new Date(startEventDate.getTime() + durationMinutes * 60 * 1000);
+            
+            const eventSubject = `APEX GYM - ${lessonName} Private Lesson`;
+            const eventDescription = `Hello ${bookerName}! Here is the Google Meet link for your private training session with APEX GYM: https://meet.google.com/orh-dtwh-wcr. Excited to train with you!`;
+            const eventLocation = 'https://meet.google.com/orh-dtwh-wcr';
+
+            // Google Calendar link
+            const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventSubject)}&dates=${formatGoogleCalendarDate(startEventDate)}/${formatGoogleCalendarDate(endEventDate)}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
+            document.getElementById('calendar-google-btn').href = googleUrl;
+
+            // .ics click listener
+            const icsBtn = document.getElementById('calendar-ics-btn');
+            // Clean up any existing listeners by cloning button
+            const newIcsBtn = icsBtn.cloneNode(true);
+            icsBtn.parentNode.replaceChild(newIcsBtn, icsBtn);
+            newIcsBtn.addEventListener('click', () => {
+              downloadICSFile(eventSubject, eventDescription, eventLocation, startEventDate, endEventDate);
+            });
+
+            // Render success modal details
+            const successDetails = document.getElementById('success-details');
+            successDetails.innerHTML = `
+              <strong>Lesson:</strong> ${lessonName}<br>
+              <strong>Date:</strong> ${displayDate}<br>
+              <strong>Time:</strong> ${selectedSlot.time}<br>
+              <strong>Type:</strong> ${bookingType === 'weekly' ? `Weekly for ${numWeeks} weeks` : 'One-Time'}<br>
+              <strong>Name:</strong> ${bookerName}<br>
+              <strong>Email:</strong> ${bookerEmail}<br>
+              <strong>Phone:</strong> ${bookerPhone}<br>
+              <strong>Total Price:</strong> $${totalToPay.toFixed(2)}
+            `;
+
+            document.getElementById('success-warning').innerHTML = `
+              ⚠️ IMPORTANT: Your private lesson will be deleted if you don't pay <strong>$${totalToPay.toFixed(2)}</strong> in the next 60 minutes. Please pay via Venmo.<br>Excited to work with you soon!
+            `;
+
+            document.getElementById('success-modal').style.display = 'block';
+          } else {
+            throw new Error('Formspree response not OK');
+          }
+        })
+        .catch(error => {
+          console.error('Failed to save booking:', error);
+          alert('There was a problem confirming your booking. Please try again.');
+        })
+        .finally(() => {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = originalConfirmText;
+        });
       }
     });
   </script>
