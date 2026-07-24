@@ -338,6 +338,39 @@ button:active, .btn:active {
   margin-bottom: 1.5rem;
 }
 
+.checkout-promo-field {
+  margin-top: 1rem;
+  max-width: 320px;
+}
+
+.checkout-promo-field label {
+  display: block;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-dark);
+}
+
+.checkout-promo-field input[type="text"] {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  background-color: #f8fafc;
+  transition: var(--transition);
+  color: var(--text-dark);
+}
+
+.checkout-promo-field input[type="text"]:focus {
+  border-color: var(--primary);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  outline: none;
+}
+
 .form-group label {
   display: block;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;

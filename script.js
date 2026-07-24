@@ -124,7 +124,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (promoEl) {
     const savedPromo = localStorage.getItem('homePromoMsg');
-    if (savedPromo !== null) promoEl.innerHTML = savedPromo;
+    const savedPromoCode = localStorage.getItem('homePromoCode');
+    const savedPromoPercent = localStorage.getItem('homePromoPercent');
+    if (savedPromo !== null) {
+      let promoText = savedPromo;
+      if (savedPromoPercent) {
+        promoText = promoText.replace(/\b\d+%\b/g, `${savedPromoPercent}%`);
+      }
+      if (savedPromoCode) {
+        if (!promoText.includes('Use code') && !promoText.includes('code')) {
+          promoText = `${promoText}  Use code ${savedPromoCode}`;
+        } else if (promoText.includes('Use code')) {
+          promoText = promoText.replace(/Use code/i, `Use code ${savedPromoCode}`);
+        } else {
+          promoText = `${promoText} ${savedPromoCode}`;
+        }
+      }
+      promoEl.innerHTML = promoText;
+    }
   }
   if (overlineEl) {
     const savedOverline = localStorage.getItem('homeOverlineMsg');

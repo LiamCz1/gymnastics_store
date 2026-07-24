@@ -174,6 +174,11 @@
         <input type="tel" id="booker-phone" name="booker-phone" placeholder="Enter your phone number" required>
       </div>
 
+      <div class="form-group">
+        <label for="promo-code">Promo Code (optional)</label>
+        <input type="text" id="promo-code" name="promo-code" placeholder="Enter a promo code">
+      </div>
+
       <input type="hidden" id="num-people" name="num-people" value="1">
 
       <div class="booking-type-selector">
@@ -310,6 +315,34 @@
 
     let currentWeekStart = null;
     let selectedLessonPrice = 45.00;
+
+    function getActivePromo() {
+      const code = (localStorage.getItem('homePromoCode') || '').trim().toUpperCase();
+      const percent = parseInt(localStorage.getItem('homePromoPercent') || '0', 10);
+      return {
+        code,
+        percent: Number.isNaN(percent) ? 0 : percent
+      };
+    }
+
+    function normalizePromoCode(value) {
+      return (value || '').trim().toUpperCase();
+    }
+
+    function calculateLessonTotals(baseTotal, promoCode) {
+      const activePromo = getActivePromo();
+      const enteredPromo = normalizePromoCode(promoCode);
+      const activePromoCode = normalizePromoCode(activePromo.code);
+      const isValidPromo = Boolean(activePromoCode && enteredPromo && enteredPromo === activePromoCode && activePromo.percent > 0);
+      const discountAmount = isValidPromo ? baseTotal * (activePromo.percent / 100) : 0;
+      const finalTotal = Math.max(0, baseTotal - discountAmount);
+      return {
+        baseTotal,
+        discountAmount,
+        finalTotal,
+        isValidPromo
+      };
+    }
 
     function resetBookedSlots() {
       clearBookedSlots();
@@ -844,10 +877,11 @@
         const lessonName = lessonNameInput.value;
         const bookingType = document.querySelector('input[name="booking-type"]:checked').value;
         const numWeeks = bookingType === 'weekly' ? document.getElementById('num-weeks').value : '1';
-        completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone);
+        const promoCode = document.getElementById('promo-code').value.trim();
+        completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone, promoCode);
       });
 
-      function completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone) {
+      function completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone, promoCode) {
         const bookedSlots = getBookedSlots();
         const limitDate = new Date();
         limitDate.setMonth(limitDate.getMonth() + 3);
@@ -875,8 +909,15 @@
         }
 
         const weeksCount = bookingType === 'weekly' ? (parseInt(numWeeks) || 4) : 1;
-        const totalToPay = pricePerPerson * numPeople * weeksCount;
+        const baseTotal = pricePerPerson * numPeople * weeksCount;
+        const promoTotals = calculateLessonTotals(baseTotal, promoCode);
+        const totalToPay = promoTotals.finalTotal;
         const displayDate = new Date(selectedSlot.dateKey + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        if (promoCode && !promoTotals.isValidPromo) {
+          alert('That promo code is not active.');
+          return;
+        }
 
         const originalConfirmText = confirmBtn.textContent;
         confirmBtn.disabled = true;
@@ -893,7 +934,9 @@
           phone: bookerPhone,
           attendees: numPeople,
           pricePerLesson: `$${pricePerPerson.toFixed(2)}`,
-          totalPrice: `$${totalToPay.toFixed(2)}`
+          totalPrice: `$${totalToPay.toFixed(2)}`,
+          promoCode: promoCode || 'None',
+          discountAmount: `$${promoTotals.discountAmount.toFixed(2)}`
         };
 
         fetch('https://formspree.io/f/mgojroae', {
@@ -918,6 +961,7 @@
                 bookerEmail: bookerEmail,
                 bookerPhone: bookerPhone,
                 numPeople: numPeople,
+                promoCode: promoCode,
                 price: pricePerPerson,
                 bookedAt: new Date().toISOString()
               });
@@ -941,6 +985,7 @@
                   bookerEmail: bookerEmail,
                   bookerPhone: bookerPhone,
                   numPeople: numPeople,
+                  promoCode: promoCode,
                   price: pricePerPerson,
                   bookedAt: new Date().toISOString()
                 });
@@ -984,7 +1029,9 @@
               <strong>Name:</strong> ${bookerName}<br>
               <strong>Email:</strong> ${bookerEmail}<br>
               <strong>Phone:</strong> ${bookerPhone}<br>
-              <strong>Total Price:</strong> $${totalToPay.toFixed(2)}
+              <strong>Promo Code:</strong> ${promoCode || 'None'}<br>
+              <strong>Discount Applied:</strong> ${promoTotals.discountAmount > 0 ? `-$${promoTotals.discountAmount.toFixed(2)}` : '$0.00'}<br>
+              <strong>Final Amount:</strong> $${totalToPay.toFixed(2)}
             `;
 
             document.getElementById('success-warning').innerHTML = `
