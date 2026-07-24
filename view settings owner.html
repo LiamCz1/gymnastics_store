@@ -99,6 +99,7 @@
       <li><a href="view booking owner.html">Bookings Calendar</a></li>
       <li><a href="view orders owner.html">Customer Orders</a></li>
       <li><a href="view settings owner.html" class="active">Custom Messages</a></li>
+      <li><a href="view performance owner.html">Analytics &amp; Performance</a></li>
       <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
     </ul>
     <div class="nav-actions">
@@ -131,6 +132,18 @@
             <label for="promo-msg-input">Promo Banner Announcement Message</label>
             <textarea id="promo-msg-input" placeholder="Enter custom promo banner message"></textarea>
             <div class="placeholder-hint">Supports HTML. E.g., bold tags, links, or special entities.</div>
+          </div>
+
+          <div class="settings-group">
+            <label for="promo-code-input">Active Promo Code</label>
+            <input type="text" id="promo-code-input" placeholder="Enter promo code (for example FLIP30)" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background-color: var(--bg-main); color: var(--text-dark); font-family: inherit; font-size: 0.95rem;">
+            <div class="placeholder-hint">This code will be displayed in the promo banner and can be used during checkout and lesson booking.</div>
+          </div>
+
+          <div class="settings-group">
+            <label for="promo-percent-input">Percentage Off</label>
+            <input type="number" id="promo-percent-input" min="0" max="100" step="1" placeholder="Enter percentage (for example 20)" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background-color: var(--bg-main); color: var(--text-dark); font-family: inherit; font-size: 0.95rem;">
+            <div class="placeholder-hint">Enter a number such as 20 for “20% off”.</div>
           </div>
 
           <div class="settings-group">
@@ -171,6 +184,8 @@
     const ownerAccessCode = 'LiaMycIaa123';
     
     const defaultPromo = `Summer Sale — Up to 30% off Competition Gear &middot; Use code FLIP30`;
+    const defaultPromoCode = `FLIP30`;
+    const defaultPromoPercent = `30`;
     const defaultOverline = `Premium Training Gear & Expert Coaching`;
     const defaultTitle = `Train Like<br>A Champion`;
     const defaultDesc = `Competition-grade equipment, performance apparel, and private coaching from USAG-certified coaches — everything you need to reach elite level.`;
@@ -182,6 +197,8 @@
 
       // Load saved messages or fallback to defaults
       document.getElementById('promo-msg-input').value = localStorage.getItem('homePromoMsg') !== null ? localStorage.getItem('homePromoMsg') : defaultPromo;
+      document.getElementById('promo-code-input').value = localStorage.getItem('homePromoCode') !== null ? localStorage.getItem('homePromoCode') : defaultPromoCode;
+      document.getElementById('promo-percent-input').value = localStorage.getItem('homePromoPercent') !== null ? localStorage.getItem('homePromoPercent') : defaultPromoPercent;
       document.getElementById('overline-msg-input').value = localStorage.getItem('homeOverlineMsg') !== null ? localStorage.getItem('homeOverlineMsg') : defaultOverline;
       document.getElementById('title-msg-input').value = localStorage.getItem('homeTitleMsg') !== null ? localStorage.getItem('homeTitleMsg') : defaultTitle;
       document.getElementById('desc-msg-input').value = localStorage.getItem('homeDescMsg') !== null ? localStorage.getItem('homeDescMsg') : defaultDesc;
@@ -217,12 +234,16 @@
 
       saveSettingsBtn.addEventListener('click', () => {
         const promo = document.getElementById('promo-msg-input').value.trim();
+        const promoCode = document.getElementById('promo-code-input').value.trim();
+        const promoPercent = document.getElementById('promo-percent-input').value.trim();
         const overline = document.getElementById('overline-msg-input').value.trim();
         const title = document.getElementById('title-msg-input').value.trim();
         const desc = document.getElementById('desc-msg-input').value.trim();
         const ticker = document.getElementById('ticker-msg-input').value.trim();
 
         localStorage.setItem('homePromoMsg', promo);
+        localStorage.setItem('homePromoCode', promoCode);
+        localStorage.setItem('homePromoPercent', promoPercent);
         localStorage.setItem('homeOverlineMsg', overline);
         localStorage.setItem('homeTitleMsg', title);
         localStorage.setItem('homeDescMsg', desc);

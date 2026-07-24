@@ -99,6 +99,10 @@
               <label for="ship-zip">ZIP Code</label>
               <input type="text" id="ship-zip" name="zip" placeholder="75001" required autocomplete="postal-code">
             </div>
+            <div class="checkout-promo-field">
+              <label for="promo-code">Promo Code (optional)</label>
+              <input type="text" id="promo-code" name="promo-code" placeholder="Enter promo code">
+            </div>
           </form>
         </section>
 
@@ -141,6 +145,10 @@
           <span>Items (<span id="summary-items-count">0</span>):</span>
           <span id="summary-items-price">$0.00</span>
         </div>
+        <div class="order-summary-row" id="promo-discount-row" style="display: none;">
+          <span>Promo discount:</span>
+          <span id="summary-promo-discount">$0.00</span>
+        </div>
         <div class="order-summary-row">
           <span>Shipping & handling:</span>
           <span id="summary-shipping-price">$0.00</span>
@@ -170,6 +178,8 @@
       <p id="success-payment-instructions" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 1rem; border-radius: 6px; font-size: 0.95rem; font-weight: bold; line-height: 1.5; margin-bottom: 1.5rem; text-align: center;">
         ⚠️ Please send your Venmo payment within 60 minutes or your order will be automatically cancelled.
       </p>
+      <div id="success-promo-summary" style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.95rem; line-height: 1.6;">
+      </div>
       <p>An email confirmation has been sent to you. Your gymnastics gear will be shipped shortly after payment is received. Get ready to train!</p>
       <button class="checkout-btn" style="max-width: 250px;" onclick="window.location.href='product.html'">Continue Shopping</button>
     </div>
@@ -189,9 +199,11 @@
       const summaryItemsCount = document.getElementById('summary-items-count');
       
       const summaryItemsPrice = document.getElementById('summary-items-price');
+      const summaryPromoDiscount = document.getElementById('summary-promo-discount');
       const summaryShippingPrice = document.getElementById('summary-shipping-price');
       const summaryTaxPrice = document.getElementById('summary-tax-price');
       const summaryTotalPrice = document.getElementById('summary-total-price');
+      const promoDiscountRow = document.getElementById('promo-discount-row');
       const placeOrderBtn = document.getElementById('place-order-btn');
 
       // Forms
@@ -209,6 +221,41 @@
         localStorage.setItem('gymCart', JSON.stringify(cart));
         const count = cart.reduce((sum, item) => sum + item.quantity, 0);
         localStorage.setItem('cartCount', String(count));
+      }
+
+      function getActivePromo() {
+        const code = (localStorage.getItem('homePromoCode') || '').trim().toUpperCase();
+        const percent = parseInt(localStorage.getItem('homePromoPercent') || '0', 10);
+        return {
+          code,
+          percent: Number.isNaN(percent) ? 0 : percent
+        };
+      }
+
+      function normalizePromoCode(value) {
+        return (value || '').trim().toUpperCase();
+      }
+
+      function calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCode) {
+        const activePromo = getActivePromo();
+        const enteredPromo = normalizePromoCode(promoCode);
+        const activePromoCode = normalizePromoCode(activePromo.code);
+        const isValidPromo = Boolean(activePromoCode && enteredPromo && enteredPromo === activePromoCode && activePromo.percent > 0);
+        const discountAmount = isValidPromo ? itemsSubtotal * (activePromo.percent / 100) : 0;
+        const discountedSubtotal = Math.max(0, itemsSubtotal - discountAmount);
+        const taxRate = 0.085;
+        const estimatedTax = (discountedSubtotal + shippingFee) * taxRate;
+        const finalTotal = discountedSubtotal + shippingFee + estimatedTax;
+
+        return {
+          itemsSubtotal,
+          discountedSubtotal,
+          discountAmount,
+          shippingFee,
+          estimatedTax,
+          finalTotal,
+          isValidPromo
+        };
       }
 
       function renderCheckout() {
@@ -261,19 +308,31 @@
         // Calculations
         // Free shipping for orders over $50, else $5.99
         const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
-        const taxRate = 0.085; // 8.5%
-        const estimatedTax = (itemsSubtotal + shippingFee) * taxRate;
-        const finalTotal = itemsSubtotal + shippingFee + estimatedTax;
+        const promoCodeInput = document.getElementById('promo-code');
+        const totals = calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCodeInput ? promoCodeInput.value : '');
 
         // Update displays
-        summaryItemsPrice.textContent = `$${itemsSubtotal.toFixed(2)}`;
+        summaryItemsPrice.textContent = `$${totals.discountedSubtotal.toFixed(2)}`;
+        summaryPromoDiscount.textContent = totals.discountAmount > 0 ? `-$${totals.discountAmount.toFixed(2)}` : '$0.00';
+        promoDiscountRow.style.display = totals.discountAmount > 0 ? 'flex' : 'none';
         summaryShippingPrice.textContent = shippingFee === 0.00 ? 'FREE' : `$${shippingFee.toFixed(2)}`;
-        summaryTaxPrice.textContent = `$${estimatedTax.toFixed(2)}`;
-        summaryTotalPrice.textContent = `$${finalTotal.toFixed(2)}`;
+        summaryTaxPrice.textContent = `$${totals.estimatedTax.toFixed(2)}`;
+        summaryTotalPrice.textContent = `$${totals.finalTotal.toFixed(2)}`;
 
         const venmoWarning = document.getElementById('venmo-warning-box');
         if (venmoWarning) {
-          venmoWarning.innerHTML = `⚠️ Please scan and pay the exact total of <strong>$${finalTotal.toFixed(2)}</strong> via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**`;
+          venmoWarning.innerHTML = `⚠️ Please scan and pay the exact total of <strong>$${totals.finalTotal.toFixed(2)}</strong> via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**`;
+        }
+
+        // Keep summary in sync when promo code changes
+        if (promoCodeInput) {
+          promoCodeInput.removeEventListener('input', handlePromoInput);
+        }
+        function handlePromoInput() {
+          renderCheckout();
+        }
+        if (promoCodeInput) {
+          promoCodeInput.addEventListener('input', handlePromoInput);
         }
 
         // Attach event listeners to quantity dropdowns
@@ -317,22 +376,29 @@
         const shipCity = document.getElementById('ship-city').value.trim();
         const shipState = document.getElementById('ship-state').value.trim();
         const shipZip = document.getElementById('ship-zip').value.trim();
+        const promoCode = document.getElementById('promo-code').value.trim();
         const itemsSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
-        const taxRate = 0.085;
-        const estimatedTax = (itemsSubtotal + shippingFee) * taxRate;
-        const finalTotal = itemsSubtotal + shippingFee + estimatedTax;
+        const totals = calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCode);
+        const finalTotal = totals.finalTotal;
+
+        if (promoCode && !totals.isValidPromo) {
+          alert('That promo code is not active.');
+          return;
+        }
 
         const order = {
           id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
           customerName: shipName,
           customerEmail: shipEmail,
           shippingAddress: `${shipAddress}, ${shipCity}, ${shipState} ${shipZip}`,
+          promoCode: promoCode,
           items: cart,
-          subtotal: itemsSubtotal,
+          subtotal: totals.discountedSubtotal,
           shipping: shippingFee,
-          tax: estimatedTax,
+          tax: totals.estimatedTax,
           total: finalTotal,
+          discountAmount: totals.discountAmount,
           date: new Date().toISOString()
         };
 
@@ -348,9 +414,10 @@
           email: order.customerEmail,
           address: order.shippingAddress,
           items: itemsText,
-          subtotal: `$${itemsSubtotal.toFixed(2)}`,
+          promoCode: promoCode || 'None',
+          subtotal: `$${totals.discountedSubtotal.toFixed(2)}`,
           shipping: shippingFee === 0.00 ? 'FREE' : `$${shippingFee.toFixed(2)}`,
-          tax: `$${estimatedTax.toFixed(2)}`,
+          tax: `$${totals.estimatedTax.toFixed(2)}`,
           total: `$${finalTotal.toFixed(2)}`,
           date: order.date
         };
@@ -378,8 +445,16 @@
             localStorage.setItem('cartCount', '0');
 
             const successInstructions = document.getElementById('success-payment-instructions');
+            const successPromoSummary = document.getElementById('success-promo-summary');
             if (successInstructions) {
               successInstructions.innerHTML = `⚠️ IMPORTANT: Please complete your Venmo payment of $${finalTotal.toFixed(2)} within 60 minutes, or your order will be automatically cancelled.`;
+            }
+            if (successPromoSummary) {
+              successPromoSummary.innerHTML = `
+                <strong>Promo Code:</strong> ${promoCode || 'None'}<br>
+                <strong>Discount Applied:</strong> ${totals.discountAmount > 0 ? `-$${totals.discountAmount.toFixed(2)}` : '$0.00'}<br>
+                <strong>Final Amount:</strong> $${finalTotal.toFixed(2)}
+              `;
             }
 
             checkoutGrid.style.display = 'none';

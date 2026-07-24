@@ -184,6 +184,7 @@
       <li><a href="view booking owner.html">Bookings Calendar</a></li>
       <li><a href="view orders owner.html" class="active">Customer Orders</a></li>
       <li><a href="view settings owner.html">Custom Messages</a></li>
+      <li><a href="view performance owner.html">Analytics &amp; Performance</a></li>
       <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
     </ul>
     <div class="nav-actions">
@@ -281,6 +282,7 @@
           <div class="order-customer-info">
             <p><strong>Customer Name:</strong> ${order.customerName}</p>
             <p><strong>Shipping Address:</strong> ${order.shippingAddress}</p>
+            <p><strong>Promo Code:</strong> ${order.promoCode || 'None'}</p>
           </div>
           
           <div class="order-items-list">
@@ -389,7 +391,8 @@
           specText += `Order ID:         #${order.id || 'N/A'}\n`;
           specText += `Order Date:       ${displayDate}\n`;
           specText += `Customer Name:    ${order.customerName}\n`;
-          specText += `Shipping Address: ${order.shippingAddress}\n\n`;
+          specText += `Shipping Address: ${order.shippingAddress}\n`;
+          specText += `Promo Code:       ${order.promoCode || 'None'}\n\n`;
           
           specText += `GARMENT SPECIFICATIONS:\n`;
           specText += `-----------------------\n`;
