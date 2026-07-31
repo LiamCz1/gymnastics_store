@@ -73,6 +73,11 @@
   </header>
 
   <main>
+    <section id="shop-locked-message" style="display: none; margin-bottom: 2rem; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);">
+      <h2 style="margin: 0 0 0.5rem; font-size: 1.5rem; color: var(--text-dark);">Shop temporarily unavailable</h2>
+      <p style="margin: 0; color: var(--text-muted);">The shop section is currently locked by the owner. Please check back soon.</p>
+    </section>
+
     <section id="products">
       <h1 style="margin-top: 0; font-size: 2rem; font-weight: 700; color: var(--text-dark);">Products</h1>
       <div class="products-grid">
@@ -283,7 +288,28 @@
   </div>
 
   <script>
+    function applyShopAccessState() {
+      const shopEnabled = localStorage.getItem('shopSectionEnabled') !== 'false';
+      const productsSection = document.getElementById('products');
+      const ownerOrdersSection = document.getElementById('owner-orders-section');
+      const lockedMessage = document.getElementById('shop-locked-message');
+
+      if (productsSection) {
+        productsSection.style.display = shopEnabled ? '' : 'none';
+      }
+
+      if (ownerOrdersSection) {
+        ownerOrdersSection.style.display = shopEnabled ? '' : 'none';
+      }
+
+      if (lockedMessage) {
+        lockedMessage.style.display = shopEnabled ? 'none' : 'block';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      applyShopAccessState();
+
       const backButton = document.getElementById('back-button');
       const cartButton = document.getElementById('cart-button');
       const cartBadge = document.getElementById('nav-cart-badge') || document.querySelector('.cart-badge');
