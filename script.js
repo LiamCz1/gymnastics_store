@@ -331,10 +331,20 @@ document.addEventListener('DOMContentLoaded', () => {
   updateAthletesCoachedStat();
 });
 
+function getCartItems() {
+  try {
+    return JSON.parse(localStorage.getItem('gymCart') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
 function updateGlobalCartBadge() {
   const badge = document.getElementById('nav-cart-badge') || document.querySelector('.cart-badge');
   if (badge) {
-    const count = parseInt(localStorage.getItem('cartCount') || '0', 10);
+    const cart = getCartItems();
+    const count = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+    localStorage.setItem('cartCount', String(count));
     badge.textContent = String(count);
     if (count > 0) {
       badge.style.display = 'inline-block';
@@ -343,6 +353,13 @@ function updateGlobalCartBadge() {
     }
   }
 }
+
+window.addEventListener('storage', () => {
+  updateGlobalCartBadge();
+});
+window.addEventListener('focus', () => {
+  updateGlobalCartBadge();
+});
 
 function updateAthletesCoachedStat() {
   const statEl = document.getElementById('stat-athletes-coached');
