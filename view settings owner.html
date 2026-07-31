@@ -88,6 +88,21 @@
       display: none;
       animation: fadeIn 0.3s ease-out;
     }
+    .shop-access-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-main);
+    }
+    .shop-access-panel p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -128,6 +143,15 @@
         <div id="status-toast" class="status-toast">Home page settings saved successfully!</div>
 
         <form class="settings-form" id="settings-form" onsubmit="event.preventDefault();">
+          <div class="settings-group">
+            <label>Shop Section Access</label>
+            <div class="shop-access-panel">
+              <p id="shop-access-status">The shop section is currently unlocked.</p>
+              <button id="toggle-shop-lock-btn" class="save-settings-btn" type="button">Lock Shop Section</button>
+            </div>
+            <div class="placeholder-hint">Use this to temporarily disable public access to the shop section.</div>
+          </div>
+
           <div class="settings-group">
             <label for="promo-msg-input">Promo Banner Announcement Message</label>
             <textarea id="promo-msg-input" placeholder="Enter custom promo banner message"></textarea>
@@ -205,11 +229,34 @@
       document.getElementById('ticker-msg-input').value = localStorage.getItem('homeTickerMsg') !== null ? localStorage.getItem('homeTickerMsg') : defaultTicker;
     }
 
+    function updateShopAccessButton() {
+      const shopAccessStatus = document.getElementById('shop-access-status');
+      const toggleShopLockBtn = document.getElementById('toggle-shop-lock-btn');
+      const shopEnabled = localStorage.getItem('shopSectionEnabled') !== 'false';
+
+      if (shopAccessStatus) {
+        shopAccessStatus.textContent = shopEnabled
+          ? 'The shop section is currently unlocked.'
+          : 'The shop section is currently locked.';
+      }
+
+      if (toggleShopLockBtn) {
+        toggleShopLockBtn.textContent = shopEnabled ? 'Lock Shop Section' : 'Unlock Shop Section';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const ownerCodeInput = document.getElementById('owner-code');
       const loadOwnerSettingsBtn = document.getElementById('load-owner-settings-btn');
       const saveSettingsBtn = document.getElementById('save-settings-btn');
+      const toggleShopLockBtn = document.getElementById('toggle-shop-lock-btn');
       const statusToast = document.getElementById('status-toast');
+
+      if (localStorage.getItem('shopSectionEnabled') === null) {
+        localStorage.setItem('shopSectionEnabled', 'true');
+      }
+
+      updateShopAccessButton();
 
       // Check sessionStorage for authentication
       if (sessionStorage.getItem('ownerAuthorized') === 'true') {
@@ -232,6 +279,21 @@
         }
       });
 
+      toggleShopLockBtn.addEventListener('click', () => {
+        const currentlyEnabled = localStorage.getItem('shopSectionEnabled') !== 'false';
+        const nextValue = currentlyEnabled ? 'false' : 'true';
+        localStorage.setItem('shopSectionEnabled', nextValue);
+        updateShopAccessButton();
+
+        statusToast.textContent = nextValue === 'true'
+          ? 'Shop section unlocked successfully.'
+          : 'Shop section locked successfully.';
+        statusToast.style.display = 'block';
+        setTimeout(() => {
+          statusToast.style.display = 'none';
+        }, 3000);
+      });
+
       saveSettingsBtn.addEventListener('click', () => {
         const promo = document.getElementById('promo-msg-input').value.trim();
         const promoCode = document.getElementById('promo-code-input').value.trim();
@@ -250,6 +312,7 @@
         localStorage.setItem('homeTickerMsg', ticker);
 
         // Show status toast
+        statusToast.textContent = 'Home page settings saved successfully!';
         statusToast.style.display = 'block';
         setTimeout(() => {
           statusToast.style.display = 'none';
