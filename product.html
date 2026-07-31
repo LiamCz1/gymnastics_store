@@ -308,7 +308,13 @@
       function updateCartBadge(cart) {
         const count = cart.reduce((sum, item) => sum + item.quantity, 0);
         localStorage.setItem('cartCount', String(count));
-        if (cartBadge) cartBadge.textContent = String(count);
+        if (cartBadge) {
+          cartBadge.textContent = String(count);
+          cartBadge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+        if (window.updateGlobalCartBadge) {
+          window.updateGlobalCartBadge();
+        }
       }
 
       const initialCart = getCart();
@@ -1304,6 +1310,17 @@
     });
   </script>
   <script src="script.js"></script>
+</body>
+
+  <section id="payment-section"
+    style="margin-top: 3rem; padding: 2.25rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(244, 63, 94, 0.02) 100%); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
+    <h2 style="margin-bottom: 0.5rem;">Payment</h2>
+    <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Scan the QR code below to complete your payment securely via Venmo:</p>
+    <div style="text-align: center;">
+      <img src="images/venmo.png" alt="Venmo QR Code"
+        style="max-width: 320px; width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); padding: 0.5rem; background: #ffffff;">
+    </div>
+  </section>
 </body>
 
 </html>
