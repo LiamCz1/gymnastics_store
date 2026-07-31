@@ -13,8 +13,14 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#111827">
   <title>APEX GYM | Shop Equipment & Apparel</title>
   <meta name="description" content="Explore APEX GYM's range of premium gymnastics equipment and apparel, including balance beam trainers, grips, and custom printed gear.">
+  <meta name="geo.region" content="US">
+  <meta name="geo.placename" content="Your City">
+  <meta name="geo.position" content="40.7128;-74.0060">
+  <meta name="ICBM" content="40.7128, -74.0060">
   <link rel="canonical" href="https://liamcz1.github.io/gymnastics_store/product.html">
   
   <!-- Open Graph / Facebook -->
@@ -30,6 +36,18 @@
   <meta property="twitter:title" content="APEX GYM | Shop Equipment & Apparel">
   <meta property="twitter:description" content="Explore APEX GYM's range of premium gymnastics equipment and apparel, including balance beam trainers, grips, and custom printed gear.">
   <meta property="twitter:image" content="https://liamcz1.github.io/gymnastics_store/images/hero.jpg">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "APEX GYM",
+    "url": "https://liamcz1.github.io/gymnastics_store/product.html",
+    "description": "APEX GYM offers gymnastics equipment, grips, and custom apparel for training and competition.",
+    "email": "info@apexgym.com",
+    "telephone": "(555) 123-4567"
+  }
+  </script>
 
   <link rel="stylesheet" href="style.css">
   <script>
@@ -49,6 +67,7 @@
 </head>
 
 <body>
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;">Skip to main content</a>
   <header class="app-header">
     <a href="index.html" class="nav-brand">
       APEX<span>GYM</span>
@@ -72,7 +91,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <section id="shop-locked-message" style="display: none; margin-bottom: 2rem; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);">
       <h2 style="margin: 0 0 0.5rem; font-size: 1.5rem; color: var(--text-dark);">Shop temporarily unavailable</h2>
       <p style="margin: 0; color: var(--text-muted);">The shop section is currently locked by the owner. Please check back soon.</p>
@@ -80,9 +99,10 @@
 
     <section id="products">
       <h1 style="margin-top: 0; font-size: 2rem; font-weight: 700; color: var(--text-dark);">Products</h1>
+      <p style="margin: 0 0 1.25rem; color: var(--text-muted); max-width: 760px; line-height: 1.7;">Browse gymnastics equipment, grips, and custom apparel built for training, competition, and team style at APEX GYM.</p>
       <div class="products-grid">
         <article class="product-card">
-          <div class="product-image"><img src="images/balance_beam.png" alt="Balance Beam Trainer"></div>
+          <div class="product-image"><img src="images/balance_beam.png" alt="Portable foam balance beam trainer for home gymnastics practice" loading="lazy"></div>
           <div class="product-info">
             <h3>Balance Beam Trainer</h3>
             <p class="product-price">$79.99</p>
@@ -93,7 +113,7 @@
         </article>
 
         <article class="product-card">
-          <div class="product-image"><img src="images/grips.png" alt="Gymnastics Grips"></div>
+          <div class="product-image"><img src="images/grips.png" alt="Leather gymnastics grips for bar work and training" loading="lazy"></div>
           <div class="product-info">
             <h3>Gymnastics Grips</h3>
             <p class="product-price">$24.99</p>

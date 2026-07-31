@@ -19,6 +19,17 @@
   --radius-md: 14px;
   --radius-lg: 24px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --promo-banner-bg: linear-gradient(90deg, #be185d, #e11d48);
+  --promo-banner-text: #ffffff;
+  --promo-badge-bg: rgba(255, 255, 255, 0.18);
+  --promo-badge-border: rgba(255, 255, 255, 0.28);
+}
+
+[data-theme="dark"] {
+  --promo-banner-bg: linear-gradient(90deg, #fb7185, #e11d48);
+  --promo-banner-text: #fff1f2;
+  --promo-badge-bg: rgba(15, 23, 42, 0.22);
+  --promo-badge-border: rgba(255, 255, 255, 0.24);
 }
 
 /* Global Reset */
@@ -1396,8 +1407,8 @@ header.app-header {
 
 /* Landing Page Overhaul Styles */
 .promo-banner {
-  background: linear-gradient(90deg, #be185d, #e11d48);
-  color: #ffffff;
+  background: var(--promo-banner-bg);
+  color: var(--promo-banner-text);
   text-align: center;
   padding: 0.6rem 1rem;
   font-size: 0.85rem;
@@ -1407,6 +1418,18 @@ header.app-header {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   z-index: 101;
   position: relative;
+}
+
+.promo-code-badge {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--promo-badge-bg);
+  border: 1px solid var(--promo-badge-border);
+  color: var(--promo-banner-text);
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .hero-grid-layout {

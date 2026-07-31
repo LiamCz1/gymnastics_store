@@ -132,12 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
         promoText = promoText.replace(/\b\d+%\b/g, `${savedPromoPercent}%`);
       }
       if (savedPromoCode) {
+        const codeBadge = `<span class="promo-code-badge">${savedPromoCode}</span>`;
         if (!promoText.includes('Use code') && !promoText.includes('code')) {
-          promoText = `${promoText}  Use code ${savedPromoCode}`;
+          promoText = `${promoText}  Use code ${codeBadge}`;
         } else if (promoText.includes('Use code')) {
-          promoText = promoText.replace(/Use code/i, `Use code ${savedPromoCode}`);
+          promoText = promoText.replace(/Use code\s*/i, `Use code ${codeBadge}`);
         } else {
-          promoText = `${promoText} ${savedPromoCode}`;
+          promoText = `${promoText} ${codeBadge}`;
         }
       }
       promoEl.innerHTML = promoText;
