@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | AIO Checkout</title>
+  <meta name="description" content="All-in-one checkout for products, lesson bookings, and payment instructions at APEX GYM.">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+
+<body>
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;">Skip to main content</a>
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">APEX<span>GYM</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Shop</a></li>
+      <li><a href="lessons.html">Lessons</a></li>
+      <li><a href="aio.html" class="active">AIO</a></li>
+      <li><a href="view my.html">My Bookings</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+      <a href="buy.html" class="cart-nav-btn" aria-label="View Cart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        Cart <span class="cart-badge" id="nav-cart-badge">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main-content" style="max-width: 1100px; width: 100%; margin: 0 auto; padding: 4rem 1rem;">
+    <section style="text-align: center; margin-bottom: 3rem;">
+      <span class="hero-overline">AIO Checkout</span>
+      <h1 class="hero-title-main" style="font-size: 2.5rem; margin: 1rem 0;">One place for shopping, booking, and payment</h1>
+      <p style="max-width: 760px; margin: 0 auto; color: var(--text-muted); line-height: 1.75;">Use the all-in-one experience to finish your order, add lesson bookings, and complete payment from a single streamlined page.</p>
+    </section>
+
+    <div class="checkout-container" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem;">
+      <section class="checkout-section" style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg);">
+        <div class="checkout-section-title" style="margin-bottom: 1rem;">
+          <span><span class="step-number">1</span>AIO Quick Start</span>
+        </div>
+        <p style="margin: 0 0 1.25rem; color: var(--text-muted);">Select items from the shop and book a lesson, then proceed to the checkout summary and payment steps.</p>
+        <div style="display: grid; gap: 1rem;">
+          <a href="product.html" class="btn" style="display: inline-flex; justify-content: center;">Browse Products</a>
+          <a href="lessons.html" class="btn btn-secondary" style="display: inline-flex; justify-content: center;">Book a Lesson</a>
+        </div>
+      </section>
+
+      <aside class="summary-card" style="padding: 2rem; border-radius: var(--radius-lg); background: var(--bg-card);">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-dark);">What AIO does</h3>
+        <ul style="margin: 0; padding-left: 1.2rem; color: var(--text-muted); line-height: 1.8;">
+          <li>Unify cart checkout with lesson booking</li>
+          <li>Show totals, shipping, tax, and promo discounts</li>
+          <li>Keep the Venmo payment flow in one place</li>
+          <li>Provide a single confirmation screen</li>
+        </ul>
+      </aside>
+    </div>
+
+    <section style="margin-top: 3rem; display: grid; gap: 1.5rem;">
+      <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.75rem;">
+        <h2 style="margin-top: 0;">Next</h2>
+        <p style="margin: 0 0 1rem; color: var(--text-muted);">I will connect the checkout/cart data and booking form to this page next so the AIO experience becomes fully functional.</p>
+        <a href="buy.html" class="btn" style="display: inline-flex; justify-content: center;">Open current checkout</a>
+      </div>
+      <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.75rem;">
+        <h2 style="margin-top: 0;">Current booking support</h2>
+        <p style="margin: 0; color: var(--text-muted);">The lesson booking process will remain on the Lessons page until I wire it into AIO.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer style="padding: 2rem 1rem; text-align: center; color: var(--text-muted);">
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
+  </footer>
+</body>
+
+</html>
