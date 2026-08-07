@@ -23,7 +23,6 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
       <li><a href="lessons.html">Lessons</a></li>
-      <li><a href="aio.html" class="active">AIO</a></li>
       <li><a href="view my.html">My Bookings</a></li>
     </ul>
     <div class="nav-actions">
@@ -39,52 +38,390 @@
     </div>
   </header>
 
-  <main id="main-content" style="max-width: 1100px; width: 100%; margin: 0 auto; padding: 4rem 1rem;">
-    <section style="text-align: center; margin-bottom: 3rem;">
+  <main id="main-content" style="max-width: 1150px; width: 100%; margin: 0 auto; padding: 3.5rem 1rem;">
+    <section style="text-align: center; margin-bottom: 2.5rem;">
       <span class="hero-overline">AIO Checkout</span>
       <h1 class="hero-title-main" style="font-size: 2.5rem; margin: 1rem 0;">One place for shopping, booking, and payment</h1>
-      <p style="max-width: 760px; margin: 0 auto; color: var(--text-muted); line-height: 1.75;">Use the all-in-one experience to finish your order, add lesson bookings, and complete payment from a single streamlined page.</p>
+      <p style="max-width: 760px; margin: 0 auto; color: var(--text-muted); line-height: 1.75;">Review your shopping cart, bookings, and payment summary from a single page. Keep checkout simple with a shared order total and clear Venmo payment instructions.</p>
     </section>
 
-    <div class="checkout-container" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem;">
-      <section class="checkout-section" style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg);">
+    <div class="checkout-container">
+      <section class="checkout-section" style="padding: 2rem;">
         <div class="checkout-section-title" style="margin-bottom: 1rem;">
-          <span><span class="step-number">1</span>AIO Quick Start</span>
+          <span><span class="step-number">1</span>Shipping & order details</span>
         </div>
-        <p style="margin: 0 0 1.25rem; color: var(--text-muted);">Select items from the shop and book a lesson, then proceed to the checkout summary and payment steps.</p>
-        <div style="display: grid; gap: 1rem;">
-          <a href="product.html" class="btn" style="display: inline-flex; justify-content: center;">Browse Products</a>
-          <a href="lessons.html" class="btn btn-secondary" style="display: inline-flex; justify-content: center;">Book a Lesson</a>
+        <form id="aio-shipping-form" onsubmit="event.preventDefault();">
+          <div class="form-field">
+            <label for="aio-ship-name">Full Name</label>
+            <input type="text" id="aio-ship-name" name="name" placeholder="John Doe" autocomplete="name" required>
+          </div>
+          <div class="form-field">
+            <label for="aio-ship-email">Email Address</label>
+            <input type="email" id="aio-ship-email" name="email" placeholder="john.doe@example.com" autocomplete="email" required>
+          </div>
+          <div class="form-field">
+            <label for="aio-ship-address">Address</label>
+            <input type="text" id="aio-ship-address" name="address" placeholder="123 Gym St" autocomplete="street-address">
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="aio-ship-city">City</label>
+              <input type="text" id="aio-ship-city" name="city" placeholder="Tumble Town" autocomplete="address-level2">
+            </div>
+            <div class="form-field">
+              <label for="aio-ship-state">State</label>
+              <input type="text" id="aio-ship-state" name="state" placeholder="TX" autocomplete="address-level1">
+            </div>
+          </div>
+          <div class="form-field" style="max-width: 220px;">
+            <label for="aio-ship-zip">ZIP Code</label>
+            <input type="text" id="aio-ship-zip" name="zip" placeholder="75001" autocomplete="postal-code">
+          </div>
+          <div class="checkout-promo-field">
+            <label for="aio-promo-code">Promo Code (optional)</label>
+            <input type="text" id="aio-promo-code" name="promo-code" placeholder="Enter promo code">
+          </div>
+        </form>
+
+        <div id="aio-summary-sections" style="margin-top: 2rem; display: grid; gap: 1.5rem;">
+          <div class="checkout-section" style="padding: 1.5rem;">
+            <div class="checkout-section-title" style="margin-bottom: 1rem;">
+              <span><span class="step-number">2</span>Cart Items</span>
+            </div>
+            <div id="aio-cart-items" class="checkout-items"></div>
+            <div id="aio-no-cart" style="display: none; color: var(--text-muted);">No items in your cart. <a href="product.html">Browse products</a>.</div>
+          </div>
+
+          <div class="checkout-section" style="padding: 1.5rem;">
+            <div class="checkout-section-title" style="margin-bottom: 1rem;">
+              <span><span class="step-number">3</span>Lesson Bookings</span>
+            </div>
+            <div id="aio-booking-items"></div>
+            <div id="aio-no-bookings" style="display: none; color: var(--text-muted);">No bookings yet. <a href="lessons.html">Book a lesson</a>.</div>
+          </div>
         </div>
       </section>
 
-      <aside class="summary-card" style="padding: 2rem; border-radius: var(--radius-lg); background: var(--bg-card);">
-        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-dark);">What AIO does</h3>
-        <ul style="margin: 0; padding-left: 1.2rem; color: var(--text-muted); line-height: 1.8;">
-          <li>Unify cart checkout with lesson booking</li>
-          <li>Show totals, shipping, tax, and promo discounts</li>
-          <li>Keep the Venmo payment flow in one place</li>
-          <li>Provide a single confirmation screen</li>
-        </ul>
+      <aside class="summary-card" style="padding: 2rem;">
+        <button id="aio-place-order-btn" class="checkout-btn" type="button">Place AIO Order</button>
+        <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin: 0.75rem 0 1.25rem 0; line-height: 1.3;">By placing your order, you agree to APEX GYM’s privacy notice and conditions of use.</p>
+
+        <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem; color: var(--text-dark);">Order Summary</h3>
+        <div class="order-summary-row">
+          <span>Items (<span id="aio-summary-items-count">0</span>):</span>
+          <span id="aio-summary-items-price">$0.00</span>
+        </div>
+        <div class="order-summary-row">
+          <span>Lessons (<span id="aio-summary-lessons-count">0</span>):</span>
+          <span id="aio-summary-lessons-price">$0.00</span>
+        </div>
+        <div class="order-summary-row" id="aio-promo-row" style="display: none;">
+          <span>Promo discount:</span>
+          <span id="aio-summary-promo">$0.00</span>
+        </div>
+        <div class="order-summary-row">
+          <span>Shipping & handling:</span>
+          <span id="aio-summary-shipping">$0.00</span>
+        </div>
+        <div class="order-summary-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+          <span>Estimated tax:</span>
+          <span id="aio-summary-tax">$0.00</span>
+        </div>
+        <div class="order-total-row">
+          <span>Order Total:</span>
+          <span id="aio-summary-total">$0.00</span>
+        </div>
+
+        <div id="aio-venmo-box" style="margin-top: 1.5rem; padding: 1rem; border-radius: var(--radius-sm); background: #f8fafc; border: 1px solid var(--border-color); color: var(--text-dark); font-size: 0.95rem; line-height: 1.5;">
+          <p style="font-weight: 700; margin: 0 0 0.75rem 0;">Pay with Venmo</p>
+          <p style="margin: 0 0 0.75rem 0;">Scan the QR code below after placing your order to complete your payment.</p>
+          <img src="images/venmo.png" alt="Venmo QR code" style="width: 100%; max-width: 280px; display: block; margin: 0 auto; border-radius: var(--radius-sm);">
+          <p id="aio-venmo-warning" style="margin: 0.75rem 0 0 0; color: var(--accent); font-weight: 700;">Payment due within 60 minutes to keep your order active.</p>
+        </div>
       </aside>
     </div>
 
-    <section style="margin-top: 3rem; display: grid; gap: 1.5rem;">
-      <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.75rem;">
-        <h2 style="margin-top: 0;">Next</h2>
-        <p style="margin: 0 0 1rem; color: var(--text-muted);">I will connect the checkout/cart data and booking form to this page next so the AIO experience becomes fully functional.</p>
-        <a href="buy.html" class="btn" style="display: inline-flex; justify-content: center;">Open current checkout</a>
+    <div class="confirmation-container" id="aio-success-screen" style="display: none; margin-top: 2rem; padding: 2rem;">
+      <div style="display: grid; gap: 1rem; text-align: center;">
+        <div class="confirmation-check">✓</div>
+        <h2>Order submitted successfully</h2>
+        <p id="aio-success-message" style="margin: 0; color: var(--text-muted);">Your order has been saved. Complete the Venmo payment and we’ll prepare your items and booking.</p>
+        <div id="aio-success-details" style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; text-align: left; line-height: 1.7;"></div>
+        <button id="aio-success-close" class="checkout-btn" type="button">Continue</button>
       </div>
-      <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.75rem;">
-        <h2 style="margin-top: 0;">Current booking support</h2>
-        <p style="margin: 0; color: var(--text-muted);">The lesson booking process will remain on the Lessons page until I wire it into AIO.</p>
-      </div>
-    </section>
+    </div>
   </main>
 
   <footer style="padding: 2rem 1rem; text-align: center; color: var(--text-muted);">
     <p>&copy; 2026 APEX GYM. All rights reserved.</p>
   </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cartItemsContainer = document.getElementById('aio-cart-items');
+      const bookingItemsContainer = document.getElementById('aio-booking-items');
+      const noCartMessage = document.getElementById('aio-no-cart');
+      const noBookingMessage = document.getElementById('aio-no-bookings');
+      const summaryItemsCount = document.getElementById('aio-summary-items-count');
+      const summaryLessonsCount = document.getElementById('aio-summary-lessons-count');
+      const summaryItemsPrice = document.getElementById('aio-summary-items-price');
+      const summaryLessonsPrice = document.getElementById('aio-summary-lessons-price');
+      const summaryPromo = document.getElementById('aio-summary-promo');
+      const summaryShipping = document.getElementById('aio-summary-shipping');
+      const summaryTax = document.getElementById('aio-summary-tax');
+      const summaryTotal = document.getElementById('aio-summary-total');
+      const promoRow = document.getElementById('aio-promo-row');
+      const placeOrderBtn = document.getElementById('aio-place-order-btn');
+      const shippingForm = document.getElementById('aio-shipping-form');
+      const promoInput = document.getElementById('aio-promo-code');
+      const successScreen = document.getElementById('aio-success-screen');
+      const successDetails = document.getElementById('aio-success-details');
+      const successClose = document.getElementById('aio-success-close');
+      const navBadge = document.getElementById('nav-cart-badge');
+
+      function getCart() {
+        try {
+          return JSON.parse(localStorage.getItem('gymCart') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function setCart(cart) {
+        localStorage.setItem('gymCart', JSON.stringify(cart));
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        localStorage.setItem('cartCount', String(count));
+        if (window.updateGlobalCartBadge) {
+          window.updateGlobalCartBadge();
+        }
+        if (navBadge) {
+          navBadge.textContent = String(count);
+          navBadge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+      }
+
+      function getBookedSlots() {
+        try {
+          return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function getActivePromo() {
+        const code = (localStorage.getItem('homePromoCode') || '').trim().toUpperCase();
+        const percent = parseInt(localStorage.getItem('homePromoPercent') || '0', 10);
+        return {
+          code,
+          percent: Number.isNaN(percent) ? 0 : percent
+        };
+      }
+
+      function normalizePromoCode(value) {
+        return (value || '').trim().toUpperCase();
+      }
+
+      function calculateTotals(itemsSubtotal, lessonsSubtotal, shippingFee, promoCode) {
+        const activePromo = getActivePromo();
+        const enteredPromo = normalizePromoCode(promoCode);
+        const activePromoCode = normalizePromoCode(activePromo.code);
+        const isValidPromo = Boolean(activePromoCode && enteredPromo && enteredPromo === activePromoCode && activePromo.percent > 0);
+        const discountAmount = isValidPromo ? (itemsSubtotal + lessonsSubtotal) * (activePromo.percent / 100) : 0;
+        const discountedSubtotal = Math.max(0, itemsSubtotal + lessonsSubtotal - discountAmount);
+        const taxRate = 0.085;
+        const estimatedTax = (discountedSubtotal + shippingFee) * taxRate;
+        const finalTotal = discountedSubtotal + shippingFee + estimatedTax;
+        return {
+          discountedSubtotal,
+          discountAmount,
+          shippingFee,
+          estimatedTax,
+          finalTotal,
+          isValidPromo
+        };
+      }
+
+      function renderAio() {
+        const cart = getCart();
+        const bookings = getBookedSlots();
+        const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const itemsSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const lessonsSubtotal = bookings.reduce((sum, slot) => {
+          return sum + ((Number(slot.price) || 0) * (Number(slot.numPeople) || 1));
+        }, 0);
+
+        summaryItemsCount.textContent = cartCount;
+        summaryLessonsCount.textContent = bookings.length;
+
+        cartItemsContainer.innerHTML = '';
+        bookingItemsContainer.innerHTML = '';
+
+        if (cart.length === 0) {
+          noCartMessage.style.display = 'block';
+        } else {
+          noCartMessage.style.display = 'none';
+          cart.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'checkout-item-card';
+            card.style.padding = '1rem 0';
+            card.innerHTML = `
+              <div style="display: flex; gap: 1rem; align-items: center;">
+                <img src="${item.img || 'images/hero.jpg'}" alt="${item.name}" class="item-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                <div style="flex: 1;">
+                  <h4>${item.name}</h4>
+                  <span class="item-price">$${item.price.toFixed(2)}</span>
+                  <div style="margin-top: 0.75rem; display: flex; gap: 1rem; align-items: center;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Qty:
+                      <select class="quantity-select" data-index="${index}" style="margin-left: 0.5rem;">
+                        ${[1,2,3,4,5,6,7,8,9,10].map(q => `<option value="${q}" ${item.quantity === q ? 'selected' : ''}>${q}</option>`).join('')}
+                      </select>
+                    </label>
+                    <button class="delete-item-link" data-index="${index}" style="background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;padding:0;">Remove</button>
+                  </div>
+                </div>
+              </div>
+            `;
+            cartItemsContainer.appendChild(card);
+          });
+        }
+
+        if (bookings.length === 0) {
+          noBookingMessage.style.display = 'block';
+        } else {
+          noBookingMessage.style.display = 'none';
+          bookings.forEach((booking) => {
+            const bookingCard = document.createElement('div');
+            bookingCard.className = 'checkout-item-card';
+            bookingCard.style.padding = '1rem 0';
+            const numPeople = Number(booking.numPeople) || 1;
+            bookingCard.innerHTML = `
+              <div style="display: grid; gap: 0.45rem;">
+                <h4>${booking.lesson}</h4>
+                <span style="color: var(--text-muted);">${booking.date} · ${booking.time} · ${booking.type === 'weekly' ? 'Recurring' : 'One-time'}</span>
+                <span style="color: var(--text-muted);">Attendees: ${numPeople}</span>
+                <span style="font-weight: 700; color: var(--accent);">$${((Number(booking.price) || 0) * numPeople).toFixed(2)}</span>
+              </div>
+            `;
+            bookingItemsContainer.appendChild(bookingCard);
+          });
+        }
+
+        const shippingFee = cart.length > 0 ? (itemsSubtotal > 50 ? 0 : 5.99) : 0;
+        const totals = calculateTotals(itemsSubtotal, lessonsSubtotal, shippingFee, promoInput.value);
+
+        summaryItemsPrice.textContent = `$${itemsSubtotal.toFixed(2)}`;
+        summaryLessonsPrice.textContent = `$${lessonsSubtotal.toFixed(2)}`;
+        summaryShipping.textContent = shippingFee === 0 ? 'FREE' : `$${shippingFee.toFixed(2)}`;
+        summaryTax.textContent = `$${totals.estimatedTax.toFixed(2)}`;
+        summaryTotal.textContent = `$${totals.finalTotal.toFixed(2)}`;
+
+        if (totals.discountAmount > 0) {
+          promoRow.style.display = 'flex';
+          summaryPromo.textContent = `-$${totals.discountAmount.toFixed(2)}`;
+        } else {
+          promoRow.style.display = 'none';
+        }
+
+        document.querySelectorAll('.quantity-select').forEach(select => {
+          select.addEventListener('change', (event) => {
+            const index = Number(event.target.dataset.index);
+            const currentCart = getCart();
+            if (currentCart[index]) {
+              currentCart[index].quantity = Number(event.target.value);
+              setCart(currentCart);
+              renderAio();
+            }
+          });
+        });
+
+        document.querySelectorAll('.delete-item-link').forEach(button => {
+          button.addEventListener('click', (event) => {
+            const index = Number(event.target.dataset.index);
+            const currentCart = getCart();
+            currentCart.splice(index, 1);
+            setCart(currentCart);
+            renderAio();
+          });
+        });
+      }
+
+      function validateOrder() {
+        const cart = getCart();
+        const bookings = getBookedSlots();
+        if (cart.length === 0 && bookings.length === 0) {
+          alert('Your order is empty. Add items or book a lesson first.');
+          return false;
+        }
+        return shippingForm.reportValidity();
+      }
+
+      placeOrderBtn.addEventListener('click', () => {
+        if (!validateOrder()) return;
+        const cart = getCart();
+        const bookings = getBookedSlots();
+        const itemsSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const lessonsSubtotal = bookings.reduce((sum, slot) => {
+          return sum + ((Number(slot.price) || 0) * (Number(slot.numPeople) || 1));
+        }, 0);
+        const shippingFee = cart.length > 0 ? (itemsSubtotal > 50 ? 0 : 5.99) : 0;
+        const totals = calculateTotals(itemsSubtotal, lessonsSubtotal, shippingFee, promoInput.value);
+
+        if (promoInput.value && !totals.isValidPromo) {
+          alert('That promo code is not active.');
+          return;
+        }
+
+        const order = {
+          id: `AIO-${Date.now()}`,
+          date: new Date().toISOString(),
+          customerName: document.getElementById('aio-ship-name').value.trim(),
+          customerEmail: document.getElementById('aio-ship-email').value.trim(),
+          shippingAddress: `${document.getElementById('aio-ship-address').value.trim()}, ${document.getElementById('aio-ship-city').value.trim()}, ${document.getElementById('aio-ship-state').value.trim()} ${document.getElementById('aio-ship-zip').value.trim()}`.replace(/^,\s*/, ''),
+          promoCode: promoInput.value.trim() || 'None',
+          cartItems: cart,
+          bookings: bookings,
+          subtotal: totals.discountedSubtotal,
+          shipping: shippingFee,
+          tax: totals.estimatedTax,
+          total: totals.finalTotal,
+          discountAmount: totals.discountAmount
+        };
+
+        const orders = JSON.parse(localStorage.getItem('gymOrders') || '[]');
+        orders.push(order);
+        localStorage.setItem('gymOrders', JSON.stringify(orders));
+        localStorage.removeItem('gymCart');
+        setCart([]);
+
+        const itemListText = cart.length > 0 ? cart.map(item => `• ${item.name} x${item.quantity} = $${(item.price * item.quantity).toFixed(2)}`).join('<br>') : 'None';
+        const bookingListText = bookings.length > 0 ? bookings.map(slot => `• ${slot.lesson} on ${slot.date} at ${slot.time} (${slot.type === 'weekly' ? 'Recurring' : 'One-time'})`).join('<br>') : 'None';
+
+        successDetails.innerHTML = `
+          <p style="margin: 0 0 0.75rem 0;"><strong>Order ID:</strong> ${order.id}</p>
+          <p style="margin: 0 0 0.75rem 0;"><strong>Items:</strong><br>${itemListText}</p>
+          <p style="margin: 0 0 0.75rem 0;"><strong>Lessons:</strong><br>${bookingListText}</p>
+          <p style="margin: 0 0 0.75rem 0;"><strong>Order total:</strong> $${order.total.toFixed(2)}</p>
+          <p style="margin: 0; color: var(--accent); font-weight: 700;">Please complete your Venmo payment within 60 minutes.</p>
+        `;
+
+        document.querySelector('.checkout-container').style.display = 'none';
+        successScreen.style.display = 'block';
+      });
+
+      if (successClose) {
+        successClose.addEventListener('click', () => {
+          window.location.href = 'index.html';
+        });
+      }
+
+      promoInput.addEventListener('input', () => {
+        renderAio();
+      });
+
+      renderAio();
+    });
+  </script>
 </body>
 
 </html>
