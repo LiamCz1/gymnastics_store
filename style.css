@@ -269,6 +269,74 @@ button:active, .btn:active {
   box-shadow: var(--shadow-sm);
 }
 
+/* Auth UI in header */
+.auth-link {
+  color: var(--text-dark);
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+.auth-link:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+#google-signin-header {
+  display: inline-flex;
+  align-items: center;
+}
+
+#nav-user {
+  display: none; /* controlled via JS */
+}
+#nav-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+.profile-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Signup page Google CTA */
+.oauth-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+}
+.oauth-cta .separator {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Method toggle buttons (Email / Google) */
+.method-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+.method-btn {
+  flex: 1 1 auto;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.method-btn.active {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(79,70,229,0.12);
+}
+
 #cart-button:hover {
   background-color: var(--bg-main);
   border-color: #cbd5e1;

@@ -817,6 +817,25 @@
           currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
 
           renderCalendar(currentWeekStart);
+          // If user is logged in, pre-fill name/email and lock fields
+          try {
+            const current = window.auth && window.auth.getCurrentUser ? window.auth.getCurrentUser() : null;
+            const nameInput = document.getElementById('booker-name');
+            const emailInput = document.getElementById('booker-email');
+            const phoneInput = document.getElementById('booker-phone');
+            if (current) {
+              if (nameInput) { nameInput.value = current.name || ''; nameInput.disabled = true; }
+              if (emailInput) { emailInput.value = current.email || ''; emailInput.disabled = true; }
+              if (phoneInput && current.phone) { phoneInput.value = current.phone; phoneInput.disabled = true; }
+            } else {
+              if (nameInput) { nameInput.disabled = false; }
+              if (emailInput) { emailInput.disabled = false; }
+              if (phoneInput) { phoneInput.disabled = false; }
+            }
+          } catch (e) {
+            // ignore
+          }
+
           bookingModal.style.display = 'block';
         });
       });
@@ -872,24 +891,31 @@
           alert('Please select a time slot');
           return;
         }
-
-        const bookerName = document.getElementById('booker-name').value.trim();
-        if (!bookerName) {
-          alert('Please enter your name');
-          return;
+        // Use logged-in user info when available; otherwise read from inputs
+        let bookerName = '';
+        let bookerEmail = '';
+        let bookerPhone = '';
+        try {
+          const current = window.auth && window.auth.getCurrentUser ? window.auth.getCurrentUser() : null;
+          if (current) {
+            bookerName = current.name || '';
+            bookerEmail = current.email || '';
+            // optional phone may be stored on user object
+            bookerPhone = current.phone || document.getElementById('booker-phone').value.trim();
+          } else {
+            bookerName = document.getElementById('booker-name').value.trim();
+            bookerEmail = document.getElementById('booker-email').value.trim();
+            bookerPhone = document.getElementById('booker-phone').value.trim();
+          }
+        } catch (e) {
+          bookerName = document.getElementById('booker-name').value.trim();
+          bookerEmail = document.getElementById('booker-email').value.trim();
+          bookerPhone = document.getElementById('booker-phone').value.trim();
         }
 
-        const bookerEmail = document.getElementById('booker-email').value.trim();
-        if (!bookerEmail) {
-          alert('Please enter your email address');
-          return;
-        }
-
-        const bookerPhone = document.getElementById('booker-phone').value.trim();
-        if (!bookerPhone) {
-          alert('Please enter your phone number');
-          return;
-        }
+        if (!bookerName) { alert('Please enter your name'); return; }
+        if (!bookerEmail) { alert('Please enter your email address'); return; }
+        if (!bookerPhone) { alert('Please enter your phone number'); return; }
 
         const lessonName = lessonNameInput.value;
         const bookingType = document.querySelector('input[name="booking-type"]:checked').value;
@@ -1071,6 +1097,7 @@
       }
     });
   </script>
+  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 
