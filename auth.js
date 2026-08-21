@@ -22,7 +22,8 @@ function saveUsers(users) {
 }
 
 function setCurrentUser(user) {
-  localStorage.setItem('gymCurrentUser', JSON.stringify({ email: user.email, name: user.name }));
+  const { passwordHash, ...sessionUser } = user;
+  localStorage.setItem('gymCurrentUser', JSON.stringify(sessionUser));
   window.dispatchEvent(new Event('storage'));
 }
 
