@@ -132,12 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
         promoText = promoText.replace(/\b\d+%\b/g, `${savedPromoPercent}%`);
       }
       if (savedPromoCode) {
+        const codeBadge = `<span class="promo-code-badge">${savedPromoCode}</span>`;
         if (!promoText.includes('Use code') && !promoText.includes('code')) {
-          promoText = `${promoText}  Use code ${savedPromoCode}`;
+          promoText = `${promoText}  Use code ${codeBadge}`;
         } else if (promoText.includes('Use code')) {
-          promoText = promoText.replace(/Use code/i, `Use code ${savedPromoCode}`);
+          promoText = promoText.replace(/Use code\s*/i, `Use code ${codeBadge}`);
         } else {
-          promoText = `${promoText} ${savedPromoCode}`;
+          promoText = `${promoText} ${codeBadge}`;
         }
       }
       promoEl.innerHTML = promoText;
@@ -329,6 +330,138 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateAthletesCoachedStat();
+
+  const heroPhoto = document.querySelector('.hero-photo');
+  if (heroPhoto) {
+    const makeGymnastFlip = () => {
+      const photoRect = heroPhoto.getBoundingClientRect();
+      const flipPhoto = heroPhoto.cloneNode();
+      flipPhoto.className = 'gymnast-flip';
+      flipPhoto.removeAttribute('role');
+      flipPhoto.removeAttribute('tabindex');
+      flipPhoto.setAttribute('aria-hidden', 'true');
+      const flipWidth = Math.min(window.innerWidth * 0.38, 280);
+      const flipHeight = photoRect.height * (flipWidth / photoRect.width);
+      const startX = window.innerWidth - flipWidth;
+      const startY = window.innerHeight - flipHeight;
+      const endX = 0;
+      const endY = window.innerHeight - flipHeight * 0.65;
+      const controlX = (startX + endX) / 2;
+      const arcY = Math.max(20, window.innerHeight * 0.08);
+      const controlY = 2 * arcY - (startY + endY) / 2;
+      flipPhoto.style.width = `${flipWidth}px`;
+      flipPhoto.style.setProperty('--flight-path', `path("M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}")`);
+      document.body.appendChild(flipPhoto);
+      flipPhoto.addEventListener('animationend', () => flipPhoto.remove(), { once: true });
+    };
+
+    heroPhoto.addEventListener('click', makeGymnastFlip);
+    heroPhoto.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        makeGymnastFlip();
+      }
+    });
+  }
+
+  let thanosCode = '';
+  let thanosCodeTimeout;
+  document.addEventListener('keydown', (event) => {
+    if (event.key.length !== 1) return;
+    thanosCode = `${thanosCode}${event.key.toLowerCase()}`.slice(-6);
+    clearTimeout(thanosCodeTimeout);
+    thanosCodeTimeout = setTimeout(() => { thanosCode = ''; }, 1500);
+
+    if (thanosCode !== 'thanos') return;
+    thanosCode = '';
+
+    const textElements = document.querySelectorAll('h1, h2, h3, h4, p, .nav-links a, .stat-desc, .ticker-item');
+    const originalMarkup = [];
+    const ashTargets = [];
+    textElements.forEach(element => {
+      originalMarkup.push({ element, html: element.innerHTML });
+      const words = element.textContent.split(/(\s+)/);
+      element.replaceChildren();
+      words.forEach(word => {
+        if (!word.trim()) {
+          element.appendChild(document.createTextNode(word));
+          return;
+        }
+        const ashWord = document.createElement('span');
+        ashWord.className = 'thanos-ash-word';
+        ashWord.textContent = word;
+        ashWord.style.setProperty('--ash-x', `${Math.round((Math.random() - 0.5) * 80)}px`);
+        ashWord.style.setProperty('--ash-y', `${Math.round((Math.random() - 0.5) * 70)}px`);
+        ashWord.style.setProperty('--ash-rotate', `${Math.round((Math.random() - 0.5) * 50)}deg`);
+        element.appendChild(ashWord);
+        ashTargets.push(ashWord);
+      });
+    });
+    for (let index = ashTargets.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [ashTargets[index], ashTargets[randomIndex]] = [ashTargets[randomIndex], ashTargets[index]];
+    }
+    const snapFlash = document.createElement('div');
+    snapFlash.className = 'thanos-snap-flash';
+    snapFlash.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(snapFlash);
+    const gauntlet = document.createElement('div');
+    gauntlet.className = 'thanos-gauntlet';
+    gauntlet.setAttribute('aria-hidden', 'true');
+    gauntlet.innerHTML = '<span class="thanos-finger finger-pinky"></span><span class="thanos-finger finger-ring"></span><span class="thanos-finger finger-middle"></span><span class="thanos-finger finger-index"></span><span class="thanos-gem gem-red"></span><span class="thanos-gem gem-orange"></span><span class="thanos-gem gem-yellow"></span><span class="thanos-gem gem-green"></span><span class="thanos-gem gem-blue"></span><span class="thanos-gem gem-purple"></span>';
+    document.body.appendChild(gauntlet);
+    const releaseAsh = target => {
+      const targetRect = target.getBoundingClientRect();
+      const targetColor = getComputedStyle(target).color;
+      for (let particleIndex = 0; particleIndex < 7; particleIndex += 1) {
+        const particle = document.createElement('span');
+        particle.className = 'thanos-ash-particle';
+        particle.style.left = `${targetRect.left + Math.random() * targetRect.width}px`;
+        particle.style.top = `${targetRect.top + Math.random() * targetRect.height}px`;
+        particle.style.backgroundColor = targetColor;
+        particle.style.setProperty('--particle-x', `${Math.round((Math.random() - 0.5) * 100)}px`);
+        particle.style.setProperty('--particle-y', `${Math.round((Math.random() - 0.5) * 90)}px`);
+        document.body.appendChild(particle);
+        particle.addEventListener('animationend', () => particle.remove(), { once: true });
+      }
+      target.classList.add('thanos-dusted');
+    };
+    setTimeout(() => {
+      gauntlet.remove();
+      ashTargets.forEach((target, index) => {
+        setTimeout(() => releaseAsh(target), index * 35);
+      });
+      setTimeout(() => {
+        originalMarkup.forEach(({ element, html }) => { element.innerHTML = html; });
+        snapFlash.remove();
+      }, 20000);
+    }, 1250);
+  });
+
+  // Mobile nav toggle handler
+  const mobileToggle = document.getElementById('mobile-nav-toggle');
+  const navLinksEl = document.querySelector('.nav-links');
+  if (mobileToggle && navLinksEl) {
+    // let CSS control visibility; ensure aria
+    mobileToggle.setAttribute('aria-expanded', 'false');
+    mobileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = navLinksEl.classList.toggle('open');
+      mobileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    // close when a link is clicked
+    navLinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navLinksEl.classList.remove('open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+    }));
+    // close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!navLinksEl.contains(e.target) && e.target !== mobileToggle) {
+        navLinksEl.classList.remove('open');
+        mobileToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 });
 
 function getCartItems() {

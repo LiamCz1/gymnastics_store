@@ -43,10 +43,12 @@
     <a href="index.html" class="nav-brand">
       APEX<span>GYM</span>
     </a>
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation">☰</button>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
       <li><a href="lessons.html">Lessons</a></li>
+
       <li><a href="view my.html">My Bookings</a></li>
     </ul>
     <div class="nav-actions">
@@ -232,6 +234,19 @@
         displayUserBookings(queryName);
       }
 
+      // If user is logged in, auto-load their bookings
+      try {
+        const current = window.auth && window.auth.getCurrentUser ? window.auth.getCurrentUser() : null;
+        if (current && current.name) {
+          // hide manual viewer form
+          const viewForm = document.getElementById('view-form');
+          if (viewForm) viewForm.style.display = 'none';
+          displayUserBookings(current.name);
+        }
+      } catch (e) {
+        // ignore
+      }
+
       loadBookingsBtn.addEventListener('click', () => {
         const name = viewerNameInput.value.trim();
         if (!name) {
@@ -248,6 +263,7 @@
       });
     });
   </script>
+  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

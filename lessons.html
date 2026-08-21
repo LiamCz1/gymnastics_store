@@ -13,8 +13,14 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#111827">
   <title>APEX GYM | Private Gymnastics Lessons & Coaching</title>
   <meta name="description" content="Book private gymnastics lessons and coaching with USAG-certified instructors at APEX GYM for strength, flexibility, and skill development.">
+  <meta name="geo.region" content="US">
+  <meta name="geo.placename" content="Your City">
+  <meta name="geo.position" content="40.7128;-74.0060">
+  <meta name="ICBM" content="40.7128, -74.0060">
   <link rel="canonical" href="https://liamcz1.github.io/gymnastics_store/lessons.html">
   
   <!-- Open Graph / Facebook -->
@@ -41,10 +47,12 @@
 </head>
 
 <body>
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;">Skip to main content</a>
   <header class="app-header">
     <a href="index.html" class="nav-brand">
       APEX<span>GYM</span>
     </a>
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation">☰</button>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
@@ -64,13 +72,17 @@
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <section id="lessons">
       <h1 style="margin-top: 0; font-size: 2rem; font-weight: 700; color: var(--text-dark);">Available Lessons</h1>
+      <section style="margin: 0 0 1.5rem; padding: 1.25rem 1.4rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: linear-gradient(135deg, rgba(79, 70, 229, 0.04) 0%, rgba(244, 63, 94, 0.04) 100%);">
+        <h2 style="margin: 0 0 0.5rem; font-size: 1.15rem;">Lessons that support the bigger training plan</h2>
+        <p style="margin: 0; color: var(--text-muted); line-height: 1.6;">Each lesson is presented alongside the gear and support customers need, so athletes can move from beginner guidance to coaching and purchase without friction.</p>
+      </section>
       <p style="margin: 0 0 1.5rem; color: var(--text-muted); max-width: 760px; line-height: 1.7;">Book private gymnastics lessons and coaching sessions focused on strength, flexibility, and skill development for athletes of all levels.</p>
       <div class="products-grid">
         <article class="product-card">
-          <div class="product-image"><img src="images/sample 1.jpg" alt="Strength Training"></div>
+          <div class="product-image"><img src="images/sample 1.jpg" alt="Strength training session for gymnastics athletes" loading="lazy"></div>
           <div class="product-info">
             <h3>Strength Training</h3>
 
@@ -90,7 +102,7 @@
         </article>
 
         <article class="product-card">
-          <div class="product-image"><img src="images/sample 2.jpg" alt="Flexibility & Stretching"></div>
+          <div class="product-image"><img src="images/sample 2.jpg" alt="Flexibility and stretching session for gymnasts" loading="lazy"></div>
           <div class="product-info">
             <h3>Flexibility & Stretching</h3>
 
@@ -109,6 +121,11 @@
           </div>
         </article>
       </div>
+    </section>
+
+    <section id="lessons-info" style="margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: var(--bg-main);">
+      <h2 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.2rem;">Why families book with APEX GYM</h2>
+      <p style="margin: 0; color: var(--text-muted); line-height: 1.7;">Our private gymnastics lessons focus on strength, flexibility, and skill growth in a supportive environment. Whether your athlete is just beginning or preparing for competition, each lesson is designed to build confidence and consistency.</p>
     </section>
 
     <section id="my-bookings">
@@ -801,6 +818,25 @@
           currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
 
           renderCalendar(currentWeekStart);
+          // If user is logged in, pre-fill name/email and lock fields
+          try {
+            const current = window.auth && window.auth.getCurrentUser ? window.auth.getCurrentUser() : null;
+            const nameInput = document.getElementById('booker-name');
+            const emailInput = document.getElementById('booker-email');
+            const phoneInput = document.getElementById('booker-phone');
+            if (current) {
+              if (nameInput) { nameInput.value = current.name || ''; nameInput.disabled = true; }
+              if (emailInput) { emailInput.value = current.email || ''; emailInput.disabled = true; }
+              if (phoneInput && current.phone) { phoneInput.value = current.phone; phoneInput.disabled = true; }
+            } else {
+              if (nameInput) { nameInput.disabled = false; }
+              if (emailInput) { emailInput.disabled = false; }
+              if (phoneInput) { phoneInput.disabled = false; }
+            }
+          } catch (e) {
+            // ignore
+          }
+
           bookingModal.style.display = 'block';
         });
       });
@@ -856,24 +892,31 @@
           alert('Please select a time slot');
           return;
         }
-
-        const bookerName = document.getElementById('booker-name').value.trim();
-        if (!bookerName) {
-          alert('Please enter your name');
-          return;
+        // Use logged-in user info when available; otherwise read from inputs
+        let bookerName = '';
+        let bookerEmail = '';
+        let bookerPhone = '';
+        try {
+          const current = window.auth && window.auth.getCurrentUser ? window.auth.getCurrentUser() : null;
+          if (current) {
+            bookerName = current.name || '';
+            bookerEmail = current.email || '';
+            // optional phone may be stored on user object
+            bookerPhone = current.phone || document.getElementById('booker-phone').value.trim();
+          } else {
+            bookerName = document.getElementById('booker-name').value.trim();
+            bookerEmail = document.getElementById('booker-email').value.trim();
+            bookerPhone = document.getElementById('booker-phone').value.trim();
+          }
+        } catch (e) {
+          bookerName = document.getElementById('booker-name').value.trim();
+          bookerEmail = document.getElementById('booker-email').value.trim();
+          bookerPhone = document.getElementById('booker-phone').value.trim();
         }
 
-        const bookerEmail = document.getElementById('booker-email').value.trim();
-        if (!bookerEmail) {
-          alert('Please enter your email address');
-          return;
-        }
-
-        const bookerPhone = document.getElementById('booker-phone').value.trim();
-        if (!bookerPhone) {
-          alert('Please enter your phone number');
-          return;
-        }
+        if (!bookerName) { alert('Please enter your name'); return; }
+        if (!bookerEmail) { alert('Please enter your email address'); return; }
+        if (!bookerPhone) { alert('Please enter your phone number'); return; }
 
         const lessonName = lessonNameInput.value;
         const bookingType = document.querySelector('input[name="booking-type"]:checked').value;
@@ -1055,6 +1098,7 @@
       }
     });
   </script>
+  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 

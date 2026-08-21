@@ -13,8 +13,14 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APEX GYM | Gymnastics Store, Lessons & Custom Apparel</title>
-  <meta name="description" content="Shop premium gymnastics equipment and custom apparel at APEX GYM, plus book private coaching and lessons for gymnasts of all levels.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#111827">
+  <title>APEX GYM | Premium Gymnastics Store, Lessons & Custom Apparel</title>
+  <meta name="description" content="Train like a champion with APEX GYM. Shop competition-grade gymnastics equipment, performance apparel, and book private coaching sessions online.">
+  <meta name="geo.region" content="US">
+  <meta name="geo.placename" content="Your City">
+  <meta name="geo.position" content="40.7128;-74.0060">
+  <meta name="ICBM" content="40.7128, -74.0060">
   <link rel="canonical" href="https://liamcz1.github.io/gymnastics_store/">
   
   <!-- Open Graph / Facebook -->
@@ -41,6 +47,7 @@
 </head>
 
 <body>
+  <a href="#main-content" style="position:absolute;left:-9999px;top:auto;">Skip to main content</a>
   <!-- Promo banner -->
   <div class="promo-banner" id="home-promo-banner">
     Summer Sale — Up to 30% off Competition Gear &middot; Use code FLIP30
@@ -51,6 +58,7 @@
     <a href="index.html" class="nav-brand">
       APEX<span>GYM</span>
     </a>
+    <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation">☰</button>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
@@ -70,10 +78,19 @@
       </a>
       <button class="btn" type="button" onclick="window.location.href='lessons.html'"
         style="padding: 0.45rem 1rem; font-size: 0.85rem; border-radius: var(--radius-md);">Get Started</button>
+
+      <a href="login.html" id="nav-login-link" class="auth-link" style="margin-left:0.75rem;">Login</a>
+      <a href="signup.html" id="nav-signup-link" class="auth-link" style="margin-left:0.5rem;">Sign Up</a>
+
+      <div id="nav-user" style="display:none; align-items:center; gap:0.5rem; margin-left:0.5rem;">
+        <img id="nav-avatar" src="" alt="User avatar" style="width:36px;height:36px;border-radius:999px;object-fit:cover;border:1px solid var(--border-color);display:none;">
+        <span id="nav-username" style="font-weight:700;"></span>
+        <a href="#" id="nav-logout-link" style="color:var(--primary);">Logout</a>
+      </div>
     </div>
   </header>
 
-  <main style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1rem;">
+  <main id="main-content" style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 1rem;">
     <!-- Side-by-side Hero Section -->
     <section class="hero-grid-layout"
       style="background: none; border: none; box-shadow: none; padding: 0; margin-top: 4rem;">
@@ -91,7 +108,7 @@
       </div>
       <div class="hero-right-visual">
         <div class="hero-photo-wrapper">
-          <img class="hero-photo" src="images/hero.jpg" alt="Gymnast performing flip">
+          <img class="hero-photo" src="images/hero.jpg" alt="Coach and gymnast practicing gymnastics skills at APEX GYM" loading="lazy" role="button" tabindex="0" aria-label="Make the gymnast flip across the screen">
         </div>
       </div>
     </section>
@@ -152,6 +169,49 @@
         <p>From checkout to lesson booking, we make it simple to get the support and products you need quickly.</p>
       </article>
     </section>
+
+    <section class="testimonial-section" aria-label="How APEX GYM supports your training journey" style="margin-top: 0;">
+      <div class="section-heading">
+        <p class="hero-overline">A SMOOTHER CUSTOMER EXPERIENCE</p>
+        <h2>Shop equipment, book coaching, and get support in one connected journey</h2>
+      </div>
+      <div class="testimonial-grid">
+        <article class="testimonial-card">
+          <h3>Find the right equipment</h3>
+          <p>Browse gymnastics gear by goal and skill level, then move naturally to lessons, apparel, and checkout when you are ready.</p>
+        </article>
+        <article class="testimonial-card">
+          <h3>Book coaching with confidence</h3>
+          <p>Private lessons, flexibility sessions, and strength support are presented alongside the products that fit your training plan.</p>
+        </article>
+        <article class="testimonial-card">
+          <h3>Get support without friction</h3>
+          <p>From payment instructions to booking reminders and contact support, the experience stays consistent from first visit to final purchase.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="testimonial-section" aria-label="Frequently asked questions" style="margin-top: 0;">
+      <div class="section-heading">
+        <p class="hero-overline">COMMON QUESTIONS</p>
+        <h2>Everything you need to know about our gymnastics shop and lessons</h2>
+      </div>
+      <div class="testimonial-grid">
+        <article class="testimonial-card">
+          <h3>Do you offer lessons for beginners?</h3>
+          <p>Yes. Our coaching program supports beginners, intermediate athletes, and competitive gymnasts with personalized lesson plans.</p>
+        </article>
+        <article class="testimonial-card">
+          <h3>Can I buy gymnastics gear online?</h3>
+          <p>Absolutely. Our shop includes gymnastics equipment, grips, and custom apparel available for online purchase and checkout.</p>
+        </article>
+        <article class="testimonial-card">
+          <h3>Do you offer custom apparel?</h3>
+          <p>Yes. We provide custom gymnastics apparel with personalized names, colors, and logo options for teams and athletes.</p>
+        </article>
+      </div>
+    </section>
+
     <!-- Featured Collection Switcher -->
     <section class="collection-section"
       style="background: none; border: none; box-shadow: none; padding: 0; margin-bottom: 5rem;">
@@ -198,6 +258,7 @@
       <span class="hero-overline contact-section-label">Have Questions?</span>
       <h2>Get in Touch</h2>
       <p>Whether you have questions about our premium gear or want to inquire about custom private lessons, we are here to help.</p>
+      <p style="margin-top: 0.75rem; color: var(--text-muted);">Serving athletes locally with private coaching, gymnastics equipment, and custom apparel solutions.</p>
       <button class="btn contact-modal-btn" id="open-contact-modal-btn" type="button">Contact Support Form</button>
     </section>
 
@@ -244,8 +305,9 @@
         <h3>Quick Links</h3>
         <ul>
           <li><a href="index.html">Home</a></li>
-          <li><a href="product.html">Shop</a></li>
-          <li><a href="lessons.html">Lessons</a></li>
+          <li><a href="product.html">Shop gymnastics equipment and apparel</a></li>
+          <li><a href="lessons.html">Book private gymnastics lessons</a></li>
+          <li><a href="view my.html">View your lesson bookings</a></li>
         </ul>
       </div>
       <div>
@@ -258,6 +320,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 
 </html>
