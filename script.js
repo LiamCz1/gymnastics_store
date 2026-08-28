@@ -28,7 +28,7 @@ const collectionData = {
       price: 12.99,
       desc: "Non-slip chalk ball set for bars and vaulting.",
       badge: "Popular",
-      img: "images/sample 1.jpg",
+      img: "images/sample-1.jpg",
       actionUrl: "product.html"
     }
   ],
@@ -38,7 +38,7 @@ const collectionData = {
       price: 39.99,
       desc: "Design your own leotard with personalized colors and custom texts.",
       badge: "Best Seller",
-      img: "images/sample 2.jpg",
+      img: "images/sample-2.jpg",
       actionUrl: "product.html"
     },
     {
@@ -46,7 +46,7 @@ const collectionData = {
       price: 45.99,
       desc: "Heavyweight athletic cotton hoodie for warmups.",
       badge: "New",
-      img: "images/sample 1.jpg",
+      img: "images/sample-1.jpg",
       actionUrl: "product.html"
     },
     {
@@ -54,7 +54,7 @@ const collectionData = {
       price: 29.99,
       desc: "Breathable mesh dry-fit training tee.",
       badge: "Deal",
-      img: "images/sample 2.jpg",
+      img: "images/sample-2.jpg",
       actionUrl: "product.html"
     }
   ],
@@ -64,7 +64,7 @@ const collectionData = {
       price: 99.99,
       desc: "Beam trainer, grips, and gym chalk essentials bundle.",
       badge: "Save 15%",
-      img: "images/sample 1.jpg",
+      img: "images/sample-1.jpg",
       actionUrl: "product.html"
     },
     {
@@ -80,7 +80,7 @@ const collectionData = {
       price: 399.99,
       desc: "Complete safety gear kit plus credit for 4 USAG-certified private lessons.",
       badge: "Premium",
-      img: "images/sample 2.jpg",
+      img: "images/sample-2.jpg",
       actionUrl: "product.html"
     }
   ]
