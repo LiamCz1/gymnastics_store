@@ -76,7 +76,7 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
       <li><a href="lessons.html">Lessons</a></li>
-      <li><a href="view my.html">My Bookings</a></li>
+      <li><a href="my-bookings.html">My Bookings</a></li>
     </ul>
     <div class="nav-actions">
       <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
@@ -407,7 +407,7 @@
         viewOrdersBtn.addEventListener('click', () => {
           const code = ownerOrderCodeInput.value.trim();
           if (code === 'LiaMycIaa123') {
-            window.location.href = 'view orders owner.html?code=LiaMycIaa123';
+            window.location.href = 'admin-orders.html?code=LiaMycIaa123';
           } else {
             alert('Invalid owner code.');
           }

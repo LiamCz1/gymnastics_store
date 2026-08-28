@@ -57,7 +57,7 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
       <li><a href="lessons.html">Lessons</a></li>
-      <li><a href="view my.html">My Bookings</a></li>
+      <li><a href="my-bookings.html">My Bookings</a></li>
     </ul>
     <div class="nav-actions">
       <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
@@ -82,7 +82,7 @@
       <p style="margin: 0 0 1.5rem; color: var(--text-muted); max-width: 760px; line-height: 1.7;">Book private gymnastics lessons and coaching sessions focused on strength, flexibility, and skill development for athletes of all levels.</p>
       <div class="products-grid">
         <article class="product-card">
-          <div class="product-image"><img src="images/sample 1.jpg" alt="Strength training session for gymnastics athletes" loading="lazy"></div>
+          <div class="product-image"><img src="images/sample-1.jpg" alt="Strength training session for gymnastics athletes" loading="lazy"></div>
           <div class="product-info">
             <h3>Strength Training</h3>
 
@@ -102,7 +102,7 @@
         </article>
 
         <article class="product-card">
-          <div class="product-image"><img src="images/sample 2.jpg" alt="Flexibility and stretching session for gymnasts" loading="lazy"></div>
+          <div class="product-image"><img src="images/sample-2.jpg" alt="Flexibility and stretching session for gymnasts" loading="lazy"></div>
           <div class="product-info">
             <h3>Flexibility & Stretching</h3>
 
@@ -736,7 +736,7 @@
             alert('Invalid owner code.');
             return;
           }
-          window.location.href = 'view booking owner.html';
+          window.location.href = 'admin-bookings.html';
         });
       }
 
@@ -750,7 +750,7 @@
           alert('Please enter your name');
           return;
         }
-        window.location.href = `view my.html?name=${encodeURIComponent(name)}`;
+        window.location.href = `my-bookings.html?name=${encodeURIComponent(name)}`;
       });
 
       verifyNameInput.addEventListener('keypress', (e) => {
