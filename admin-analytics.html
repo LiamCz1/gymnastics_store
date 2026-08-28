@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | Owner Analytics</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">APEX<span>GYM</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(225, 29, 72, 0.15);">Owner Portal</span></a>
+    <ul class="nav-links">
+      <li><a href="admin-bookings.html">Bookings Calendar</a></li>
+      <li><a href="admin-orders.html">Customer Orders</a></li>
+      <li><a href="admin-settings.html">Custom Messages</a></li>
+      <li><a href="admin-analytics.html" class="active">Analytics &amp; Performance</a></li>
+      <li><a href="admin-subscribers.html">Subscribers</a></li>
+      <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="boxed-panel">
+      <div id="owner-access-form">
+        <label for="owner-code">Owner Code:</label>
+        <div class="owner-access-group">
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <button id="load-owner-stats-btn" class="verify-btn" type="button">View Analytics</button>
+        </div>
+      </div>
+      <div id="owner-stats-container" style="display: none;">
+        <!-- Analytics UI copied from original -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
+  </footer>
+
+  <script src="src/script.js"></script>
+</body>
+</html>

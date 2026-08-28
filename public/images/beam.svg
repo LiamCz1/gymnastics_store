@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <rect width="100%" height="100%" fill="#f3f6fb"/>
+  <rect x="40" y="120" width="320" height="24" rx="12" fill="#d6eaff"/>
+  <rect x="80" y="80" width="240" height="24" rx="8" fill="#b6d4ff"/>
+  <text x="200" y="45" font-size="20" font-family="Arial" fill="#334" text-anchor="middle">Balance Beam Trainer</text>
+</svg>

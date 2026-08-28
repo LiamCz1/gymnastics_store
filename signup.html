@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Up — APEX GYM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main style="max-width:720px;margin:3rem auto;padding:1rem;">
+    <a href="index.html" style="text-decoration:none;color:inherit;font-weight:700;">← Back to Home</a>
+    <h1 style="margin-top:1rem;">Create an account</h1>
+    <p style="color:var(--text-muted);">Sign up to book lessons, view orders, and save your preferences.</p>
+
+    <div id="signup-success" style="display:none;color:green;margin-bottom:1rem;">Account created — redirecting…</div>
+    <div id="signup-error" style="display:none;color:crimson;margin-bottom:1rem;"></div>
+
+    <div class="method-toggle" style="margin-top:1rem; display:flex; gap:0.5rem;">
+      <button id="signup-method-email" type="button" class="method-btn active">Sign up with Email</button>
+      <button id="signup-method-google" type="button" class="method-btn">Sign up with Google</button>
+    </div>
+
+    <div id="signup-google-container" style="margin:1rem 0 0.75rem; display:none; flex-direction:column; gap:0.6rem; align-items:stretch;">
+      <div id="signup-google-btn" style="display:flex; justify-content:center;"></div>
+      <div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">or</div>
+    </div>
+
+    <form id="signup-form">
+      <div class="form-group">
+        <label for="signup-name">Full name</label>
+        <input id="signup-name" name="name" required autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="signup-email">Email address</label>
+        <input id="signup-email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <input id="signup-password" name="password" type="password" minlength="6" required autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label for="signup-password-confirm">Confirm password</label>
+        <input id="signup-password-confirm" name="passwordConfirm" type="password" minlength="6" required>
+      </div>
+      <button type="submit" class="btn" style="width:100%;">Create account</button>
+    </form>
+
+    <p style="margin-top:1rem;">Already have an account? <a href="login.html">Log in</a></p>
+  </main>
+
+  <script src="src/auth.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    const form = document.getElementById('signup-form');
+    const success = document.getElementById('signup-success');
+    const error = document.getElementById('signup-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.style.display = 'none';
+      success.style.display = 'none';
+
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-password-confirm').value;
+
+      if (password !== confirm) {
+        error.textContent = 'Passwords do not match.';
+        error.style.display = 'block';
+        return;
+      }
+
+      try {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+        await window.auth.signupUser({ name, email, password });
+        success.style.display = 'block';
+        setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+      } catch (err) {
+        error.textContent = err.message || 'Failed to create account.';
+        error.style.display = 'block';
+      } finally {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create account';
+      }
+    });
+
+    // Toggle between Email and Google sign-up methods
+    (function() {
+      const btnEmail = document.getElementById('signup-method-email');
+      const btnGoogle = document.getElementById('signup-method-google');
+      const form = document.getElementById('signup-form');
+      const googleContainer = document.getElementById('signup-google-container');
+
+      function showEmail() {
+        form.style.display = '';
+        googleContainer.style.display = 'none';
+        btnEmail.classList.add('active');
+        btnGoogle.classList.remove('active');
+      }
+      function showGoogle() {
+        form.style.display = 'none';
+        googleContainer.style.display = 'flex';
+        btnEmail.classList.remove('active');
+        btnGoogle.classList.add('active');
+      }
+
+      btnEmail.addEventListener('click', showEmail);
+      btnGoogle.addEventListener('click', showGoogle);
+      // default: show email form
+      showEmail();
+    })();
+
+    // Google Sign-In callback
+    function handleCredentialResponse(response) {
+      if (!response || !response.credential) return;
+      window.auth.handleGoogleSignIn(response.credential)
+        .then(() => { success.style.display = 'block'; setTimeout(() => { window.location.href = 'index.html'; }, 800); })
+        .catch(err => { error.textContent = err.message || 'Google sign-in failed'; error.style.display = 'block'; });
+    }
+
+    // Render Google button (replace YOUR_GOOGLE_CLIENT_ID)
+    window.addEventListener('load', () => {
+      try {
+        const onloadDiv = document.createElement('div');
+        onloadDiv.id = 'g_id_onload';
+        onloadDiv.setAttribute('data-client_id', '1028753478315-uiopbg7e2osj31mopfrkhu1ld51h4jd7.apps.googleusercontent.com');
+        onloadDiv.setAttribute('data-callback', 'handleCredentialResponse');
+        document.body.appendChild(onloadDiv);
+
+        // Initialize Google Identity SDK when available and render the button
+        (function initGoogleButton(retries = 0) {
+          const container = document.getElementById('signup-google-btn');
+          if (window.google && google.accounts && google.accounts.id) {
+            console.debug('GSI available — initializing signup button');
+            google.accounts.id.initialize({
+              client_id: '1028753478315-uiopbg7e2osj31mopfrkhu1ld51h4jd7.apps.googleusercontent.com',
+              callback: handleCredentialResponse
+            });
+            if (container) {
+              google.accounts.id.renderButton(container, { theme: 'outline', size: 'large', text: 'signup_with' });
+            }
+            try { google.accounts.id.prompt(); } catch (e) { /* optional prompt may fail */ }
+          } else if (retries < 10) {
+            setTimeout(() => initGoogleButton(retries + 1), 250);
+          } else {
+            // fallback: show native node if Google script not available
+            const signinDiv = document.createElement('div');
+            signinDiv.className = 'g_id_signin';
+            signinDiv.setAttribute('data-type', 'standard');
+            document.getElementById('signup-form').insertAdjacentElement('beforebegin', signinDiv);
+          }
+        })();
+      } catch (e) { /* ignore */ }
+    });
+  </script>
+</body>
+</html>

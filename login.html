@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — APEX GYM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main style="max-width:720px;margin:3rem auto;padding:1rem;">
+    <a href="index.html" style="text-decoration:none;color:inherit;font-weight:700;">← Back to Home</a>
+    <h1 style="margin-top:1rem;">Log in to your account</h1>
+    <p style="color:var(--text-muted);">Access your bookings, orders, and account settings.</p>
+
+    <div id="login-success" style="display:none;color:green;margin-bottom:1rem;">Login successful — redirecting…</div>
+    <div id="login-error" style="display:none;color:crimson;margin-bottom:1rem;"></div>
+
+    <div class="method-toggle" style="margin-top:1rem; display:flex; gap:0.5rem;">
+      <button id="login-method-email" type="button" class="method-btn active">Log in with Email</button>
+      <button id="login-method-google" type="button" class="method-btn">Log in with Google</button>
+    </div>
+
+    <div id="login-google-container" style="margin:1rem 0 0.75rem; display:none; flex-direction:column; gap:0.6rem; align-items:stretch;">
+      <div id="login-google-btn" style="display:flex; justify-content:center;"></div>
+      <div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">or</div>
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="login-email">Email address</label>
+        <input id="login-email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input id="login-password" name="password" type="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn" style="width:100%;">Log in</button>
+    </form>
+
+    <p style="margin-top:1rem;">Don't have an account? <a href="signup.html">Create one</a></p>
+  </main>
+
+  <script src="src/auth.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    const form = document.getElementById('login-form');
+    const success = document.getElementById('login-success');
+    const error = document.getElementById('login-error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.style.display = 'none';
+      success.style.display = 'none';
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in...';
+        await window.auth.loginUser({ email, password });
+        success.style.display = 'block';
+        setTimeout(() => { window.location.href = 'index.html'; }, 700);
+      } catch (err) {
+        error.textContent = err.message || 'Failed to sign in.';
+        error.style.display = 'block';
+      } finally {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log in';
+      }
+    });
+
+    // Google Sign-In callback
+    function handleCredentialResponse(response) {
+      if (!response || !response.credential) return;
+      window.auth.handleGoogleSignIn(response.credential)
+        .then(() => { success.style.display = 'block'; setTimeout(() => { window.location.href = 'index.html'; }, 600); })
+        .catch(err => { error.textContent = err.message || 'Google sign-in failed'; error.style.display = 'block'; });
+    }
+
+    // Render Google button (replace YOUR_GOOGLE_CLIENT_ID)
+    window.addEventListener('load', () => {
+      try {
+        const onloadDiv = document.createElement('div');
+        onloadDiv.id = 'g_id_onload';
+        onloadDiv.setAttribute('data-client_id', '1028753478315-uiopbg7e2osj31mopfrkhu1ld51h4jd7.apps.googleusercontent.com');
+        onloadDiv.setAttribute('data-callback', 'handleCredentialResponse');
+        document.body.appendChild(onloadDiv);
+
+        // Initialize Google Identity SDK when available and render the button
+        (function initGoogleButton(retries = 0) {
+          const container = document.getElementById('login-google-btn');
+          if (window.google && google.accounts && google.accounts.id) {
+            console.debug('GSI available — initializing login button');
+            google.accounts.id.initialize({
+              client_id: '1028753478315-uiopbg7e2osj31mopfrkhu1ld51h4jd7.apps.googleusercontent.com',
+              callback: handleCredentialResponse
+            });
+            if (container) {
+              google.accounts.id.renderButton(container, { theme: 'outline', size: 'large', text: 'signin_with' });
+            }
+            try { google.accounts.id.prompt(); } catch (e) { /* optional prompt */ }
+          } else if (retries < 10) {
+            setTimeout(() => initGoogleButton(retries + 1), 250);
+          } else {
+            const signinDiv = document.createElement('div');
+            signinDiv.className = 'g_id_signin';
+            signinDiv.setAttribute('data-type', 'standard');
+            document.getElementById('login-form').insertAdjacentElement('beforebegin', signinDiv);
+          }
+        })();
+      } catch (e) { /* ignore */ }
+    });
+
+    // Toggle between email and Google login methods
+    (function() {
+      const btnEmail = document.getElementById('login-method-email');
+      const btnGoogle = document.getElementById('login-method-google');
+      const form = document.getElementById('login-form');
+      const googleContainer = document.getElementById('login-google-container');
+
+      function showEmail() {
+        form.style.display = '';
+        googleContainer.style.display = 'none';
+        btnEmail.classList.add('active');
+        btnGoogle.classList.remove('active');
+      }
+      function showGoogle() {
+        form.style.display = 'none';
+        googleContainer.style.display = 'flex';
+        btnEmail.classList.remove('active');
+        btnGoogle.classList.add('active');
+      }
+
+      btnEmail.addEventListener('click', showEmail);
+      btnGoogle.addEventListener('click', showGoogle);
+      // default: show email form
+      showEmail();
+    })();
+  </script>
+</body>
+</html>

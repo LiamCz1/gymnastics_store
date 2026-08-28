@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Home Page -->
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/index.html</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Shop / Products Customizer -->
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/product.html</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Lessons & Coaching Schedule -->
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/lessons.html</loc>
+    <lastmod>2026-07-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Checkout Cart -->
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/buy.html</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/aio.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Customer View Booking Page -->
+  <url>
+    <loc>https://liamcz1.github.io/gymnastics_store/view%20my.html</loc>
+    <lastmod>2026-07-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

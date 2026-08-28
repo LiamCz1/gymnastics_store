@@ -1,0 +1,9 @@
+# Ignore Google OAuth client secret JSON files
+images/client_secret_*.json
+images/*.json
+
+# Local env and editor files
+.env
+node_modules/
+.DS_Store
+*.log

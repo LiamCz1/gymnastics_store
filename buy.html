@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZF0FKVM306"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-ZF0FKVM306');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | Secure Checkout for Gymnastics Equipment</title>
+  <meta name="description" content="Complete your checkout securely for gymnastics equipment, apparel, and lesson bookings from APEX GYM.">
+  <link rel="canonical" href="https://liamcz1.github.io/gymnastics_store/buy.html">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://liamcz1.github.io/gymnastics_store/buy.html">
+  <meta property="og:title" content="APEX GYM | Secure Checkout">
+  <meta property="og:description" content="Complete your purchase securely at APEX GYM. High-quality gymnastics training equipment and apparel delivered directly to you.">
+  <meta property="og:image" content="https://liamcz1.github.io/gymnastics_store/public/images/hero.jpg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://liamcz1.github.io/gymnastics_store/buy.html">
+  <meta property="twitter:title" content="APEX GYM | Secure Checkout">
+  <meta property="twitter:description" content="Complete your purchase securely at APEX GYM. High-quality gymnastics training equipment and apparel delivered directly to you.">
+  <meta property="twitter:image" content="https://liamcz1.github.io/gymnastics_store/public/images/hero.jpg">
+
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body class="checkout-body">
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">
+      APEX<span>GYM</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="product.html">Shop</a></li>
+      <li><a href="lessons.html">Lessons</a></li>
+      <li><a href="my-bookings.html">My Bookings</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+      <a href="buy.html" class="cart-nav-btn" aria-label="View Cart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        Cart <span class="cart-badge" id="nav-cart-badge">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">Secure Checkout</h1>
+    <div class="checkout-container" id="checkout-grid" style="display: none;">
+      <!-- Left Column: Checkout details -->
+      <div>
+        <!-- Step 1: Shipping Address -->
+        <section class="checkout-section">
+          <div class="checkout-section-title">
+            <span><span class="step-number">1</span>Shipping Address</span>
+          </div>
+          <form id="shipping-form" onsubmit="event.preventDefault();">
+            <div class="form-field">
+              <label for="ship-name">Full Name</label>
+              <input type="text" id="ship-name" name="name" placeholder="John Doe" required autocomplete="name">
+            </div>
+            <div class="form-field">
+              <label for="ship-email">Email Address</label>
+              <input type="email" id="ship-email" name="email" placeholder="john.doe@example.com" required autocomplete="email">
+            </div>
+            <div class="form-field">
+              <label for="ship-address">Address</label>
+              <input type="text" id="ship-address" name="address" placeholder="123 Gym St" required autocomplete="street-address">
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="ship-city">City</label>
+                <input type="text" id="ship-city" name="city" placeholder="Tumble Town" required autocomplete="address-level2">
+              </div>
+              <div class="form-field">
+                <label for="ship-state">State</label>
+                <input type="text" id="ship-state" name="state" placeholder="TX" required autocomplete="address-level1">
+              </div>
+            </div>
+            <div class="form-field" style="max-width: 200px;">
+              <label for="ship-zip">ZIP Code</label>
+              <input type="text" id="ship-zip" name="zip" placeholder="75001" required autocomplete="postal-code">
+            </div>
+            <div class="checkout-promo-field">
+              <label for="promo-code">Promo Code (optional)</label>
+              <input type="text" id="promo-code" name="promo-code" placeholder="Enter promo code">
+            </div>
+          </form>
+        </section>
+
+        <!-- Step 2: Payment Method -->
+        <section class="checkout-section">
+          <div class="checkout-section-title">
+            <span><span class="step-number">2</span>Payment Method</span>
+          </div>
+
+          <!-- Venmo Section -->
+          <div id="venmo-payment-section" style="padding: 1.25rem; border-radius: 6px; text-align: center;">
+            <p style="font-weight: bold; margin-bottom: 1rem; font-size: 0.95rem;">Scan the QR code below to pay via Venmo:</p>
+            <img src="public/images/venmo.png" alt="Venmo QR Code" style="max-width: 320px; width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto 1.25rem auto;">
+            <div id="venmo-warning-box" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: bold; text-align: left; max-width: 420px; margin: 0 auto; line-height: 1.4;">
+              ⚠️ Please scan and pay the Order Total shown on the right via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3: Review Items -->
+        <section class="checkout-section">
+          <div class="checkout-section-title">
+            <span><span class="step-number">3</span>Review Items & Shipping</span>
+          </div>
+          <div class="checkout-items" id="cart-items-container">
+            <!-- Items loaded dynamically -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Sticky order summary -->
+      <aside class="summary-card">
+        <button id="place-order-btn" class="checkout-btn" type="button">Place your order</button>
+        <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin: 0.5rem 0 1rem 0; line-height: 1.3;">
+          By placing your order, you agree to Gymnastics Store's privacy notice and conditions of use.
+        </p>
+        
+        <h3 style="font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem; color: var(--text-dark);">Order Summary</h3>
+        <div class="order-summary-row">
+          <span>Items (<span id="summary-items-count">0</span>):</span>
+          <span id="summary-items-price">$0.00</span>
+        </div>
+        <div class="order-summary-row" id="promo-discount-row" style="display: none;">
+          <span>Promo discount:</span>
+          <span id="summary-promo-discount">$0.00</span>
+        </div>
+        <div class="order-summary-row">
+          <span>Shipping & handling:</span>
+          <span id="summary-shipping-price">$0.00</span>
+        </div>
+        <div class="order-summary-row" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+          <span>Estimated tax:</span>
+          <span id="summary-tax-price">$0.00</span>
+        </div>
+        <div class="order-total-row">
+          <span>Order Total:</span>
+          <span id="summary-total-price">$0.00</span>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Empty Cart Screen -->
+    <div class="empty-cart-message" id="empty-cart-screen" style="display: none;">
+      <h3>Your Cart is empty.</h3>
+      <p>Please go back to the products page to select items for purchase.</p>
+      <button class="checkout-btn" style="max-width: 250px; margin-top: 1.5rem;" onclick="window.location.href='product.html'">Go to Products</button>
+    </div>
+
+    <!-- Order Placed Success Screen -->
+    <div class="confirmation-container" id="success-screen" style="display: none;">
+      <div class="confirmation-check">✓</div>
+      <h2>Thank you, your order has been placed!</h2>
+      <p id="success-payment-instructions" style="background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 1rem; border-radius: 6px; font-size: 0.95rem; font-weight: bold; line-height: 1.5; margin-bottom: 1.5rem; text-align: center;">
+        ⚠️ Please send your Venmo payment within 60 minutes or your order will be automatically cancelled.
+      </p>
+      <div id="success-promo-summary" style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.95rem; line-height: 1.6;">
+      </div>
+      <p>An email confirmation has been sent to you. Your gymnastics gear will be shipped shortly after payment is received. Get ready to train!</p>
+      <button class="checkout-btn" style="max-width: 250px;" onclick="window.location.href='product.html'">Continue Shopping</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const checkoutGrid = document.getElementById('checkout-grid');
+      const emptyCartScreen = document.getElementById('empty-cart-screen');
+      const successScreen = document.getElementById('success-screen');
+      const cartItemsContainer = document.getElementById('cart-items-container');
+      const headerItemsCount = document.getElementById('nav-cart-badge');
+      const summaryItemsCount = document.getElementById('summary-items-count');
+      
+      const summaryItemsPrice = document.getElementById('summary-items-price');
+      const summaryPromoDiscount = document.getElementById('summary-promo-discount');
+      const summaryShippingPrice = document.getElementById('summary-shipping-price');
+      const summaryTaxPrice = document.getElementById('summary-tax-price');
+      const summaryTotalPrice = document.getElementById('summary-total-price');
+      const promoDiscountRow = document.getElementById('promo-discount-row');
+      const placeOrderBtn = document.getElementById('place-order-btn');
+
+      // Forms
+      const shippingForm = document.getElementById('shipping-form');
+
+      function getCart() {
+        try {
+          return JSON.parse(localStorage.getItem('gymCart') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function setCart(cart) {
+        localStorage.setItem('gymCart', JSON.stringify(cart));
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        localStorage.setItem('cartCount', String(count));
+        if (window.updateGlobalCartBadge) {
+          window.updateGlobalCartBadge();
+        }
+      }
+
+      function getActivePromo() {
+        const code = (localStorage.getItem('homePromoCode') || '').trim().toUpperCase();
+        const percent = parseInt(localStorage.getItem('homePromoPercent') || '0', 10);
+        return {
+          code,
+          percent: Number.isNaN(percent) ? 0 : percent
+        };
+      }
+
+      function normalizePromoCode(value) {
+        return (value || '').trim().toUpperCase();
+      }
+
+      function calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCode) {
+        const activePromo = getActivePromo();
+        const enteredPromo = normalizePromoCode(promoCode);
+        const activePromoCode = normalizePromoCode(activePromo.code);
+        const isValidPromo = Boolean(activePromoCode && enteredPromo && enteredPromo === activePromoCode && activePromo.percent > 0);
+        const discountAmount = isValidPromo ? itemsSubtotal * (activePromo.percent / 100) : 0;
+        const discountedSubtotal = Math.max(0, itemsSubtotal - discountAmount);
+        const taxRate = 0.085;
+        const estimatedTax = (discountedSubtotal + shippingFee) * taxRate;
+        const finalTotal = discountedSubtotal + shippingFee + estimatedTax;
+
+        return {
+          itemsSubtotal,
+          discountedSubtotal,
+          discountAmount,
+          shippingFee,
+          estimatedTax,
+          finalTotal,
+          isValidPromo
+        };
+      }
+
+      function renderCheckout() {
+        const cart = getCart();
+        const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        headerItemsCount.textContent = totalItemsCount;
+        summaryItemsCount.textContent = totalItemsCount;
+
+        if (cart.length === 0) {
+          checkoutGrid.style.display = 'none';
+          successScreen.style.display = 'none';
+          emptyCartScreen.style.display = 'block';
+          return;
+        }
+
+        emptyCartScreen.style.display = 'none';
+        successScreen.style.display = 'none';
+        checkoutGrid.style.display = 'grid';
+
+        // Clear container
+        cartItemsContainer.innerHTML = '';
+
+        let itemsSubtotal = 0;
+
+        cart.forEach((item, index) => {
+          const itemTotal = item.price * item.quantity;
+          itemsSubtotal += itemTotal;
+
+          const card = document.createElement('div');
+          card.className = 'checkout-item-card';
+          card.innerHTML = `
+            <img src="${item.img}" alt="${item.name}" class="item-thumbnail">
+            <div class="item-details">
+              <h4>${item.name}</h4>
+              <span class="item-price">$${item.price.toFixed(2)}</span>
+              <div class="item-quantity-row">
+                <label>Qty: 
+                  <select class="quantity-select" data-index="${index}">
+                    ${[1,2,3,4,5,6,7,8,9,10].map(q => `<option value="${q}" ${item.quantity === q ? 'selected' : ''}>${q}</option>`).join('')}
+                  </select>
+                </label>
+                <span class="delete-item-link" data-index="${index}">Delete</span>
+              </div>
+            </div>
+          `;
+          cartItemsContainer.appendChild(card);
+        });
+
+        // Calculations
+        // Free shipping for orders over $50, else $5.99
+        const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
+        const promoCodeInput = document.getElementById('promo-code');
+        const totals = calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCodeInput ? promoCodeInput.value : '');
+
+        // Update displays
+        summaryItemsPrice.textContent = `$${totals.discountedSubtotal.toFixed(2)}`;
+        summaryPromoDiscount.textContent = totals.discountAmount > 0 ? `-$${totals.discountAmount.toFixed(2)}` : '$0.00';
+        promoDiscountRow.style.display = totals.discountAmount > 0 ? 'flex' : 'none';
+        summaryShippingPrice.textContent = shippingFee === 0.00 ? 'FREE' : `$${shippingFee.toFixed(2)}`;
+        summaryTaxPrice.textContent = `$${totals.estimatedTax.toFixed(2)}`;
+        summaryTotalPrice.textContent = `$${totals.finalTotal.toFixed(2)}`;
+
+        const venmoWarning = document.getElementById('venmo-warning-box');
+        if (venmoWarning) {
+          venmoWarning.innerHTML = `⚠️ Please scan and pay the exact total of <strong>$${totals.finalTotal.toFixed(2)}</strong> via Venmo. **Note: payment must be received within 60 minutes of placing the order, or your order will be automatically cancelled.**`;
+        }
+
+        // Keep summary in sync when promo code changes
+        if (promoCodeInput) {
+          promoCodeInput.removeEventListener('input', handlePromoInput);
+        }
+        function handlePromoInput() {
+          renderCheckout();
+        }
+        if (promoCodeInput) {
+          promoCodeInput.addEventListener('input', handlePromoInput);
+        }
+
+        // Attach event listeners to quantity dropdowns
+        document.querySelectorAll('.quantity-select').forEach(select => {
+          select.addEventListener('change', (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            const newQty = parseInt(e.target.value, 10);
+            const currentCart = getCart();
+            if (currentCart[index]) {
+              currentCart[index].quantity = newQty;
+              setCart(currentCart);
+              renderCheckout();
+            }
+          });
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll('.delete-item-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            const currentCart = getCart();
+            currentCart.splice(index, 1);
+            setCart(currentCart);
+            renderCheckout();
+          });
+        });
+      }
+
+      // Handle placing order
+      placeOrderBtn.addEventListener('click', () => {
+        // Validate forms
+        if (!shippingForm.reportValidity()) {
+          return;
+        }
+
+        // Save order details to localStorage
+        const cart = getCart();
+        const shipName = document.getElementById('ship-name').value.trim();
+        const shipEmail = document.getElementById('ship-email').value.trim();
+        const shipAddress = document.getElementById('ship-address').value.trim();
+        const shipCity = document.getElementById('ship-city').value.trim();
+        const shipState = document.getElementById('ship-state').value.trim();
+        const shipZip = document.getElementById('ship-zip').value.trim();
+        const promoCode = document.getElementById('promo-code').value.trim();
+        const itemsSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
+        const totals = calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCode);
+        const finalTotal = totals.finalTotal;
+
+        if (promoCode && !totals.isValidPromo) {
+          alert('That promo code is not active.');
+          return;
+        }
+
+        const order = {
+          id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+          customerName: shipName,
+          customerEmail: shipEmail,
+          shippingAddress: `${shipAddress}, ${shipCity}, ${shipState} ${shipZip}`,
+          promoCode: promoCode,
+          items: cart,
+          subtotal: totals.discountedSubtotal,
+          shipping: shippingFee,
+          tax: totals.estimatedTax,
+          total: finalTotal,
+          discountAmount: totals.discountAmount,
+          date: new Date().toISOString()
+        };
+
+        const originalBtnText = placeOrderBtn.textContent;
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.textContent = 'Placing order...';
+
+        const itemsText = cart.map(item => `- ${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+
+        const formData = {
+          orderId: order.id,
+          name: order.customerName,
+          email: order.customerEmail,
+          address: order.shippingAddress,
+          items: itemsText,
+          promoCode: promoCode || 'None',
+          subtotal: `$${totals.discountedSubtotal.toFixed(2)}`,
+          shipping: shippingFee === 0.00 ? 'FREE' : `$${shippingFee.toFixed(2)}`,
+          tax: `$${totals.estimatedTax.toFixed(2)}`,
+          total: `$${finalTotal.toFixed(2)}`,
+          date: order.date
+        };
+
+        fetch('https://formspree.io/f/mgojroae', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          if (response.ok) {
+            try {
+              const orders = JSON.parse(localStorage.getItem('gymOrders') || '[]');
+              orders.push(order);
+              localStorage.setItem('gymOrders', JSON.stringify(orders));
+            } catch (e) {
+              console.error('Failed to save order:', e);
+            }
+
+            // Simulating purchase completion
+            localStorage.removeItem('gymCart');
+            localStorage.setItem('cartCount', '0');
+
+            const successInstructions = document.getElementById('success-payment-instructions');
+            const successPromoSummary = document.getElementById('success-promo-summary');
+            if (successInstructions) {
+              successInstructions.innerHTML = `⚠️ IMPORTANT: Please complete your Venmo payment of $${finalTotal.toFixed(2)} within 60 minutes, or your order will be automatically cancelled.`;
+            }
+            if (successPromoSummary) {
+              successPromoSummary.innerHTML = `
+                <strong>Promo Code:</strong> ${promoCode || 'None'}<br>
+                <strong>Discount Applied:</strong> ${totals.discountAmount > 0 ? `-$${totals.discountAmount.toFixed(2)}` : '$0.00'}<br>
+                <strong>Final Amount:</strong> $${finalTotal.toFixed(2)}
+              `;
+            }
+
+            checkoutGrid.style.display = 'none';
+            emptyCartScreen.style.display = 'none';
+            successScreen.style.display = 'block';
+          } else {
+            throw new Error('Formspree response not OK');
+          }
+        })
+        .catch(error => {
+          console.error('Failed to place order:', error);
+          alert('There was a problem submitting your order to Formspree. Please try again.');
+        })
+        .finally(() => {
+          placeOrderBtn.disabled = false;
+          placeOrderBtn.textContent = originalBtnText;
+        });
+      });
+
+      // Initial Render
+      renderCheckout();
+    });
+  </script>
+  <script src="src/script.js"></script>
+</body>
+</html>

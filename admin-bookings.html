@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | Owner Bookings Calendar</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+  <header class="app-header">
+    <a href="index.html" class="nav-brand">
+      APEX<span>GYM</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(225, 29, 72, 0.15);">Owner Portal</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="admin-bookings.html" class="active">Bookings Calendar</a></li>
+      <li><a href="admin-orders.html">Customer Orders</a></li>
+      <li><a href="admin-settings.html">Custom Messages</a></li>
+      <li><a href="admin-analytics.html">Analytics &amp; Performance</a></li>
+      <li><a href="admin-subscribers.html">Subscribers</a></li>
+      <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="boxed-panel">
+      <div id="owner-access-form">
+        <label for="owner-code">Owner Code:</label>
+        <div class="owner-access-group">
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <button id="load-owner-bookings-btn" class="verify-btn" type="button">Load Bookings</button>
+        </div>
+      </div>
+      <div id="owner-calendar" class="owner-calendar" style="display: none;">
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 APEX GYM. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const ownerAccessCode = 'LiaMycIaa123';
+
+    function getBookedSlots() {
+      try {
+        return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function setBookedSlots(slots) {
+      localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
+    }
+
+    function displayOwnerBookings() {
+      const bookedSlots = getBookedSlots();
+      const ownerCalendar = document.getElementById('owner-calendar');
+      const ownerAccessForm = document.getElementById('owner-access-form');
+
+      ownerAccessForm.style.display = 'none';
+      ownerCalendar.innerHTML = '';
+
+      if (bookedSlots.length === 0) {
+        ownerCalendar.innerHTML = '<p class="no-bookings">No bookings available.</p>';
+        ownerCalendar.style.display = 'block';
+        return;
+      }
+
+      const bookingsByDate = {};
+      bookedSlots.forEach((booking, index) => {
+        const dateKey = booking.date;
+        if (!bookingsByDate[dateKey]) {
+          bookingsByDate[dateKey] = [];
+        }
+        bookingsByDate[dateKey].push({ ...booking, index });
+      });
+
+      const sortedDates = Object.keys(bookingsByDate).sort();
+      sortedDates.forEach(dateKey => {
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'owner-calendar-date';
+        const dateObj = new Date(dateKey + 'T00:00:00');
+        dateHeader.textContent = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        ownerCalendar.appendChild(dateHeader);
+
+        const dateList = document.createElement('div');
+        dateList.className = 'owner-date-slot-list';
+
+        bookingsByDate[dateKey].sort((a, b) => a.time.localeCompare(b.time)).forEach(booking => {
+          const bookingItem = document.createElement('div');
+          bookingItem.className = 'owner-booking-item';
+          let lessonPrice = booking.price;
+          if (lessonPrice === undefined) {
+            if (booking.lesson === 'Strength Training') lessonPrice = 50.00;
+            else if (booking.lesson === 'Flexibility & Stretching') lessonPrice = 40.00;
+            else lessonPrice = 0.00;
+          }
+          const totalPrice = lessonPrice * (booking.numPeople || 1);
+
+          bookingItem.innerHTML = `
+            <div class="owner-booking-info">
+              <strong>${booking.lesson}</strong>
+              <p>${booking.time} &middot; ${booking.type === 'weekly' ? 'Weekly' : 'One-Time'}</p>
+              <p>Booked by: ${booking.bookerName}</p>
+              <p>Email: ${booking.bookerEmail || 'N/A'} &middot; Phone: ${booking.bookerPhone || 'N/A'}</p>
+              <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
+            </div>
+            <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
+          `;
+          dateList.appendChild(bookingItem);
+        });
+
+        ownerCalendar.appendChild(dateList);
+      });
+
+      ownerCalendar.style.display = 'block';
+
+      ownerCalendar.querySelectorAll('.owner-cancel-booking-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.dataset.index, 10);
+          const slots = getBookedSlots();
+          const booking = slots[index];
+          if (!booking) {
+            alert('Booking not found.');
+            return;
+          }
+          if (confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) {
+            slots.splice(index, 1);
+            setBookedSlots(slots);
+            displayOwnerBookings();
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ownerCodeInput = document.getElementById('owner-code');
+      const loadOwnerBookingsBtn = document.getElementById('load-owner-bookings-btn');
+      const backButton = document.getElementById('back-button');
+
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.location.href = 'lessons.html';
+        });
+      }
+
+      if (sessionStorage.getItem('ownerAuthorized') === 'true') {
+        displayOwnerBookings();
+      }
+
+      loadOwnerBookingsBtn.addEventListener('click', () => {
+        const enteredCode = ownerCodeInput.value.trim();
+        if (enteredCode !== ownerAccessCode) {
+          alert('Invalid owner code.');
+          return;
+        }
+        sessionStorage.setItem('ownerAuthorized', 'true');
+        displayOwnerBookings();
+      });
+
+      ownerCodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          loadOwnerBookingsBtn.click();
+        }
+      });
+    });
+  </script>
+  <script src="src/script.js"></script>
+</body>
+</html>
