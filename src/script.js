@@ -258,23 +258,85 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeContactModalBtn = document.getElementById('close-contact-modal-btn');
   const contactForm = document.getElementById('contact-form');
 
+  // Accessible modal helper: open/close, focus trap, aria management
+  function openModal(modal, opener) {
+    if (!modal) return;
+    modal.style.display = 'block';
+    modal.setAttribute('aria-hidden', 'false');
+    modal.removeAttribute('tabindex');
+    document.body.style.overflow = 'hidden';
+
+    const focusable = Array.from(modal.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'));
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    // remember opener to restore focus on close
+    modal._opener = opener || document.activeElement;
+
+    // keydown handler for trap and Escape
+    modal._keydown = function (e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal(modal);
+        return;
+      }
+      if (e.key === 'Tab') {
+        if (focusable.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', modal._keydown);
+
+    // click outside to close
+    modal._click = function (e) {
+      if (e.target === modal) closeModal(modal);
+    };
+    modal.addEventListener('click', modal._click);
+
+    // focus first element
+    if (first) first.focus();
+    else modal.focus();
+  }
+
+  function closeModal(modal) {
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (modal._keydown) document.removeEventListener('keydown', modal._keydown);
+    if (modal._click) modal.removeEventListener('click', modal._click);
+    try {
+      if (modal._opener && typeof modal._opener.focus === 'function') modal._opener.focus();
+    } catch (e) {
+      // noop
+    }
+  }
+
   if (openContactModalBtn && contactModal) {
-    openContactModalBtn.addEventListener('click', () => {
-      contactModal.style.display = 'block';
+    openContactModalBtn.addEventListener('click', (e) => {
+      openModal(contactModal, openContactModalBtn);
     });
   }
 
   if (closeContactModalBtn && contactModal) {
     closeContactModalBtn.addEventListener('click', () => {
-      contactModal.style.display = 'none';
+      closeModal(contactModal);
     });
   }
-
-  window.addEventListener('click', (e) => {
-    if (e.target === contactModal) {
-      contactModal.style.display = 'none';
-    }
-  });
 
   if (contactForm) {
     const contactSubmitBtn = document.getElementById('contact-submit-btn');
@@ -312,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
           contactForm.reset();
           setTimeout(() => {
             successBanner.style.display = 'none';
-            contactModal.style.display = 'none';
+            try { closeModal(contactModal); } catch (e) { contactModal.style.display = 'none'; }
           }, 3000);
         } else {
           throw new Error('Formspree response not OK');
@@ -516,3 +578,219 @@ function updateAthletesCoachedStat() {
     statEl.textContent = baseCount.toLocaleString();
   }
 }
+
+// Owner orders management (admin-orders.html)
+function getOrders() {
+  try {
+    return JSON.parse(localStorage.getItem('gymOrders') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>\"]/g, function (m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]); });
+}
+
+function setOrders(orders) {
+  localStorage.setItem('gymOrders', JSON.stringify(orders));
+}
+
+function displayOwnerOrders() {
+  const orders = getOrders();
+  const container = document.getElementById('owner-orders-container');
+  const accessForm = document.getElementById('owner-access-form');
+  const listEl = document.getElementById('orders-list');
+  if (!container || !listEl) return;
+  accessForm.style.display = 'none';
+  listEl.innerHTML = '';
+  if (!orders || orders.length === 0) {
+    listEl.innerHTML = '<p class="no-bookings">No orders found.</p>';
+    container.style.display = 'block';
+    return;
+  }
+
+  orders.slice().reverse().forEach((order, idx) => {
+    const item = document.createElement('div');
+    item.className = 'owner-order-item';
+    const when = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Unknown date';
+    const itemsHtml = (order.items || []).map(it => `<li>${(it.name||'Item')} x ${it.quantity || 1} — $${(Number(it.price)||0).toFixed(2)}</li>`).join('');
+    item.innerHTML = `
+      <div class="owner-order-info">
+        <strong>Order #${(order.id || (orders.length - idx))}</strong>
+        <p>${when} &middot; ${escapeHtml(order.customerName || order.name || 'Guest')}</p>
+        <p>Email: ${escapeHtml(order.customerEmail || order.email || 'N/A')}</p>
+        <ul>${itemsHtml}</ul>
+        <p><strong>Total:</strong> $${(Number(order.total)||0).toFixed(2)}</p>
+      </div>
+    `;
+    listEl.appendChild(item);
+  });
+
+  container.style.display = 'block';
+}
+
+// wire owner orders UI on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  const ownerCode = 'LiaMycIaa123';
+  const ownerCodeInput = document.getElementById('owner-code');
+  const loadBtn = document.getElementById('load-owner-orders-btn');
+  const resetBtn = document.getElementById('reset-orders-btn');
+
+  // auto-authorize from URL param
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const codeParam = params.get('code');
+    if (codeParam === ownerCode) {
+      sessionStorage.setItem('ownerAuthorized', 'true');
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  if (sessionStorage.getItem('ownerAuthorized') === 'true') {
+    // only display if this page has orders container
+    if (document.getElementById('owner-orders-container')) displayOwnerOrders();
+  }
+
+  if (loadBtn && ownerCodeInput) {
+    loadBtn.addEventListener('click', () => {
+      const entered = ownerCodeInput.value.trim();
+      if (entered !== ownerCode) return alert('Invalid owner code.');
+      sessionStorage.setItem('ownerAuthorized', 'true');
+      displayOwnerOrders();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('Delete all orders from this browser? This cannot be undone.')) return;
+      setOrders([]);
+      displayOwnerOrders();
+    });
+  }
+});
+
+// Owner settings & analytics (admin-settings.html, admin-analytics.html)
+function displayOwnerSettings() {
+  const container = document.getElementById('owner-settings-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const form = document.createElement('form');
+  form.className = 'owner-settings-form';
+  form.innerHTML = `
+    <label>Homepage Overline (small):<br><input id="owner-home-overline" type="text" placeholder="e.g. New Season"/></label>
+    <label>Homepage Title:<br><input id="owner-home-title" type="text" placeholder="Welcome to APEX"/></label>
+    <label>Homepage Description:<br><textarea id="owner-home-desc" rows="3" placeholder="Short description"></textarea></label>
+    <label>Promo Message:<br><input id="owner-home-promo" type="text" placeholder="Free shipping for orders $50+"/></label>
+    <label>Promo Code:<br><input id="owner-home-promo-code" type="text" placeholder="APEX10"/></label>
+    <label>Promo Percent:<br><input id="owner-home-promo-percent" type="number" min="0" max="100"/></label>
+    <div style="margin-top:0.5rem;"><button id="owner-save-settings" type="button" class="btn">Save Settings</button> <button id="owner-reset-settings" type="button" class="btn btn-ghost">Reset</button></div>
+  `;
+  container.appendChild(form);
+
+  // populate current values
+  const overline = document.getElementById('owner-home-overline');
+  const title = document.getElementById('owner-home-title');
+  const desc = document.getElementById('owner-home-desc');
+  const promo = document.getElementById('owner-home-promo');
+  const promoCode = document.getElementById('owner-home-promo-code');
+  const promoPercent = document.getElementById('owner-home-promo-percent');
+
+  overline.value = localStorage.getItem('homeOverlineMsg') || '';
+  title.value = localStorage.getItem('homeTitleMsg') || '';
+  desc.value = localStorage.getItem('homeDescMsg') || '';
+  promo.value = localStorage.getItem('homePromoMsg') || '';
+  promoCode.value = localStorage.getItem('homePromoCode') || '';
+  promoPercent.value = localStorage.getItem('homePromoPercent') || '';
+
+  document.getElementById('owner-save-settings').addEventListener('click', () => {
+    localStorage.setItem('homeOverlineMsg', overline.value);
+    localStorage.setItem('homeTitleMsg', title.value);
+    localStorage.setItem('homeDescMsg', desc.value);
+    localStorage.setItem('homePromoMsg', promo.value);
+    localStorage.setItem('homePromoCode', promoCode.value);
+    localStorage.setItem('homePromoPercent', promoPercent.value);
+    alert('Settings saved locally. Refresh the home page to see changes.');
+  });
+
+  document.getElementById('owner-reset-settings').addEventListener('click', () => {
+    if (!confirm('Reset all site messages to defaults?')) return;
+    localStorage.removeItem('homeOverlineMsg');
+    localStorage.removeItem('homeTitleMsg');
+    localStorage.removeItem('homeDescMsg');
+    localStorage.removeItem('homePromoMsg');
+    localStorage.removeItem('homePromoCode');
+    localStorage.removeItem('homePromoPercent');
+    overline.value = title.value = desc.value = promo.value = promoCode.value = promoPercent.value = '';
+    alert('Settings reset. Refresh the home page to see default content.');
+  });
+}
+
+function displayOwnerAnalytics() {
+  const container = document.getElementById('owner-stats-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const orders = getOrders();
+  const bookings = (function(){ try { return JSON.parse(localStorage.getItem('bookedLessonSlots')||'[]'); } catch(e){ return []; } })();
+
+  // try subscribers count from local file if available
+  let subscribersCount = 0;
+  try {
+    const subs = JSON.parse(localStorage.getItem('localSubscribers') || 'null');
+    if (Array.isArray(subs)) subscribersCount = subs.length;
+  } catch (e) {}
+
+  const totalRevenue = orders.reduce((sum,o) => sum + (Number(o.total) || 0), 0);
+  const uniqueBookers = new Set((bookings || []).map(b => (b.bookerName || '').trim().toLowerCase()).filter(Boolean));
+
+  container.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat"><h3>Orders</h3><p>${orders.length}</p></div>
+      <div class="stat"><h3>Revenue</h3><p>$${totalRevenue.toFixed(2)}</p></div>
+      <div class="stat"><h3>Bookings</h3><p>${(bookings||[]).length}</p></div>
+      <div class="stat"><h3>Unique Bookers</h3><p>${uniqueBookers.size}</p></div>
+      <div class="stat"><h3>Subscribers (local)</h3><p>${subscribersCount}</p></div>
+    </div>
+  `;
+}
+
+// Wire settings and analytics owner buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const ownerCode = 'LiaMycIaa123';
+  const settingsBtn = document.getElementById('load-owner-settings-btn');
+  const settingsContainer = document.getElementById('owner-settings-container');
+  const statsBtn = document.getElementById('load-owner-stats-btn');
+  const statsContainer = document.getElementById('owner-stats-container');
+
+  if (sessionStorage.getItem('ownerAuthorized') === 'true') {
+    if (settingsContainer) {
+      settingsContainer.style.display = 'block';
+      displayOwnerSettings();
+    }
+    if (statsContainer) {
+      statsContainer.style.display = 'block';
+      displayOwnerAnalytics();
+    }
+  }
+
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      const entered = document.getElementById('owner-code').value.trim();
+      if (entered !== ownerCode) return alert('Invalid owner code.');
+      sessionStorage.setItem('ownerAuthorized', 'true');
+      if (settingsContainer) { settingsContainer.style.display = 'block'; displayOwnerSettings(); }
+    });
+  }
+
+  if (statsBtn) {
+    statsBtn.addEventListener('click', () => {
+      const entered = document.getElementById('owner-code').value.trim();
+      if (entered !== ownerCode) return alert('Invalid owner code.');
+      sessionStorage.setItem('ownerAuthorized', 'true');
+      if (statsContainer) { statsContainer.style.display = 'block'; displayOwnerAnalytics(); }
+    });
+  }
+});

@@ -27,6 +27,20 @@ function setCurrentUser(user) {
   window.dispatchEvent(new Event('storage'));
 }
 
+// Try to subscribe this user on the newsletter server (non-blocking)
+async function subscribeServer(user) {
+  try {
+    if (!user || !user.email) return;
+    await fetch('http://localhost:3000/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user.email, name: user.name })
+    });
+  } catch (e) {
+    console.debug('subscribeServer failed', e);
+  }
+}
+
 function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem('gymCurrentUser') || 'null');
@@ -51,6 +65,7 @@ async function signupUser({ name, email, password }) {
   users.push(user);
   saveUsers(users);
   setCurrentUser(user);
+  subscribeServer(user);
   return user;
 }
 
@@ -61,6 +76,7 @@ async function loginUser({ email, password }) {
   const pwHash = await hashPassword(password);
   if (pwHash !== user.passwordHash) throw new Error('Incorrect password.');
   setCurrentUser(user);
+  subscribeServer(user);
   return user;
 }
 
@@ -160,6 +176,7 @@ async function handleGoogleSignIn(credential) {
   }
 
   setCurrentUser(user);
+  subscribeServer(user);
   console.debug('handleGoogleSignIn -> signed in as', user.email);
   return user;
 }

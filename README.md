@@ -1,59 +1,69 @@
-# APEX GYM SEO Plan
+# APEX GYM — Project README
 
 ## Overview
-APEX GYM is a gymnastics store and coaching website with pages for home, shop, lessons, bookings, and owner tools. This project can improve search visibility by strengthening on-page SEO, technical SEO, and local SEO.
+This repository is a static site demo for a gymnastics store and coaching service (APEX GYM). It includes pages for Home, Shop, Lessons, Bookings, Authentication demos, and lightweight owner tools. The site is intentionally simple so you can learn HTML/CSS/JS and later migrate to frameworks and a real backend.
 
-## SEO Goals
-- Improve rankings for searches such as:
-  - gymnastics lessons near me
-  - gymnastics equipment shop
-  - custom gymnastics apparel
-- Increase clicks from search results
-- Make the website easier for Google to understand and index
+Important note: many demo features store data in `localStorage` (cart, bookings, promo settings). This is fine for learning and testing, but not suitable for production or storing PII.
 
-## Priority Actions
-1. Add unique titles and meta descriptions to each important page.
-2. Improve page content with clear keywords related to coaching, equipment, and apparel.
-3. Add descriptive alt text for images.
-4. Improve internal links between Home, Shop, Lessons, and Bookings.
-5. Ensure the sitemap and robots file are accurate and up to date.
+## Quick Start (serve locally)
+- Option A — simple static server (Node):
 
-## Recommended Page Focus
-### Home Page
-- Add strong homepage title and description
-- Highlight gymnastics lessons, equipment, and apparel
-- Add clear calls to action
+```bash
+npx serve .
+# then open http://localhost:3000 (or the port shown)
+```
 
-### Shop Page
-- Optimize product page content with relevant keywords
-- Use clear product descriptions
-- Add strong title and meta description
+- Option B — Python 3 (if installed):
 
-### Lessons Page
-- Focus on private coaching and lesson booking keywords
-- Add FAQ content for common questions
-- Include local service-area language if relevant
+```bash
+python -m http.server 8000
+# open http://localhost:8000
+```
 
-## Technical SEO
-- Keep the site mobile-friendly
-- Improve page speed where possible
-- Use clean heading structure
-- Confirm important pages are in the sitemap
-- Review canonical tags and duplicate content issues
+- Option C — open `index.html` directly in your browser (some features requiring fetch or routing may need a server).
 
-## Local SEO
-- Add business name, phone number, and location details
-- Use consistent business information across the site
-- Create or update a Google Business Profile
-- Add local keywords where appropriate
+## Project Structure (important files)
+- `index.html` — Home / landing page
+- `product.html`, `product-details.html` — Shop and product views
+- `style.css` — Main site styles
+- `src/script.js` — Client-side site logic (products, UI behavior)
+- `src/auth.js` — Authentication demo wiring (Google, owner UI)
+- `server/` — small server-side utilities and owner scripts (if present)
+- `public/images/` — media assets
 
-## Content Checklist
-- Unique title tags
-- Unique meta descriptions
-- One clear H1 per page
-- Keyword-rich headings
-- Descriptive image alt text
-- Strong internal links
+## Current Features (what works now)
+- Static product catalogue rendered by `src/script.js` (client-side)
+- Shopping cart demo that uses `localStorage` for persistence
+- Booking demo pages that save bookings to `localStorage`
+- Theme toggle (light/dark) persisted in `localStorage`
+- Contact form wired to a Formspree endpoint
+- Basic accessibility considerations (skip link, alt text on main hero image)
 
-## Next Step
-Start by updating the SEO metadata and page content for the Home, Shop, and Lessons pages.
+## Phase 1 Plan (what I'll do next)
+This repository follows the student-friendly roadmap. Phase 1 focuses on understanding and small incremental improvements.
+
+- Step 1: Review core files (`index.html`, `style.css`, `src/script.js`) — completed.
+- Step 2: Create a clean `README.md` with setup and warnings — completed (this file).
+- Step 3: Fix filenames with spaces and update internal links (e.g., `my-bookings.html`) — next.
+- Step 4: Reduce repeated header/footer HTML into a small include or a JS-inserted template (simple reusable approach) — planned.
+- Step 5: Improve mobile navigation (accessible menu with keyboard support) — planned.
+- Step 6: Accessibility pass — audit pages and fix missing alt text, label issues, and focus order — planned.
+
+## LocalStorage and Safety (demo caveats)
+- Cart and booking data are stored in `localStorage` only. Do not use this for production data or sensitive information.
+- Bookings and orders in this project are demo-only and should be moved to a proper backend (with authentication and server-side validation) before any real use.
+
+## How you can help / contribute
+- Open an issue describing a bug or improvement.
+- Preferred small PRs that change one feature at a time (follow the roadmap steps).
+
+## What's changed in Phase 1 so far
+- Added this beginner-friendly README with setup, features, and Phase 1 checklist.
+
+## Test Checklist for this change (README)
+- [ ] `README.md` opens in editor and clearly explains how to run the site locally.
+- [ ] Contains a warning about `localStorage` usage and demo limitations.
+- [ ] Lists the main files to inspect for Phase 1 work.
+
+---
+If you'd like, I'll proceed to Step 3 (rename files with spaces and update links). Say "yes" to continue or tell me which Step to run next.
