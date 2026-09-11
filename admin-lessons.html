@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | Owner Lessons</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+  <div id="header-root"></div>
+
+  <main>
+    <section class="boxed-panel">
+      <div id="owner-access-form">
+        <h1>Owner Lessons</h1>
+        <label for="owner-code">Owner Code:</label>
+        <div class="owner-access-group">
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <button id="load-owner-lessons-btn" class="verify-btn" type="button">Open Lessons</button>
+        </div>
+      </div>
+
+      <div id="owner-lessons-content" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+          <div>
+            <h1>Owner Lessons</h1>
+            <p style="margin: 0; color: var(--text-muted);">Create and manage lessons shown on the public lessons page.</p>
+          </div>
+          <button id="owner-add-lesson-btn" class="verify-btn" type="button">Add Lesson</button>
+        </div>
+        <div id="owner-lessons-list" style="margin-top: 1.5rem;"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+
+  <div id="owner-add-lesson-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close owner-add-close">&times;</span>
+      <h2>Add a Lesson</h2>
+      <form id="owner-add-lesson-form">
+        <div class="form-group">
+          <label for="lesson-title">Lesson Title</label>
+          <input type="text" id="lesson-title" name="lesson-title" required>
+        </div>
+        <div class="form-group">
+          <label for="lesson-type">Offer Type</label>
+          <select id="lesson-type" name="lesson-type" required>
+            <option value="lesson">Lesson</option>
+            <option value="clinic">Clinic</option>
+            <option value="group">Group Class</option>
+          </select>
+        </div>
+        <div class="form-group" id="group-capacity-group" style="display: none;">
+          <label for="group-capacity">Maximum People per Class</label>
+          <input type="number" id="group-capacity" name="group-capacity" min="1" max="500" value="10">
+        </div>
+        <div class="form-group" id="lesson-delivery-group">
+          <label for="lesson-delivery">Lesson Format</label>
+          <select id="lesson-delivery" name="lesson-delivery" required>
+            <option value="online">Online</option>
+            <option value="in-person">In Person</option>
+          </select>
+        </div>
+        <div class="form-group" id="lesson-location-group" style="display: none;">
+          <label for="lesson-location">Clinic Location</label>
+          <input type="text" id="lesson-location" name="lesson-location" placeholder="Gym name and address">
+        </div>
+        <div id="clinic-schedule-group" style="display: none;">
+          <div class="form-group">
+            <label for="clinic-date">Clinic Date</label>
+            <input type="date" id="clinic-date" name="clinic-date">
+          </div>
+          <div class="form-group">
+            <label for="clinic-start-time">Clinic Start Time</label>
+            <input type="time" id="clinic-start-time" name="clinic-start-time">
+          </div>
+          <div class="form-group">
+            <label for="clinic-end-time">Clinic End Time</label>
+            <input type="time" id="clinic-end-time" name="clinic-end-time">
+          </div>
+        </div>
+        <div id="lesson-weekly-schedule-group">
+          <div class="form-group">
+            <label>Weekly Class Days</label>
+            <div id="lesson-weekdays" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              <label><input type="checkbox" name="lesson-weekday" value="0"> Sun</label>
+              <label><input type="checkbox" name="lesson-weekday" value="1"> Mon</label>
+              <label><input type="checkbox" name="lesson-weekday" value="2"> Tue</label>
+              <label><input type="checkbox" name="lesson-weekday" value="3"> Wed</label>
+              <label><input type="checkbox" name="lesson-weekday" value="4"> Thu</label>
+              <label><input type="checkbox" name="lesson-weekday" value="5"> Fri</label>
+              <label><input type="checkbox" name="lesson-weekday" value="6"> Sat</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="lesson-weekly-start">Weekly Start Time</label>
+            <input type="time" id="lesson-weekly-start" name="lesson-weekly-start">
+          </div>
+          <div class="form-group">
+            <label for="lesson-weekly-end">Weekly End Time</label>
+            <input type="time" id="lesson-weekly-end" name="lesson-weekly-end">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="lesson-price">Price (USD)</label>
+          <input type="number" id="lesson-price" name="lesson-price" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="lesson-image">Image (optional)</label>
+          <input type="file" id="lesson-image" name="lesson-image" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label for="lesson-desc">Description</label>
+          <textarea id="lesson-desc" name="lesson-desc" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="lesson-duration">How long should this lesson be available?</label>
+          <select id="lesson-duration" name="lesson-duration" required></select>
+        </div>
+        <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.75rem;">
+          <button type="button" id="owner-add-cancel" class="reset-bookings-btn">Cancel</button>
+          <button type="submit" class="submit-btn">Save Lesson</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="src/templates.js"></script>
+  <script>renderOwnerHeader();</script>
+  <script>
+    const ownerAccessCode = 'LiaMycIaa123';
+
+    function getCustomLessons() {
+      try {
+        return JSON.parse(localStorage.getItem('customLessons') || '[]');
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveCustomLesson(dataUrl) {
+      const title = document.getElementById('lesson-title').value.trim();
+      const price = parseFloat(document.getElementById('lesson-price').value) || 0;
+      const description = document.getElementById('lesson-desc').value.trim();
+      const type = document.getElementById('lesson-type').value;
+      const delivery = document.getElementById('lesson-delivery').value;
+      const location = document.getElementById('lesson-location').value.trim();
+      const isClinic = type === 'clinic';
+      const isGroup = type === 'group';
+      const maxParticipants = isGroup ? Number(document.getElementById('group-capacity').value) : null;
+      if (isGroup && (!maxParticipants || maxParticipants < 1)) {
+        alert('Enter a maximum number of people for the group class.');
+        return;
+      }
+      const clinicDate = document.getElementById('clinic-date').value;
+      const clinicStartTime = document.getElementById('clinic-start-time').value;
+      const clinicEndTime = document.getElementById('clinic-end-time').value;
+      const weeklyDays = Array.from(document.querySelectorAll('input[name="lesson-weekday"]:checked')).map(input => Number(input.value));
+      const weeklyStartTime = document.getElementById('lesson-weekly-start').value;
+      const weeklyEndTime = document.getElementById('lesson-weekly-end').value;
+      if (!isClinic && weeklyDays.length === 0) {
+        alert('Select at least one weekly class day.');
+        return;
+      }
+      if (!isClinic && weeklyEndTime <= weeklyStartTime) {
+        alert('Weekly class end time must be after the start time.');
+        return;
+      }
+        if (isClinic && clinicEndTime <= clinicStartTime) {
+          alert('Clinic end time must be after the start time.');
+          return;
+        }
+      const duration = document.getElementById('lesson-duration').value;
+      const durationDays = duration === 'forever' ? null : Number(duration);
+      const lessons = getCustomLessons();
+      lessons.push({
+        id: 'custom-' + Date.now(),
+        name: title,
+        type,
+        maxParticipants,
+        delivery: isClinic ? 'in-person' : delivery,
+        location: isClinic || delivery === 'in-person' ? location : '',
+        clinicDate: isClinic ? clinicDate : '',
+        clinicStartTime: isClinic ? clinicStartTime : '',
+        clinicEndTime: isClinic ? clinicEndTime : '',
+        weeklyDays: isClinic ? [] : weeklyDays,
+        weeklyStartTime: isClinic ? '' : weeklyStartTime,
+        weeklyEndTime: isClinic ? '' : weeklyEndTime,
+        price,
+        desc: description,
+        img: dataUrl,
+        durationDays,
+        expiresAt: durationDays === null ? null : Date.now() + durationDays * 24 * 60 * 60 * 1000
+      });
+      localStorage.setItem('customLessons', JSON.stringify(lessons));
+      document.getElementById('owner-add-lesson-modal').style.display = 'none';
+      document.getElementById('owner-add-lesson-form').reset();
+      displayCustomLessons();
+    }
+
+    function displayCustomLessons() {
+      const lessonsList = document.getElementById('owner-lessons-list');
+      const lessons = getCustomLessons();
+      lessonsList.innerHTML = lessons.length
+        ? lessons.map((lesson, index) => `
+            <div class="owner-booking-item">
+              <div class="owner-booking-info">
+                <strong>${lesson.name}</strong>
+                <p>${lesson.type === 'clinic' ? `Clinic${lesson.location ? ` at ${lesson.location}` : ''}` : `Lesson - ${lesson.delivery === 'in-person' ? 'In Person' : 'Online'}${lesson.delivery === 'in-person' && lesson.location ? ` at ${lesson.location}` : ''}`}</p>
+                ${lesson.type === 'group' ? `<p>Group capacity: ${lesson.maxParticipants || 'Not set'} people</p>` : ''}
+                ${lesson.type === 'clinic' && lesson.clinicDate ? `<p>${lesson.clinicDate} &middot; ${lesson.clinicStartTime} - ${lesson.clinicEndTime}</p>` : ''}
+                ${lesson.type !== 'clinic' && lesson.weeklyDays?.length ? `<p>Weekly: ${lesson.weeklyDays.map(day => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]).join(', ')} ${lesson.weeklyStartTime} - ${lesson.weeklyEndTime}</p>` : ''}
+                <p>$${Number(lesson.price || 0).toFixed(2)}${lesson.desc ? ` &middot; ${lesson.desc}` : ''}</p>
+                <p>${lesson.expiresAt ? `Available until ${new Date(lesson.expiresAt).toLocaleDateString()}` : 'Available forever'}</p>
+              </div>
+              <button class="owner-cancel-booking-btn owner-delete-lesson-btn" data-index="${index}" type="button">Delete</button>
+            </div>
+          `).join('')
+        : '<p class="no-bookings">No custom lessons added yet.</p>';
+
+      lessonsList.querySelectorAll('.owner-delete-lesson-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const updatedLessons = getCustomLessons();
+          updatedLessons.splice(Number(button.dataset.index), 1);
+          localStorage.setItem('customLessons', JSON.stringify(updatedLessons));
+          displayCustomLessons();
+        });
+      });
+    }
+
+    function openOwnerLessons() {
+      document.getElementById('owner-access-form').style.display = 'none';
+      document.getElementById('owner-lessons-content').style.display = 'block';
+      displayCustomLessons();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const ownerCodeInput = document.getElementById('owner-code');
+      const loadLessonsButton = document.getElementById('load-owner-lessons-btn');
+      const addLessonModal = document.getElementById('owner-add-lesson-modal');
+      const addLessonForm = document.getElementById('owner-add-lesson-form');
+      const durationSelect = document.getElementById('lesson-duration');
+      const typeSelect = document.getElementById('lesson-type');
+      const deliverySelect = document.getElementById('lesson-delivery');
+      const locationGroup = document.getElementById('lesson-location-group');
+      const locationInput = document.getElementById('lesson-location');
+      const groupCapacityGroup = document.getElementById('group-capacity-group');
+      const groupCapacityInput = document.getElementById('group-capacity');
+      const clinicScheduleGroup = document.getElementById('clinic-schedule-group');
+      const clinicDateInput = document.getElementById('clinic-date');
+      const clinicStartInput = document.getElementById('clinic-start-time');
+      const clinicEndInput = document.getElementById('clinic-end-time');
+      const weeklyGroup = document.getElementById('lesson-weekly-schedule-group');
+      const weeklyStartInput = document.getElementById('lesson-weekly-start');
+      const weeklyEndInput = document.getElementById('lesson-weekly-end');
+      const weeklyDayInputs = document.querySelectorAll('input[name="lesson-weekday"]');
+
+      function updateLocationField() {
+        const isClinic = typeSelect.value === 'clinic';
+        const isGroup = typeSelect.value === 'group';
+        const isInPersonLesson = (typeSelect.value === 'lesson' || typeSelect.value === 'group') && deliverySelect.value === 'in-person';
+        const needsLocation = isClinic || isInPersonLesson;
+        clinicScheduleGroup.style.display = isClinic ? 'block' : 'none';
+        groupCapacityGroup.style.display = isGroup ? 'block' : 'none';
+        groupCapacityInput.required = isGroup;
+        clinicDateInput.required = isClinic;
+        clinicStartInput.required = isClinic;
+        clinicEndInput.required = isClinic;
+        weeklyGroup.style.display = isClinic ? 'none' : 'block';
+        weeklyStartInput.required = !isClinic;
+        weeklyEndInput.required = !isClinic;
+        locationGroup.style.display = needsLocation ? 'block' : 'none';
+        locationInput.required = needsLocation;
+        locationGroup.querySelector('label').textContent = isClinic ? 'Clinic Location' : 'Lesson Location';
+        if (!needsLocation) locationInput.value = '';
+      }
+
+      typeSelect.addEventListener('change', updateLocationField);
+      deliverySelect.addEventListener('change', updateLocationField);
+      updateLocationField();
+
+      const today = new Date();
+      clinicDateInput.min = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      weeklyStartInput.value = '09:00';
+      weeklyEndInput.value = '10:00';
+
+      durationSelect.innerHTML = '<option value="forever">Forever</option>';
+      for (let days = 1; days <= 60; days += 1) {
+        durationSelect.insertAdjacentHTML('beforeend', `<option value="${days}">${days} ${days === 1 ? 'day' : 'days'}</option>`);
+      }
+
+      if (sessionStorage.getItem('ownerAuthorized') === 'true') {
+        openOwnerLessons();
+      }
+
+      loadLessonsButton.addEventListener('click', () => {
+        if (ownerCodeInput.value.trim() !== ownerAccessCode) {
+          alert('Invalid owner code.');
+          return;
+        }
+        sessionStorage.setItem('ownerAuthorized', 'true');
+        openOwnerLessons();
+      });
+
+      ownerCodeInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') loadLessonsButton.click();
+      });
+
+      document.getElementById('owner-add-lesson-btn').addEventListener('click', () => {
+        addLessonModal.style.display = 'block';
+      });
+
+      document.querySelector('.owner-add-close').addEventListener('click', () => {
+        addLessonModal.style.display = 'none';
+      });
+
+      document.getElementById('owner-add-cancel').addEventListener('click', () => {
+        addLessonModal.style.display = 'none';
+        addLessonForm.reset();
+      });
+
+      addLessonForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const file = document.getElementById('lesson-image').files[0];
+        if (!file) {
+          saveCustomLesson('public/images/sample-1.jpg');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (fileEvent) => saveCustomLesson(fileEvent.target.result);
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+  <script src="src/script.js"></script>
+</body>
+</html>

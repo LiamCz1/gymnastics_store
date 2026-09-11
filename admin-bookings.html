@@ -27,7 +27,11 @@
       </div>
       <div id="owner-calendar" class="owner-calendar" style="display: none;">
       </div>
+      <div id="owner-booking-actions" style="display: none; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+        <button id="reset-bookings-btn" class="reset-bookings-btn" type="button">Reset All Bookings</button>
+      </div>
     </section>
+
   </main>
 
   <div id="footer-root"></div>
@@ -54,8 +58,10 @@
       const bookedSlots = getBookedSlots();
       const ownerCalendar = document.getElementById('owner-calendar');
       const ownerAccessForm = document.getElementById('owner-access-form');
+      const ownerBookingActions = document.getElementById('owner-booking-actions');
 
       ownerAccessForm.style.display = 'none';
+      ownerBookingActions.style.display = 'block';
       ownerCalendar.innerHTML = '';
 
       if (bookedSlots.length === 0) {
@@ -101,6 +107,8 @@
               <p>${booking.time} &middot; ${booking.type === 'weekly' ? 'Weekly' : 'One-Time'}</p>
               <p>Booked by: ${booking.bookerName}</p>
               <p>Email: ${booking.bookerEmail || 'N/A'} &middot; Phone: ${booking.bookerPhone || 'N/A'}</p>
+              <p><strong>Format:</strong> ${booking.delivery === 'in-person' ? 'In Person' : 'Online'}</p>
+              ${booking.location ? `<p><strong>Location:</strong> ${booking.location}</p>` : ''}
               <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
             </div>
             <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
@@ -134,17 +142,18 @@
     document.addEventListener('DOMContentLoaded', () => {
       const ownerCodeInput = document.getElementById('owner-code');
       const loadOwnerBookingsBtn = document.getElementById('load-owner-bookings-btn');
-      const backButton = document.getElementById('back-button');
-
-      if (backButton) {
-        backButton.addEventListener('click', () => {
-          window.location.href = 'lessons.html';
-        });
-      }
+      const resetBookingsBtn = document.getElementById('reset-bookings-btn');
 
       if (sessionStorage.getItem('ownerAuthorized') === 'true') {
         displayOwnerBookings();
       }
+
+      resetBookingsBtn.addEventListener('click', () => {
+        if (confirm('Reset all bookings? This will remove all saved lesson bookings.')) {
+          setBookedSlots([]);
+          displayOwnerBookings();
+        }
+      });
 
       loadOwnerBookingsBtn.addEventListener('click', () => {
         const enteredCode = ownerCodeInput.value.trim();

@@ -45,6 +45,7 @@
     <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
     <ul id="primary-navigation" class="nav-links" aria-hidden="true">
       <li><a href="admin-bookings.html">Bookings Calendar</a></li>
+      <li><a href="admin-lessons.html">Owner Lessons</a></li>
       <li><a href="admin-orders.html">Customer Orders</a></li>
       <li><a href="admin-settings.html">Custom Messages</a></li>
       <li><a href="admin-analytics.html">Analytics &amp; Performance</a></li>

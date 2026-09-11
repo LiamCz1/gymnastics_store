@@ -1248,6 +1248,42 @@ header.app-header {
   background-color: var(--primary-light);
 }
 
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 64px;
+    right: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    min-width: 160px;
+    box-shadow: var(--shadow-md);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    z-index: 200;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .mobile-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
@@ -1407,6 +1443,72 @@ header.app-header {
   padding: 2.25rem;
   box-shadow: var(--shadow-sm);
   margin-top: 1.5rem;
+}
+
+.owner-settings-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.owner-settings-form > label,
+.owner-promo-settings label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.owner-settings-form input,
+.owner-settings-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-main);
+  color: var(--text-dark);
+  font: inherit;
+}
+
+.owner-promo-settings {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0.5rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-main);
+}
+
+.owner-promo-settings legend {
+  padding: 0 0.5rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.owner-settings-help {
+  margin: -0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.owner-promo-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.owner-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 600px) {
+  .owner-promo-fields {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Cohesive Secure Checkout Layout */
