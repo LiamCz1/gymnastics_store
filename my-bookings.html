@@ -74,6 +74,8 @@
               <p>${escapeHtml(s.date || '')} &middot; ${escapeHtml(s.time || '')}</p>
               <p>Booked by: ${escapeHtml(s.bookerName || '')}</p>
               <p>Email: ${escapeHtml(s.bookerEmail || 'N/A')} &middot; Phone: ${escapeHtml(s.bookerPhone || 'N/A')}</p>
+              <p><strong>Format:</strong> ${s.delivery === 'in-person' ? 'In Person' : 'Online'}</p>
+              ${s.location ? `<p><strong>Location:</strong> ${escapeHtml(s.location)}</p>` : ''}
               <p><strong>Total Price:</strong> $${totalPrice}</p>
             </div>
             <div style="margin-top:0.5rem;"><button class="owner-cancel-booking-btn" data-index="${i}" type="button">Cancel Booking</button></div>

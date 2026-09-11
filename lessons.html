@@ -58,47 +58,7 @@
         <p style="margin: 0; color: var(--text-muted); line-height: 1.6;">Each lesson is presented alongside the gear and support customers need, so athletes can move from beginner guidance to coaching and purchase without friction.</p>
       </section>
       <p style="margin: 0 0 1.5rem; color: var(--text-muted); max-width: 760px; line-height: 1.7;">Book private gymnastics lessons and coaching sessions focused on strength, flexibility, and skill development for athletes of all levels.</p>
-      <div class="products-grid">
-        <article class="product-card">
-          <div class="product-image"><img src="public/images/sample-1.jpg" alt="Strength training session for gymnastics athletes" loading="lazy"></div>
-          <div class="product-info">
-            <h3>Strength Training</h3>
-
-            <div class="pricing-badge-container"
-              style="display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0 1rem 0;">
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Price</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$45.00</span>
-              </div>
-            </div>
-
-            <p>60-minute personalized strength and conditioning workout designed for gymnasts.</p>
-            <button class="lesson-book" type="button" data-id="strength-001" data-name="Strength Training"
-              data-price="45.00">Book Now</button>
-          </div>
-        </article>
-
-        <article class="product-card">
-          <div class="product-image"><img src="public/images/sample-2.jpg" alt="Flexibility and stretching session for gymnasts" loading="lazy"></div>
-          <div class="product-info">
-            <h3>Flexibility & Stretching</h3>
-
-            <div class="pricing-badge-container"
-              style="display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0 1rem 0;">
-              <div
-                style="display: flex; justify-content: space-between; align-items: center; background: rgba(79, 70, 229, 0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(79, 70, 229, 0.08);">
-                <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark);">Price</span>
-                <span style="font-weight: 800; font-size: 1rem; color: var(--primary);">$40.00</span>
-              </div>
-            </div>
-
-            <p>45-minute session focusing on improving flexibility and injury prevention.</p>
-            <button class="lesson-book" type="button" data-id="flex-001" data-name="Flexibility & Stretching"
-              data-price="40.00">Book Now</button>
-          </div>
-        </article>
-      </div>
+      <div class="products-grid"></div>
     </section>
 
     <section id="lessons-info" style="margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: var(--bg-main);">
@@ -115,20 +75,17 @@
           <button id="verify-name-btn" class="verify-btn">View Now</button>
         </div>
       </div>
-      <div id="owner-tools" class="owner-tools">
-        <label for="owner-code">Owner Access</label>
-        <div class="owner-access-group">
-          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
-          <button id="owner-view-btn" class="verify-btn">View All Bookings</button>
-        </div>
-        <button id="reset-bookings-btn" class="reset-bookings-btn" type="button">Reset All Bookings</button>
-      </div>
-      <div id="owner-bookings" class="owner-bookings" style="display: none;">
-        <h3>Owner Booking Calendar</h3>
-        <div id="owner-calendar" class="owner-calendar"></div>
-      </div>
       <div id="bookings-list" class="bookings-list" style="display: none;">
         <p class="no-bookings">No bookings found</p>
+      </div>
+    </section>
+
+    <section id="owner-access" class="booking-login" style="margin-top: 2rem;">
+      <h2>Owner Access</h2>
+      <label for="owner-code">Enter the owner code to open the owner area:</label>
+      <div class="verify-name-group">
+        <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+        <button id="owner-view-btn" class="verify-btn" type="button">Owner Login</button>
       </div>
     </section>
 
@@ -309,6 +266,19 @@
 
     let currentWeekStart = null;
     let selectedLessonPrice = 45.00;
+    let selectedLessonExpiresAt = null;
+    let selectedLessonLocation = '';
+    let selectedLessonDelivery = 'online';
+    let selectedLessonType = 'lesson';
+    let selectedLessonSchedule = null;
+    let selectedLessonCapacity = null;
+
+    function formatClinicTime(timeValue) {
+      const [hours, minutes] = timeValue.split(':').map(Number);
+      const suffix = hours >= 12 ? 'PM' : 'AM';
+      const displayHours = hours % 12 || 12;
+      return `${displayHours}:${String(minutes).padStart(2, '0')} ${suffix}`;
+    }
 
     function getActivePromo() {
       const code = (localStorage.getItem('homePromoCode') || '').trim().toUpperCase();
@@ -376,6 +346,13 @@
       }
 
       return { hours, minutes };
+    }
+
+    function timeToMinutes(timeString) {
+      const parsed = timeString.includes(':') && /AM|PM/i.test(timeString)
+        ? parseTimeString(timeString)
+        : { hours: Number(timeString.split(':')[0]), minutes: Number(timeString.split(':')[1]) };
+      return parsed.hours * 60 + parsed.minutes;
     }
 
     function getLessonDateTime(dateKey, timeString) {
@@ -483,8 +460,17 @@
 
         // Time slots for this day
         timeSlots.forEach(time => {
+          if (selectedLessonType === 'lesson' && selectedLessonSchedule && selectedLessonSchedule.days.length) {
+            const dayAllowed = selectedLessonSchedule.days.includes(date.getDay());
+            const timeAllowed = timeToMinutes(time) >= timeToMinutes(selectedLessonSchedule.start) && timeToMinutes(time) < timeToMinutes(selectedLessonSchedule.end);
+            if (!dayAllowed || !timeAllowed) return;
+          }
           const slotKey = `${dateKey}-${time}`;
-          const isBooked = bookedSlots.some(slot => slot.key === slotKey);
+          const matchingBookings = bookedSlots.filter(slot => slot.key === slotKey && slot.lesson === lessonNameInput.value);
+          const bookedPeople = matchingBookings.reduce((total, slot) => total + (Number(slot.numPeople) || 1), 0);
+          const isBooked = selectedLessonType === 'group'
+            ? bookedPeople >= selectedLessonCapacity
+            : bookedSlots.some(slot => slot.key === slotKey);
           const inPast = isSlotInPast(dateKey, time);
           if (inPast) {
             return; // Skip rendering slots that are in the past
@@ -493,7 +479,9 @@
 
           const slot = document.createElement('button');
           slot.className = `calendar-time-slot ${isBooked ? 'booked' : (tooFar ? 'too-far' : 'available')}`;
-          slot.textContent = time;
+          slot.textContent = selectedLessonType === 'group' && selectedLessonCapacity
+            ? `${time} (${Math.max(0, selectedLessonCapacity - bookedPeople)} left)`
+            : time;
           slot.disabled = isBooked || tooFar;
 
           if (selectedSlot && selectedSlot.dateKey === dateKey && selectedSlot.time === time) {
@@ -779,15 +767,188 @@
         });
       });
 
+      // Custom lessons persisted by owner (localStorage)
+      function getCustomLessons() {
+        try { return JSON.parse(localStorage.getItem('customLessons') || '[]'); } catch (e) { return []; }
+      }
+
+      function setCustomLessons(list) {
+        localStorage.setItem('customLessons', JSON.stringify(list || []));
+      }
+
+      function createLessonCard(lesson) {
+        const article = document.createElement('article');
+        article.className = 'product-card';
+        article.innerHTML = `
+          <div class="product-image"><img src="${lesson.img || 'public/images/sample-1.jpg'}" alt="${escapeHtml(lesson.name)}" loading="lazy"></div>
+          <div class="product-info">
+            <h3>${escapeHtml(lesson.name)}</h3>
+            <div class="pricing-badge-container" style="display:flex;flex-direction:column;gap:0.5rem;margin:0.5rem 0 1rem 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(79,70,229,0.04);padding:0.5rem 0.75rem;border-radius:8px;border:1px solid rgba(79,70,229,0.08);">
+                <span style="font-weight:600;font-size:0.85rem;color:var(--text-dark);">Price</span>
+                <span style="font-weight:800;font-size:1rem;color:var(--primary);">$${parseFloat(lesson.price || 0).toFixed(2)}</span>
+              </div>
+            </div>
+            <p>${escapeHtml(lesson.desc || '')}</p>
+            <p><strong>${lesson.type === 'clinic' ? 'Clinic' : 'Format'}:</strong> ${lesson.type === 'clinic' ? 'In Person' : (lesson.delivery === 'in-person' ? 'In Person' : 'Online')}</p>
+            ${lesson.location ? `<p><strong>Location:</strong> ${escapeHtml(lesson.location)}</p>` : ''}
+            ${lesson.type === 'clinic' && lesson.clinicDate ? `<p><strong>When:</strong> ${escapeHtml(lesson.clinicDate)} at ${escapeHtml(lesson.clinicStartTime)} - ${escapeHtml(lesson.clinicEndTime)}</p>` : ''}
+            ${lesson.type !== 'clinic' && lesson.weeklyDays?.length ? `<p><strong>Weekly:</strong> ${lesson.weeklyDays.map(day => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]).join(', ')} at ${escapeHtml(lesson.weeklyStartTime)}</p>` : ''}
+            ${lesson.type === 'group' ? `<p><strong>Capacity:</strong> ${Number(lesson.maxParticipants || 0)} people per class</p>` : ''}
+            <button class="lesson-book" type="button" data-id="${escapeHtml(lesson.id)}" data-name="${escapeHtml(lesson.name)}" data-price="${parseFloat(lesson.price||0).toFixed(2)}" data-type="${escapeHtml(lesson.type || 'lesson')}" data-capacity="${lesson.maxParticipants || ''}" data-delivery="${escapeHtml(lesson.delivery || (lesson.type === 'clinic' ? 'in-person' : 'online'))}" data-location="${escapeHtml(lesson.location || '')}" data-clinic-date="${escapeHtml(lesson.clinicDate || '')}" data-clinic-start="${escapeHtml(lesson.clinicStartTime || '')}" data-clinic-end="${escapeHtml(lesson.clinicEndTime || '')}" data-weekly-days="${escapeHtml(JSON.stringify(lesson.weeklyDays || []))}" data-weekly-start="${escapeHtml(lesson.weeklyStartTime || '')}" data-weekly-end="${escapeHtml(lesson.weeklyEndTime || '')}" data-expires-at="${lesson.expiresAt || ''}">Book Now</button>
+          </div>
+        `;
+        return article;
+      }
+
+      function escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      function renderCustomLessons() {
+        const grid = document.querySelector('.products-grid');
+        if (!grid) return;
+        const now = Date.now();
+        const list = getCustomLessons().filter(lesson => !lesson.expiresAt || lesson.expiresAt > now);
+        // Remove previously rendered custom markers
+        Array.from(grid.querySelectorAll('[data-custom="true"]')).forEach(el => el.remove());
+        list.forEach(lesson => {
+          const card = createLessonCard(lesson);
+          card.setAttribute('data-custom', 'true');
+          grid.appendChild(card);
+          // attach booking handler for this card
+          const btn = card.querySelector('.lesson-book');
+          if (btn) attachBookHandler(btn);
+        });
+      }
+
+      function attachBookHandler(btn) {
+        btn.addEventListener('click', () => {
+          lessonNameInput.value = btn.dataset.name;
+          selectedLessonPrice = parseFloat(btn.dataset.price) || 45.00;
+          selectedLessonExpiresAt = btn.dataset.expiresAt ? Number(btn.dataset.expiresAt) : null;
+          selectedLessonLocation = btn.dataset.location || '';
+          selectedLessonDelivery = btn.dataset.delivery || 'online';
+          selectedLessonType = btn.dataset.type || 'lesson';
+          selectedLessonCapacity = btn.dataset.capacity ? Number(btn.dataset.capacity) : null;
+          selectedLessonSchedule = {
+            days: JSON.parse(btn.dataset.weeklyDays || '[]'),
+            start: btn.dataset.weeklyStart,
+            end: btn.dataset.weeklyEnd
+          };
+          selectedSlot = null;
+          confirmBtn.style.display = 'none';
+          document.getElementById('selection-display').textContent = '';
+
+          const bookingTypeSelector = document.querySelector('.booking-type-selector');
+          const calendarWrapper = document.querySelector('.calendar-wrapper');
+          if (selectedLessonType === 'clinic') {
+            bookingTypeSelector.style.display = 'none';
+            calendarWrapper.style.display = 'none';
+            document.querySelector('input[name="booking-type"][value="one-time"]').checked = true;
+            selectedSlot = {
+              dateKey: btn.dataset.clinicDate,
+              time: formatClinicTime(btn.dataset.clinicStart)
+            };
+            document.getElementById('selection-display').textContent = `Clinic: ${selectedSlot.dateKey} at ${selectedSlot.time} - ${formatClinicTime(btn.dataset.clinicEnd)}`;
+            confirmBtn.style.display = 'block';
+          } else {
+            bookingTypeSelector.style.display = '';
+            calendarWrapper.style.display = '';
+          }
+          currentWeekStart = new Date();
+          currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+          renderCalendar(currentWeekStart);
+          bookingModal.style.display = 'block';
+        });
+      }
+
+      // Owner Add Lesson UI handlers
+      const ownerAddBtn = document.getElementById('owner-add-lesson-btn');
+      const ownerAddModal = document.getElementById('owner-add-lesson-modal');
+      const ownerAddClose = document.querySelector('.owner-add-close');
+      const ownerAddCancel = document.getElementById('owner-add-cancel');
+      const ownerAddForm = document.getElementById('owner-add-lesson-form');
+
+      if (ownerAddBtn) {
+        ownerAddBtn.addEventListener('click', () => {
+          const enteredCode = ownerCodeInput.value.trim();
+          if (enteredCode !== ownerAccessCode) { alert('Invalid owner code.'); return; }
+          if (ownerAddModal) ownerAddModal.style.display = 'block';
+        });
+      }
+
+      if (ownerAddClose) ownerAddClose.addEventListener('click', () => { ownerAddModal.style.display = 'none'; });
+      if (ownerAddCancel) ownerAddCancel.addEventListener('click', () => { ownerAddModal.style.display = 'none'; });
+
+      if (ownerAddForm) {
+        ownerAddForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const title = document.getElementById('lesson-title').value.trim();
+          const price = parseFloat(document.getElementById('lesson-price').value) || 0;
+          const desc = document.getElementById('lesson-desc').value.trim();
+          const fileInput = document.getElementById('lesson-image');
+
+          function saveWithImage(dataUrl) {
+            const list = getCustomLessons();
+            const lesson = { id: 'custom-' + Date.now(), name: title, price: price, desc: desc, img: dataUrl };
+            list.push(lesson);
+            setCustomLessons(list);
+            renderCustomLessons();
+            ownerAddModal.style.display = 'none';
+            ownerAddForm.reset();
+          }
+
+          if (fileInput && fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(evt) { saveWithImage(evt.target.result); };
+            reader.readAsDataURL(fileInput.files[0]);
+          } else {
+            saveWithImage('public/images/sample-1.jpg');
+          }
+        });
+      }
+
+      // Render any previously saved custom lessons
+      renderCustomLessons();
+
+
       // Open modal when Book Now is clicked
       const bookButtons = document.querySelectorAll('.lesson-book');
       bookButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           lessonNameInput.value = btn.dataset.name;
           selectedLessonPrice = parseFloat(btn.dataset.price) || 45.00;
+          selectedLessonExpiresAt = btn.dataset.expiresAt ? Number(btn.dataset.expiresAt) : null;
+          selectedLessonLocation = btn.dataset.location || '';
+          selectedLessonDelivery = btn.dataset.delivery || 'online';
+          selectedLessonType = btn.dataset.type || 'lesson';
+          selectedLessonCapacity = btn.dataset.capacity ? Number(btn.dataset.capacity) : null;
+          selectedLessonSchedule = {
+            days: JSON.parse(btn.dataset.weeklyDays || '[]'),
+            start: btn.dataset.weeklyStart,
+            end: btn.dataset.weeklyEnd
+          };
           selectedSlot = null;
           confirmBtn.style.display = 'none';
           document.getElementById('selection-display').textContent = '';
+
+          const bookingTypeSelector = document.querySelector('.booking-type-selector');
+          const calendarWrapper = document.querySelector('.calendar-wrapper');
+          if (selectedLessonType === 'clinic') {
+            bookingTypeSelector.style.display = 'none';
+            calendarWrapper.style.display = 'none';
+            document.querySelector('input[name="booking-type"][value="one-time"]').checked = true;
+            selectedSlot = {
+              dateKey: btn.dataset.clinicDate,
+              time: formatClinicTime(btn.dataset.clinicStart)
+            };
+            document.getElementById('selection-display').textContent = `Clinic: ${selectedSlot.dateKey} at ${selectedSlot.time} - ${formatClinicTime(btn.dataset.clinicEnd)}`;
+            confirmBtn.style.display = 'block';
+          } else {
+            bookingTypeSelector.style.display = '';
+            calendarWrapper.style.display = '';
+          }
 
           // Reset to current week
           currentWeekStart = new Date();
@@ -909,6 +1070,21 @@
         const numPeople = parseInt(document.getElementById('num-people').value, 10) || 1;
         const pricePerPerson = selectedLessonPrice;
 
+        if (selectedLessonType === 'group' && selectedLessonCapacity) {
+          const bookedPeople = bookedSlots
+            .filter(slot => slot.key === `${selectedSlot.dateKey}-${selectedSlot.time}` && slot.lesson === lessonName)
+            .reduce((total, slot) => total + (Number(slot.numPeople) || 1), 0);
+          if (bookedPeople + numPeople > selectedLessonCapacity) {
+            alert(`This group class has only ${Math.max(0, selectedLessonCapacity - bookedPeople)} spot(s) left.`);
+            return;
+          }
+        }
+
+        if (selectedLessonExpiresAt && Date.now() >= selectedLessonExpiresAt) {
+          alert('This clinic is no longer accepting new bookings. Existing bookings are not affected.');
+          return;
+        }
+
         // Validation checks
         if (bookingType === 'one-time') {
           const slotDate = new Date(selectedSlot.dateKey + 'T00:00:00');
@@ -944,6 +1120,9 @@
         confirmBtn.textContent = 'Confirming...';
 
         const formData = {
+          _subject: `APEX GYM Booking Details - ${lessonName}`,
+          _replyto: bookerEmail,
+          _autoresponse: `Your APEX GYM booking is confirmed.\n\nLesson or clinic: ${lessonName}\nFormat: ${selectedLessonDelivery === 'in-person' ? 'In Person' : 'Online'}\nDate: ${displayDate}\nTime: ${selectedSlot.time}\nLocation: ${selectedLessonLocation || 'Online meeting link will be provided'}\nTotal: $${totalToPay.toFixed(2)}\n\nPlease contact APEX GYM if you need to change your booking.`,
           bookingType: 'Coaching Lesson Reservation',
           lessonName: lessonName,
           date: displayDate,
@@ -952,6 +1131,8 @@
           name: bookerName,
           email: bookerEmail,
           phone: bookerPhone,
+          location: selectedLessonLocation || 'Not specified',
+          delivery: selectedLessonDelivery,
           attendees: numPeople,
           pricePerLesson: `$${pricePerPerson.toFixed(2)}`,
           totalPrice: `$${totalToPay.toFixed(2)}`,
@@ -980,6 +1161,8 @@
                 bookerName: bookerName,
                 bookerEmail: bookerEmail,
                 bookerPhone: bookerPhone,
+                location: selectedLessonLocation || '',
+                delivery: selectedLessonDelivery,
                 numPeople: numPeople,
                 promoCode: promoCode,
                 price: pricePerPerson,
@@ -1004,6 +1187,8 @@
                   bookerName: bookerName,
                   bookerEmail: bookerEmail,
                   bookerPhone: bookerPhone,
+                  location: selectedLessonLocation || '',
+                  delivery: selectedLessonDelivery,
                   numPeople: numPeople,
                   promoCode: promoCode,
                   price: pricePerPerson,
@@ -1024,7 +1209,7 @@
             
             const eventSubject = `APEX GYM - ${lessonName} Private Lesson`;
             const eventDescription = `Hello ${bookerName}! Here is the Google Meet link for your private training session with APEX GYM: https://meet.google.com/orh-dtwh-wcr. Excited to train with you!`;
-            const eventLocation = 'https://meet.google.com/orh-dtwh-wcr';
+            const eventLocation = selectedLessonLocation || 'https://meet.google.com/orh-dtwh-wcr';
 
             // Google Calendar link
             const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventSubject)}&dates=${formatGoogleCalendarDate(startEventDate)}/${formatGoogleCalendarDate(endEventDate)}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(eventLocation)}`;
@@ -1049,6 +1234,8 @@
               <strong>Name:</strong> ${bookerName}<br>
               <strong>Email:</strong> ${bookerEmail}<br>
               <strong>Phone:</strong> ${bookerPhone}<br>
+              ${selectedLessonLocation ? `<strong>Location:</strong> ${selectedLessonLocation}<br>` : ''}
+              <strong>Format:</strong> ${selectedLessonDelivery === 'in-person' ? 'In Person' : 'Online'}<br>
               <strong>Promo Code:</strong> ${promoCode || 'None'}<br>
               <strong>Discount Applied:</strong> ${promoTotals.discountAmount > 0 ? `-$${promoTotals.discountAmount.toFixed(2)}` : '$0.00'}<br>
               <strong>Final Amount:</strong> $${totalToPay.toFixed(2)}

@@ -123,38 +123,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const descEl = document.getElementById('home-hero-desc');
 
   if (promoEl) {
+    if (localStorage.getItem('hideHomePromoBanner') === 'true') {
+      promoEl.style.display = 'none';
+    }
     const savedPromo = localStorage.getItem('homePromoMsg');
     const savedPromoCode = localStorage.getItem('homePromoCode');
     const savedPromoPercent = localStorage.getItem('homePromoPercent');
-    if (savedPromo !== null) {
-      let promoText = savedPromo;
-      if (savedPromoPercent) {
-        promoText = promoText.replace(/\b\d+%\b/g, `${savedPromoPercent}%`);
-      }
+    const hasPromoMessage = savedPromo !== null && savedPromo.trim() !== '';
+    const hasPromoOffer = savedPromoCode && Number(savedPromoPercent) > 0;
+    if (hasPromoMessage || hasPromoOffer) {
+      const promoText = hasPromoMessage
+        ? savedPromo.replace(/\b\d+%\b/g, `${savedPromoPercent}%`)
+        : `Save ${savedPromoPercent}% when you use promo code`;
+      promoEl.textContent = promoText;
       if (savedPromoCode) {
-        const codeBadge = `<span class="promo-code-badge">${savedPromoCode}</span>`;
-        if (!promoText.includes('Use code') && !promoText.includes('code')) {
-          promoText = `${promoText}  Use code ${codeBadge}`;
-        } else if (promoText.includes('Use code')) {
-          promoText = promoText.replace(/Use code\s*/i, `Use code ${codeBadge}`);
-        } else {
-          promoText = `${promoText} ${codeBadge}`;
-        }
+        const codeBadge = document.createElement('span');
+        codeBadge.className = 'promo-code-badge';
+        codeBadge.textContent = savedPromoCode;
+        promoEl.append(document.createTextNode(hasPromoMessage ? '  Use code ' : ' '), codeBadge);
       }
-      promoEl.innerHTML = promoText;
     }
   }
   if (overlineEl) {
     const savedOverline = localStorage.getItem('homeOverlineMsg');
-    if (savedOverline !== null) overlineEl.innerHTML = savedOverline;
+    if (savedOverline !== null && savedOverline.trim() !== '') overlineEl.innerHTML = savedOverline;
   }
   if (titleEl) {
     const savedTitle = localStorage.getItem('homeTitleMsg');
-    if (savedTitle !== null) titleEl.innerHTML = savedTitle;
+    if (savedTitle !== null && savedTitle.trim() !== '') titleEl.innerHTML = savedTitle;
   }
   if (descEl) {
     const savedDesc = localStorage.getItem('homeDescMsg');
-    if (savedDesc !== null) descEl.innerHTML = savedDesc;
+    if (savedDesc !== null && savedDesc.trim() !== '') descEl.innerHTML = savedDesc;
   }
   
   const tickerEl = document.getElementById('home-ticker-wrapper');
@@ -683,10 +683,17 @@ function displayOwnerSettings() {
     <label>Homepage Overline (small):<br><input id="owner-home-overline" type="text" placeholder="e.g. New Season"/></label>
     <label>Homepage Title:<br><input id="owner-home-title" type="text" placeholder="Welcome to APEX"/></label>
     <label>Homepage Description:<br><textarea id="owner-home-desc" rows="3" placeholder="Short description"></textarea></label>
-    <label>Promo Message:<br><input id="owner-home-promo" type="text" placeholder="Free shipping for orders $50+"/></label>
-    <label>Promo Code:<br><input id="owner-home-promo-code" type="text" placeholder="APEX10"/></label>
-    <label>Promo Percent:<br><input id="owner-home-promo-percent" type="number" min="0" max="100"/></label>
-    <div style="margin-top:0.5rem;"><button id="owner-save-settings" type="button" class="btn">Save Settings</button> <button id="owner-reset-settings" type="button" class="btn btn-ghost">Reset</button></div>
+    <fieldset class="owner-promo-settings">
+      <legend>Discount Code</legend>
+      <p class="owner-settings-help">Create the discount shown on the homepage and accepted during checkout.</p>
+      <label for="owner-home-promo">Offer Message</label>
+      <input id="owner-home-promo" type="text" placeholder="Free shipping for orders $50+"/>
+      <div class="owner-promo-fields">
+        <label for="owner-home-promo-code">Code<input id="owner-home-promo-code" type="text" placeholder="APEX10"/></label>
+        <label for="owner-home-promo-percent">Discount Percent<input id="owner-home-promo-percent" type="number" min="0" max="100" placeholder="10"/></label>
+      </div>
+    </fieldset>
+    <div class="owner-settings-actions"><button id="owner-save-settings" type="button" class="btn">Save Settings</button><button id="owner-reset-settings" type="button" class="btn btn-ghost">Reset</button><button id="owner-hide-banner" type="button" class="btn btn-ghost">Hide Homepage Banner</button></div>
   `;
   container.appendChild(form);
 
@@ -697,6 +704,7 @@ function displayOwnerSettings() {
   const promo = document.getElementById('owner-home-promo');
   const promoCode = document.getElementById('owner-home-promo-code');
   const promoPercent = document.getElementById('owner-home-promo-percent');
+  const hideBannerButton = document.getElementById('owner-hide-banner');
 
   overline.value = localStorage.getItem('homeOverlineMsg') || '';
   title.value = localStorage.getItem('homeTitleMsg') || '';
@@ -704,14 +712,33 @@ function displayOwnerSettings() {
   promo.value = localStorage.getItem('homePromoMsg') || '';
   promoCode.value = localStorage.getItem('homePromoCode') || '';
   promoPercent.value = localStorage.getItem('homePromoPercent') || '';
+  hideBannerButton.textContent = localStorage.getItem('hideHomePromoBanner') === 'true' ? 'Show Homepage Banner' : 'Hide Homepage Banner';
+
+  hideBannerButton.addEventListener('click', () => {
+    const shouldHide = localStorage.getItem('hideHomePromoBanner') !== 'true';
+    localStorage.setItem('hideHomePromoBanner', String(shouldHide));
+    hideBannerButton.textContent = shouldHide ? 'Show Homepage Banner' : 'Hide Homepage Banner';
+    alert(shouldHide ? 'Homepage banner hidden.' : 'Homepage banner enabled.');
+  });
 
   document.getElementById('owner-save-settings').addEventListener('click', () => {
-    localStorage.setItem('homeOverlineMsg', overline.value);
-    localStorage.setItem('homeTitleMsg', title.value);
-    localStorage.setItem('homeDescMsg', desc.value);
-    localStorage.setItem('homePromoMsg', promo.value);
-    localStorage.setItem('homePromoCode', promoCode.value);
-    localStorage.setItem('homePromoPercent', promoPercent.value);
+    const promoPercentValue = Math.min(100, Math.max(0, parseInt(promoPercent.value, 10) || 0));
+    const promoCodeValue = promoCode.value.trim().toUpperCase();
+    const textSettings = [
+      ['homeOverlineMsg', overline.value],
+      ['homeTitleMsg', title.value],
+      ['homeDescMsg', desc.value],
+      ['homePromoMsg', promo.value]
+    ];
+    textSettings.forEach(([key, value]) => {
+      const trimmedValue = value.trim();
+      if (trimmedValue) localStorage.setItem(key, trimmedValue);
+      else localStorage.removeItem(key);
+    });
+    localStorage.setItem('homePromoCode', promoCodeValue);
+    localStorage.setItem('homePromoPercent', String(promoPercentValue));
+    promoCode.value = promoCodeValue;
+    promoPercent.value = promoPercentValue ? String(promoPercentValue) : '';
     alert('Settings saved locally. Refresh the home page to see changes.');
   });
 
@@ -723,7 +750,9 @@ function displayOwnerSettings() {
     localStorage.removeItem('homePromoMsg');
     localStorage.removeItem('homePromoCode');
     localStorage.removeItem('homePromoPercent');
+    localStorage.removeItem('hideHomePromoBanner');
     overline.value = title.value = desc.value = promo.value = promoCode.value = promoPercent.value = '';
+    hideBannerButton.textContent = 'Hide Homepage Banner';
     alert('Settings reset. Refresh the home page to see default content.');
   });
 }
