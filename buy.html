@@ -167,6 +167,7 @@
   <div id="footer-root"></div>
 
   <script src="src/templates.js"></script>
+  <script src="src/product-data.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -188,17 +189,37 @@
       // Forms
       const shippingForm = document.getElementById('shipping-form');
 
+      function normalizeCart(cart) {
+        if (!Array.isArray(cart)) return [];
+
+        return cart
+          .map(item => {
+            if (!item || !item.id) return null;
+            return {
+              id: String(item.id),
+              quantity: Math.max(1, Number(item.quantity) || 1)
+            };
+          })
+          .filter(Boolean);
+      }
+
       function getCart() {
         try {
-          return JSON.parse(localStorage.getItem('gymCart') || '[]');
+          const cart = JSON.parse(localStorage.getItem('gymCart') || '[]');
+          const normalizedCart = normalizeCart(cart);
+          if (normalizedCart.length !== cart.length) {
+            localStorage.setItem('gymCart', JSON.stringify(normalizedCart));
+          }
+          return normalizedCart;
         } catch (e) {
           return [];
         }
       }
 
       function setCart(cart) {
-        localStorage.setItem('gymCart', JSON.stringify(cart));
-        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const normalizedCart = normalizeCart(cart);
+        localStorage.setItem('gymCart', JSON.stringify(normalizedCart));
+        const count = normalizedCart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
         localStorage.setItem('cartCount', String(count));
         if (window.updateGlobalCartBadge) {
           window.updateGlobalCartBadge();
@@ -240,14 +261,38 @@
         };
       }
 
+      function resolveCartItem(item) {
+        const catalogItem = (window.productCatalog || []).find(product => product.id === item.id) || null;
+        if (catalogItem) {
+          return {
+            id: catalogItem.id,
+            name: catalogItem.name,
+            price: Number(catalogItem.price),
+            img: catalogItem.image,
+            quantity: Math.max(1, Number(item.quantity) || 1)
+          };
+        }
+
+        const legacyName = item.name || 'Product';
+        const legacyPrice = Number(item.price) || 0;
+        return {
+          id: item.id || legacyName,
+          name: legacyName,
+          price: legacyPrice,
+          img: item.img || '',
+          quantity: Math.max(1, Number(item.quantity) || 1)
+        };
+      }
+
       function renderCheckout() {
         const cart = getCart();
-        const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-        
+        const cartItems = cart.map(resolveCartItem);
+        const totalItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
         headerItemsCount.textContent = totalItemsCount;
         summaryItemsCount.textContent = totalItemsCount;
 
-        if (cart.length === 0) {
+        if (cartItems.length === 0) {
           checkoutGrid.style.display = 'none';
           successScreen.style.display = 'none';
           emptyCartScreen.style.display = 'block';
@@ -263,7 +308,7 @@
 
         let itemsSubtotal = 0;
 
-        cart.forEach((item, index) => {
+        cartItems.forEach((item, index) => {
           const itemTotal = item.price * item.quantity;
           itemsSubtotal += itemTotal;
 
@@ -352,6 +397,7 @@
 
         // Save order details to localStorage
         const cart = getCart();
+        const cartItems = cart.map(resolveCartItem);
         const shipName = document.getElementById('ship-name').value.trim();
         const shipEmail = document.getElementById('ship-email').value.trim();
         const shipAddress = document.getElementById('ship-address').value.trim();
@@ -359,7 +405,7 @@
         const shipState = document.getElementById('ship-state').value.trim();
         const shipZip = document.getElementById('ship-zip').value.trim();
         const promoCode = document.getElementById('promo-code').value.trim();
-        const itemsSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const itemsSubtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const shippingFee = itemsSubtotal > 50.00 ? 0.00 : 5.99;
         const totals = calculateCheckoutTotals(itemsSubtotal, shippingFee, promoCode);
         const finalTotal = totals.finalTotal;
@@ -375,7 +421,7 @@
           customerEmail: shipEmail,
           shippingAddress: `${shipAddress}, ${shipCity}, ${shipState} ${shipZip}`,
           promoCode: promoCode,
-          items: cart,
+          items: cartItems,
           subtotal: totals.discountedSubtotal,
           shipping: shippingFee,
           tax: totals.estimatedTax,
@@ -388,7 +434,7 @@
         placeOrderBtn.disabled = true;
         placeOrderBtn.textContent = 'Placing order...';
 
-        const itemsText = cart.map(item => `- ${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+        const itemsText = cartItems.map(item => `- ${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
 
         const formData = {
           orderId: order.id,

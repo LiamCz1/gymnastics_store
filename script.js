@@ -106,7 +106,7 @@ function renderCollection(category) {
         <h3>${item.name}</h3>
         <p>${item.desc}</p>
         <p class="collection-card-price">$${item.price.toFixed(2)}</p>
-        <button class="btn collection-card-btn" type="button" onclick="window.location.href='${item.actionUrl}'">View Details</button>
+        <button class="btn collection-card-btn" type="button" onclick="window.location.href='product-details.html?id=${encodeURIComponent(item.id || item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}'">View Details</button>
       </div>
     `;
     grid.appendChild(card);

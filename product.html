@@ -91,8 +91,11 @@
             <h3>Balance Beam Trainer</h3>
             <p class="product-price">$79.99</p>
             <p>Portable foam balance beam for home practice.</p>
-            <button class="product-buy" type="button" data-id="beam" data-name="Balance Beam Trainer" data-price="79.99"
-              data-img="public/images/balance_beam.png">Buy</button>
+            <div style="display:flex; gap:0.75rem;">
+              <a class="btn" href="product-details.html?id=beam" style="flex:1; text-align:center;">View Details</a>
+              <button class="product-buy" type="button" data-id="beam" data-name="Balance Beam Trainer" data-price="79.99"
+                data-img="public/images/balance_beam.png">Buy</button>
+            </div>
           </div>
         </article>
 
@@ -102,8 +105,11 @@
             <h3>Gymnastics Grips</h3>
             <p class="product-price">$24.99</p>
             <p>Comfortable leather grips for bar work.</p>
-            <button class="product-buy" type="button" data-id="grips" data-name="Gymnastics Grips" data-price="24.99"
-              data-img="public/images/grips.png">Buy</button>
+            <div style="display:flex; gap:0.75rem;">
+              <a class="btn" href="product-details.html?id=grips" style="flex:1; text-align:center;">View Details</a>
+              <button class="product-buy" type="button" data-id="grips" data-name="Gymnastics Grips" data-price="24.99"
+                data-img="public/images/grips.png">Buy</button>
+            </div>
           </div>
         </article>
 
@@ -290,6 +296,7 @@
   </div>
 
   <script src="src/templates.js"></script>
+  <script src="src/product-data.js"></script>
 
   <script>
     function applyShopAccessState() {
@@ -327,16 +334,38 @@
       // removed header buy button; cart and product buy buttons handle navigation
 
       // initialize cart count from localStorage
+      const catalog = window.productCatalog || [];
+
+      function normalizeCart(cart) {
+        if (!Array.isArray(cart)) return [];
+
+        return cart
+          .map(item => {
+            if (!item || !item.id) return null;
+            const quantity = Number(item.quantity) || 1;
+            return {
+              id: String(item.id),
+              quantity: Math.max(1, quantity)
+            };
+          })
+          .filter(Boolean);
+      }
+
       function getCart() {
         try {
-          return JSON.parse(localStorage.getItem('gymCart') || '[]');
+          const cart = JSON.parse(localStorage.getItem('gymCart') || '[]');
+          const normalizedCart = normalizeCart(cart);
+          if (normalizedCart.length !== cart.length) {
+            localStorage.setItem('gymCart', JSON.stringify(normalizedCart));
+          }
+          return normalizedCart;
         } catch (e) {
           return [];
         }
       }
 
       function updateCartBadge(cart) {
-        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const count = (Array.isArray(cart) ? cart : getCart()).reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
         localStorage.setItem('cartCount', String(count));
         if (cartBadge) {
           cartBadge.textContent = String(count);
@@ -360,17 +389,20 @@
       const productBuyButtons = document.querySelectorAll('.product-buy');
       productBuyButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-          const cart = getCart();
           const id = btn.dataset.id;
-          const name = btn.dataset.name;
-          const price = parseFloat(btn.dataset.price);
-          const img = btn.dataset.img;
+          const product = catalog.find(item => item.id === id) || {
+            id,
+            name: btn.dataset.name || 'Product',
+            price: parseFloat(btn.dataset.price || '0'),
+            image: btn.dataset.img || ''
+          };
 
-          const existing = cart.find(item => item.id === id);
+          const cart = getCart();
+          const existing = cart.find(item => item.id === product.id);
           if (existing) {
             existing.quantity += 1;
           } else {
-            cart.push({ id, name, price, img, quantity: 1 });
+            cart.push({ id: product.id, quantity: 1 });
           }
 
           localStorage.setItem('gymCart', JSON.stringify(cart));
