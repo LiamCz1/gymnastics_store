@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | My Bookings</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+  <div id="header-root"></div>
+
+  <main id="main-content" style="max-width:900px;margin:2rem auto;padding:1rem;">
+    <section class="boxed-panel">
+      <h1 style="margin-top:0;">My Bookings</h1>
+      <p style="color:var(--text-muted);">Enter your full name to view bookings saved in this browser (demo only).</p>
+
+      <div id="booking-lookup" style="display:flex;gap:0.5rem;align-items:center;margin:1rem 0 1.5rem 0;">
+        <label for="lookup-name" style="position:absolute;left:-9999px">Name</label>
+        <input id="lookup-name" type="text" placeholder="Enter your name" aria-label="Enter your name" style="flex:1;padding:0.6rem;border:1px solid var(--border-color);border-radius:8px;">
+        <button id="lookup-btn" class="btn" type="button">View Bookings</button>
+      </div>
+
+      <div id="bookings-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+
+  <script src="src/templates.js"></script>
+  <script src="src/script.js"></script>
+  <script>
+    (function () {
+      function getBookedSlots() {
+        try {
+          return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function setBookedSlots(slots) {
+        localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
+      }
+
+      function renderSlotsFor(name) {
+        const listEl = document.getElementById('bookings-list');
+        listEl.innerHTML = '';
+        if (!name) {
+          listEl.innerHTML = '<p class="no-bookings">Please enter a name to view bookings.</p>';
+          return;
+        }
+        const normalized = name.trim().toLowerCase();
+        const slots = getBookedSlots();
+        const matches = slots.map((s, i) => ({ s, i })).filter(({ s }) => (s.bookerName || '').toLowerCase().includes(normalized));
+        if (matches.length === 0) {
+          listEl.innerHTML = '<p class="no-bookings">No bookings found for that name.</p>';
+          return;
+        }
+
+        matches.forEach(({ s, i }) => {
+          const item = document.createElement('div');
+          item.className = 'owner-booking-item';
+          const lessonPrice = (s.price !== undefined) ? Number(s.price) : 0;
+          const totalPrice = (lessonPrice * (s.numPeople || 1)).toFixed(2);
+          item.innerHTML = `
+            <div class="owner-booking-info">
+              <strong>${escapeHtml(s.lesson || 'Lesson')}</strong>
+              <p>${escapeHtml(s.date || '')} &middot; ${escapeHtml(s.time || '')}</p>
+              <p>Booked by: ${escapeHtml(s.bookerName || '')}</p>
+              <p>Email: ${escapeHtml(s.bookerEmail || 'N/A')} &middot; Phone: ${escapeHtml(s.bookerPhone || 'N/A')}</p>
+              <p><strong>Format:</strong> ${s.delivery === 'in-person' ? 'In Person' : 'Online'}</p>
+              ${s.location ? `<p><strong>Location:</strong> ${escapeHtml(s.location)}</p>` : ''}
+              <p><strong>Total Price:</strong> $${totalPrice}</p>
+            </div>
+            <div style="margin-top:0.5rem;"><button class="owner-cancel-booking-btn" data-index="${i}" type="button">Cancel Booking</button></div>
+          `;
+          listEl.appendChild(item);
+        });
+
+        // wire cancel buttons
+        listEl.querySelectorAll('.owner-cancel-booking-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.index, 10);
+            const all = getBookedSlots();
+            const booking = all[idx];
+            if (!booking) return alert('Booking not found.');
+            if (!confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) return;
+            all.splice(idx, 1);
+            setBookedSlots(all);
+            renderSlotsFor(document.getElementById('lookup-name').value || '');
+          });
+        });
+      }
+
+      function escapeHtml(str) {
+        return String(str || '').replace(/[&<>"]/g, function (m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]); });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.renderHeader) renderHeader();
+        if (window.renderFooter) renderFooter();
+
+        const params = new URLSearchParams(window.location.search);
+        const nameParam = params.get('name') || '';
+        const input = document.getElementById('lookup-name');
+        const btn = document.getElementById('lookup-btn');
+
+        if (nameParam) {
+          input.value = decodeURIComponent(nameParam);
+          renderSlotsFor(nameParam);
+        }
+
+        btn.addEventListener('click', () => {
+          const name = input.value.trim();
+          if (!name) return alert('Please enter your name to view bookings.');
+          // update URL without reloading
+          const newUrl = 'my-bookings.html?name=' + encodeURIComponent(name);
+          history.replaceState(null, '', newUrl);
+          renderSlotsFor(name);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

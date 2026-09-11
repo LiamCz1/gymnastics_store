@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Standing gymnast</title>
+  <desc id="desc">An original illustration of a gymnast standing with arms raised.</desc>
+  <g transform="rotate(180 256 256)">
+    <path d="M256 73c-18 0-32 14-32 32s14 32 32 32 32-14 32-32-14-32-32-32Z" fill="#f2b18f"/>
+    <path d="M225 78c8-20 31-29 51-18 11 6 18 16 20 28-12-7-25-9-38-4-12 5-22 3-33-6Z" fill="#3b1f24"/>
+    <path d="M225 144c18-12 44-12 62 0l24 76-55 28-55-28 24-76Z" fill="#b91c45"/>
+    <path d="M225 151c-19 13-34 31-46 51l-45 60 19 14 59-45 35-52-22-28Z" fill="#f2b18f"/>
+    <path d="M287 151c19 13 34 31 46 51l45 60-19 14-59-45-35-52 22-28Z" fill="#f2b18f"/>
+    <path d="M207 226h98l-13 62-36 19-36-19-13-62Z" fill="#b91c45"/>
+    <path d="M220 295l25 4-8 91-28 0 11-95Z" fill="#f2b18f"/>
+    <path d="M292 295l-25 4 8 91 28 0-11-95Z" fill="#f2b18f"/>
+    <path d="M209 382h31l-8 30h-39l16-30Z" fill="#f2b18f"/>
+    <path d="M272 382h31l16 30h-39l-8-30Z" fill="#f2b18f"/>
+    <path d="M209 236h94" fill="none" stroke="#f9d4c1" stroke-width="7" opacity=".75"/>
+  </g>
+</svg>

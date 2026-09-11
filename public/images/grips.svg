@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <rect width="100%" height="100%" fill="#fff8f0"/>
+  <g fill="#ffd8a8">
+    <rect x="60" y="50" width="80" height="90" rx="12"/>
+    <rect x="170" y="50" width="80" height="90" rx="12"/>
+    <rect x="280" y="50" width="40" height="90" rx="12"/>
+  </g>
+  <text x="200" y="170" font-size="18" font-family="Arial" fill="#443" text-anchor="middle">Gymnastics Grips</text>
+</svg>

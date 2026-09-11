@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /*owner.html
+
+# Sitemap Location
+Sitemap: https://liamcz1.github.io/gymnastics_store/sitemap.xml
