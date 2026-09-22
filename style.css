@@ -49,6 +49,21 @@ body {
   flex-direction: column;
 }
 
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+a[href="#main-content"]:focus {
+  left: 1rem !important;
+  top: 1rem !important;
+  z-index: 1000;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-card);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;

@@ -18,11 +18,13 @@
   <main id="main-content" style="max-width:900px;margin:2rem auto;padding:1rem;">
     <section class="boxed-panel">
       <h1 style="margin-top:0;">My Bookings</h1>
-      <p style="color:var(--text-muted);">Enter your full name to view bookings saved in this browser (demo only).</p>
+      <p style="color:var(--text-muted);">Enter your booking reference and email to view bookings saved in this browser (demo only).</p>
 
       <div id="booking-lookup" style="display:flex;gap:0.5rem;align-items:center;margin:1rem 0 1.5rem 0;">
-        <label for="lookup-name" style="position:absolute;left:-9999px">Name</label>
-        <input id="lookup-name" type="text" placeholder="Enter your name" aria-label="Enter your name" style="flex:1;padding:0.6rem;border:1px solid var(--border-color);border-radius:8px;">
+        <label for="lookup-reference" style="position:absolute;left:-9999px">Booking reference</label>
+        <input id="lookup-reference" type="text" placeholder="Booking reference" aria-label="Booking reference" style="flex:1;padding:0.6rem;border:1px solid var(--border-color);border-radius:8px;">
+        <label for="lookup-email" style="position:absolute;left:-9999px">Email address</label>
+        <input id="lookup-email" type="email" placeholder="Email address" aria-label="Email address" autocomplete="email" style="flex:1;padding:0.6rem;border:1px solid var(--border-color);border-radius:8px;">
         <button id="lookup-btn" class="btn" type="button">View Bookings</button>
       </div>
 
@@ -48,18 +50,22 @@
         localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
       }
 
-      function renderSlotsFor(name) {
+      function renderSlotsFor(reference, email) {
         const listEl = document.getElementById('bookings-list');
         listEl.innerHTML = '';
-        if (!name) {
-          listEl.innerHTML = '<p class="no-bookings">Please enter a name to view bookings.</p>';
+        if (!reference || !email) {
+          listEl.innerHTML = '<p class="no-bookings">Please enter your booking reference and email.</p>';
           return;
         }
-        const normalized = name.trim().toLowerCase();
+        const normalizedReference = reference.trim().toUpperCase();
+        const normalizedEmail = email.trim().toLowerCase();
         const slots = getBookedSlots();
-        const matches = slots.map((s, i) => ({ s, i })).filter(({ s }) => (s.bookerName || '').toLowerCase().includes(normalized));
+        const matches = slots.map((s, i) => ({ s, i })).filter(({ s }) =>
+          (s.reference || '').toUpperCase() === normalizedReference &&
+          (s.bookerEmail || '').toLowerCase() === normalizedEmail
+        );
         if (matches.length === 0) {
-          listEl.innerHTML = '<p class="no-bookings">No bookings found for that name.</p>';
+          listEl.innerHTML = '<p class="no-bookings">No bookings found for that reference and email.</p>';
           return;
         }
 
@@ -71,6 +77,7 @@
           item.innerHTML = `
             <div class="owner-booking-info">
               <strong>${escapeHtml(s.lesson || 'Lesson')}</strong>
+              <p>Booking reference: ${escapeHtml(s.reference || 'Unavailable for older booking')}</p>
               <p>${escapeHtml(s.date || '')} &middot; ${escapeHtml(s.time || '')}</p>
               <p>Booked by: ${escapeHtml(s.bookerName || '')}</p>
               <p>Email: ${escapeHtml(s.bookerEmail || 'N/A')} &middot; Phone: ${escapeHtml(s.bookerPhone || 'N/A')}</p>
@@ -93,7 +100,10 @@
             if (!confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) return;
             all.splice(idx, 1);
             setBookedSlots(all);
-            renderSlotsFor(document.getElementById('lookup-name').value || '');
+            renderSlotsFor(
+              document.getElementById('lookup-reference').value || '',
+              document.getElementById('lookup-email').value || ''
+            );
           });
         });
       }
@@ -107,22 +117,26 @@
         if (window.renderFooter) renderFooter();
 
         const params = new URLSearchParams(window.location.search);
-        const nameParam = params.get('name') || '';
-        const input = document.getElementById('lookup-name');
+        const referenceParam = params.get('reference') || '';
+        const emailParam = params.get('email') || '';
+        const referenceInput = document.getElementById('lookup-reference');
+        const emailInput = document.getElementById('lookup-email');
         const btn = document.getElementById('lookup-btn');
 
-        if (nameParam) {
-          input.value = decodeURIComponent(nameParam);
-          renderSlotsFor(nameParam);
+        if (referenceParam || emailParam) {
+          referenceInput.value = referenceParam;
+          emailInput.value = emailParam;
+          renderSlotsFor(referenceParam, emailParam);
         }
 
         btn.addEventListener('click', () => {
-          const name = input.value.trim();
-          if (!name) return alert('Please enter your name to view bookings.');
+          const reference = referenceInput.value.trim().toUpperCase();
+          const email = emailInput.value.trim().toLowerCase();
+          if (!reference || !email) return alert('Please enter your booking reference and email.');
           // update URL without reloading
-          const newUrl = 'my-bookings.html?name=' + encodeURIComponent(name);
+          const newUrl = 'my-bookings.html?reference=' + encodeURIComponent(reference) + '&email=' + encodeURIComponent(email);
           history.replaceState(null, '', newUrl);
-          renderSlotsFor(name);
+          renderSlotsFor(reference, email);
         });
       });
     })();
