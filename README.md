@@ -1,7 +1,7 @@
 # APEX GYM — Project README
 
 ## Overview
-This repository is a static site demo for a gymnastics store and coaching service (APEX GYM). It includes pages for Home, Shop, Lessons, Bookings, Authentication demos, and lightweight owner tools. The site is intentionally simple so you can learn HTML/CSS/JS and later migrate to frameworks and a real backend.
+This repository is a gymnastics store and coaching service demo (APEX GYM). It includes pages for Home, Shop, Lessons, Bookings, authentication demos, owner tools, and the first React/Vite home-page migration at `react-home.html`.
 
 Important note: many demo features store data in `localStorage` (cart, bookings, promo settings). This is fine for learning and testing, but not suitable for production or storing PII.
 
@@ -22,12 +22,26 @@ python -m http.server 8000
 
 - Option C — open `index.html` directly in your browser (some features requiring fetch or routing may need a server).
 
+For the optional server features:
+
+```bash
+cd server
+npm install
+npm start
+```
+
+Copy `.env.example` to `.env` before enabling Supabase or Stripe. Keep server-only keys out of browser code and Git.
+
 ## Project Structure (important files)
 - `index.html` — Home / landing page
 - `product.html`, `product-details.html` — Shop and product views
 - `style.css` — Main site styles
 - `src/script.js` — Client-side site logic (products, UI behavior)
 - `src/auth.js` — Authentication demo wiring (Google, owner UI)
+- `src/react/` — First React/Vite page migration
+- `src/supabase-client.js`, `src/supabase-data.js` — Environment-gated Supabase access
+- `supabase/schema.sql` — Products, bookings, orders, and row-level security policies
+- `server/index.js` — Newsletter API and fail-closed Stripe Checkout/webhook routes
 - `server/` — small server-side utilities and owner scripts (if present)
 - `public/images/` — media assets
 
@@ -39,15 +53,15 @@ python -m http.server 8000
 - Contact form wired to a Formspree endpoint
 - Basic accessibility considerations (skip link, alt text on main hero image)
 
-## Phase 1 Plan (what I'll do next)
-This repository follows the student-friendly roadmap. Phase 1 focuses on understanding and small incremental improvements.
+## Roadmap Status
+The current status is tracked in `roadmap.md`. Phases 1–3 are implemented or partially implemented. The React, Supabase, and Stripe work has foundations in place, but production activation still requires configured services, migrations, and deployment access.
 
 - Step 1: Review core files (`index.html`, `style.css`, `src/script.js`) — completed.
 - Step 2: Create a clean `README.md` with setup and warnings — completed (this file).
-- Step 3: Fix filenames with spaces and update internal links (e.g., `my-bookings.html`) — next.
-- Step 4: Reduce repeated header/footer HTML into a small include or a JS-inserted template (simple reusable approach) — planned.
-- Step 5: Improve mobile navigation (accessible menu with keyboard support) — planned.
-- Step 6: Accessibility pass — audit pages and fix missing alt text, label issues, and focus order — planned.
+- Step 3: Fix filenames with spaces and update internal links (e.g., `my-bookings.html`) — completed.
+- Step 4: Reduce repeated header/footer HTML into a small include or a JS-inserted template — completed.
+- Step 5: Improve mobile navigation — completed.
+- Step 6: Accessibility pass — partially completed; continue auditing remaining admin and dynamic controls.
 
 ## LocalStorage and Safety (demo caveats)
 - Cart and booking data are stored in `localStorage` only. Do not use this for production data or sensitive information.

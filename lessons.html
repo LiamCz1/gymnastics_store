@@ -69,10 +69,11 @@
     <section id="my-bookings">
       <h2>My Bookings</h2>
       <div id="booking-login" class="booking-login">
-        <label for="verify-name">Enter Your Name to View Your Bookings:</label>
+        <label for="verify-reference">Enter your booking reference and email to view your bookings:</label>
         <div class="verify-name-group">
-          <input type="text" id="verify-name" placeholder="Enter your name" autocomplete="off">
-          <button id="verify-name-btn" class="verify-btn">View Now</button>
+          <input type="text" id="verify-reference" placeholder="Booking reference" autocomplete="off">
+          <input type="email" id="verify-email" placeholder="Email address" autocomplete="email">
+          <button id="verify-name-btn" class="verify-btn" type="button">View Now</button>
         </div>
       </div>
       <div id="bookings-list" class="bookings-list" style="display: none;">
@@ -569,12 +570,13 @@
               <p><strong>Date:</strong> ${displayDate}</p>
               <p><strong>Time:</strong> ${booking.time}</p>
               <p><strong>Type:</strong> ${booking.type === 'weekly' ? 'Weekly Recurring' : 'One-Time'}</p>
+              <p><strong>Booking reference:</strong> ${booking.reference || 'Unavailable for older booking'}</p>
               ${booking.bookerEmail ? `<p><strong>Email:</strong> ${booking.bookerEmail}</p>` : ''}
               ${booking.bookerPhone ? `<p><strong>Phone:</strong> ${booking.bookerPhone}</p>` : ''}
               <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
               ${meetHtml}
             </div>
-            <button class="cancel-booking-btn" data-index="${originalIndex}">Cancel</button>
+            <button class="cancel-booking-btn" type="button" data-index="${originalIndex}">Cancel</button>
           `;
           bookingsList.appendChild(bookingCard);
         });
@@ -663,7 +665,7 @@
                 <p>Email: ${booking.bookerEmail || 'N/A'} &middot; Phone: ${booking.bookerPhone || 'N/A'}</p>
                 <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
               </div>
-              <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
+              <button class="owner-cancel-booking-btn" type="button" data-index="${booking.index}">Cancel</button>
             `;
             dateList.appendChild(bookingItem);
           });
@@ -706,18 +708,20 @@
 
       // Name verification
       const verifyNameBtn = document.getElementById('verify-name-btn');
-      const verifyNameInput = document.getElementById('verify-name');
+      const verifyReferenceInput = document.getElementById('verify-reference');
+      const verifyEmailInput = document.getElementById('verify-email');
 
       verifyNameBtn.addEventListener('click', () => {
-        const name = verifyNameInput.value.trim();
-        if (!name) {
-          alert('Please enter your name');
+        const reference = verifyReferenceInput.value.trim().toUpperCase();
+        const email = verifyEmailInput.value.trim().toLowerCase();
+        if (!reference || !email) {
+          alert('Please enter your booking reference and email address');
           return;
         }
-        window.location.href = `my-bookings.html?name=${encodeURIComponent(name)}`;
+        window.location.href = `my-bookings.html?reference=${encodeURIComponent(reference)}&email=${encodeURIComponent(email)}`;
       });
 
-      verifyNameInput.addEventListener('keypress', (e) => {
+      verifyEmailInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           verifyNameBtn.click();
         }
@@ -1064,6 +1068,7 @@
 
       function completeBooking(lessonName, bookingType, numWeeks, bookerName, bookerEmail, bookerPhone, promoCode) {
         const bookedSlots = getBookedSlots();
+        const bookingReference = `APEX-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const limitDate = new Date();
         limitDate.setMonth(limitDate.getMonth() + 3);
         limitDate.setHours(23, 59, 59, 999);
@@ -1158,6 +1163,7 @@
                 date: selectedSlot.dateKey,
                 time: selectedSlot.time,
                 type: 'one-time',
+                reference: bookingReference,
                 bookerName: bookerName,
                 bookerEmail: bookerEmail,
                 bookerPhone: bookerPhone,
@@ -1184,6 +1190,7 @@
                   date: recurringDateKey,
                   time: selectedSlot.time,
                   type: 'weekly',
+                  reference: bookingReference,
                   bookerName: bookerName,
                   bookerEmail: bookerEmail,
                   bookerPhone: bookerPhone,
@@ -1231,6 +1238,7 @@
               <strong>Date:</strong> ${displayDate}<br>
               <strong>Time:</strong> ${selectedSlot.time}<br>
               <strong>Type:</strong> ${bookingType === 'weekly' ? `Weekly for ${numWeeks} weeks` : 'One-Time'}<br>
+              <strong>Booking Reference:</strong> ${bookingReference}<br>
               <strong>Name:</strong> ${bookerName}<br>
               <strong>Email:</strong> ${bookerEmail}<br>
               <strong>Phone:</strong> ${bookerPhone}<br>

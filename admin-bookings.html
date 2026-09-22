@@ -111,7 +111,7 @@
               ${booking.location ? `<p><strong>Location:</strong> ${booking.location}</p>` : ''}
               <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
             </div>
-            <button class="owner-cancel-booking-btn" data-index="${booking.index}">Cancel</button>
+            <button class="owner-cancel-booking-btn" type="button" data-index="${booking.index}">Cancel</button>
           `;
           dateList.appendChild(bookingItem);
         });

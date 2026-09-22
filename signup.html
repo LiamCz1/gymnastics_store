@@ -48,6 +48,7 @@
     <p style="margin-top:1rem;">Already have an account? <a href="login.html">Log in</a></p>
   </main>
 
+  <script src="google-config.js"></script>
   <script src="src/auth.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
@@ -122,12 +123,13 @@
         .catch(err => { error.textContent = err.message || 'Google sign-in failed'; error.style.display = 'block'; });
     }
 
-    // Render Google button (replace YOUR_GOOGLE_CLIENT_ID)
+    // Render Google button from the shared configuration.
     window.addEventListener('load', () => {
       try {
+        const googleClientId = window.GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
         const onloadDiv = document.createElement('div');
         onloadDiv.id = 'g_id_onload';
-        onloadDiv.setAttribute('data-client_id', '1028753478315-uiopbg7e2osj31mopfrkhu1ld51h4jd7.apps.googleusercontent.com');
+        onloadDiv.setAttribute('data-client_id', googleClientId);
         onloadDiv.setAttribute('data-callback', 'handleCredentialResponse');
         document.body.appendChild(onloadDiv);
 
@@ -137,7 +139,7 @@
           if (window.google && google.accounts && google.accounts.id) {
             console.debug('GSI available — initializing signup button');
             google.accounts.id.initialize({
-              client_id: '1028753478315-uiopbg7e2osj31mopfrkhu1ld51h4jd7.apps.googleusercontent.com',
+              client_id: googleClientId,
               callback: handleCredentialResponse
             });
             if (container) {

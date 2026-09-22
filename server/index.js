@@ -4,10 +4,62 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+const Stripe = require('stripe');
 
 const app = express();
 app.use(cors());
+
+const stripe = process.env.STRIPE_SECRET_KEY ? Stripe(process.env.STRIPE_SECRET_KEY) : null;
+
+app.post('/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  if (!stripe || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return res.status(503).json({ error: 'Stripe webhook is not configured.' });
+  }
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      req.headers['stripe-signature'],
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (error) {
+    return res.status(400).json({ error: `Webhook signature verification failed: ${error.message}` });
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    console.log(`Stripe checkout completed: ${event.data.object.id}`);
+  }
+
+  return res.json({ received: true });
+});
+
 app.use(express.json());
+
+app.post('/create-checkout-session', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripe is not configured on the server.' });
+  }
+
+  const { lineItems, customerEmail } = req.body || {};
+  if (!Array.isArray(lineItems) || lineItems.length === 0) {
+    return res.status(400).json({ error: 'At least one checkout item is required.' });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      customer_email: customerEmail || undefined,
+      line_items: lineItems,
+      success_url: `${process.env.PUBLIC_APP_URL || 'http://localhost:4173'}/buy.html?checkout=success`,
+      cancel_url: `${process.env.PUBLIC_APP_URL || 'http://localhost:4173'}/buy.html?checkout=cancelled`
+    });
+
+    return res.json({ id: session.id, url: session.url });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 
 const DATA_FILE = path.join(__dirname, 'subscribers.json');
 
