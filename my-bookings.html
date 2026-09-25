@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GYM | My Bookings</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+</head>
+<body>
+  <div id="header-root"></div>
+
+  <main id="main-content" style="max-width:900px;margin:2rem auto;padding:1rem;">
+    <section class="boxed-panel">
+      <h1 style="margin-top:0;">My Bookings</h1>
+      <p style="color:var(--text-muted);">Enter your booking reference and email to view bookings saved in this browser (demo only).</p>
+
+      <div id="booking-lookup" style="display:flex;gap:0.5rem;align-items:center;margin:1rem 0 1.5rem 0;">
+        <label for="lookup-reference" style="position:absolute;left:-9999px">Booking reference</label>
+        <input id="lookup-reference" type="text" placeholder="Booking reference" aria-label="Booking reference" style="flex:1;padding:0.6rem;border:1px solid var(--border-color);border-radius:8px;">
+        <label for="lookup-email" style="position:absolute;left:-9999px">Email address</label>
+        <input id="lookup-email" type="email" placeholder="Email address" aria-label="Email address" autocomplete="email" style="flex:1;padding:0.6rem;border:1px solid var(--border-color);border-radius:8px;">
+        <button id="lookup-btn" class="btn" type="button">View Bookings</button>
+      </div>
+
+      <div id="bookings-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+
+  <script src="src/templates.js"></script>
+  <script src="src/script.js"></script>
+  <script type="module">
+    import { loadMyBookings, loadMyOrders } from './src/supabase-data.js';
+    import { supabase } from './src/supabase-client.js';
+
+    async function renderDashboard() {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const listEl = document.getElementById('bookings-list');
+      const lookupDiv = document.getElementById('booking-lookup');
+
+      if (lookupDiv) lookupDiv.style.display = 'none';
+      listEl.innerHTML = '<p>Loading your data...</p>';
+
+      if (authError || !user) {
+        listEl.innerHTML = '<p class="no-bookings">You must be logged in to view your bookings and orders. <a href="login.html">Log in here</a>.</p>';
+        return;
+      }
+
+      try {
+        const [bookings, orders] = await Promise.all([
+          loadMyBookings(),
+          loadMyOrders()
+        ]);
+
+        let html = '<h2>My Bookings</h2>';
+        if (!bookings || bookings.length === 0) {
+          html += '<p class="no-bookings">You have no bookings.</p>';
+        } else {
+          bookings.forEach((s) => {
+            html += `
+              <div class="owner-booking-item">
+                <div class="owner-booking-info">
+                  <strong>${s.lesson || 'Lesson'}</strong>
+                  <p>Booking reference: ${s.reference || 'N/A'}</p>
+                  <p>${s.date || ''} &middot; ${s.time || ''}</p>
+                  <p>Email: ${s.email || 'N/A'}</p>
+                  <p><strong>Total Price:</strong> $${(s.details?.totalPrice || 0).toFixed(2)}</p>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        html += '<h2 style="margin-top: 2rem;">My Orders</h2>';
+        if (!orders || orders.length === 0) {
+          html += '<p class="no-bookings">You have no orders.</p>';
+        } else {
+          orders.forEach((o) => {
+            html += `
+              <div class="owner-booking-item">
+                <div class="owner-booking-info">
+                  <strong>Order ID: ${o.id.substring(0,8)}</strong>
+                  <p>Status: ${o.status}</p>
+                  <p>Total: $${(Number(o.total) || 0).toFixed(2)}</p>
+                  <p>Items: ${Array.isArray(o.items) ? o.items.length : 0}</p>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        listEl.innerHTML = html;
+
+      } catch (err) {
+        listEl.innerHTML = `<p class="no-bookings">Error loading data: ${err.message}</p>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderHeader) renderHeader();
+      if (window.renderFooter) renderFooter();
+      renderDashboard();
+    });
+  </script>
+</body>
+</html>
