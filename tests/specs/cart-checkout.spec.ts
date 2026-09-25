@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test('adds a product, changes quantity, and updates the checkout total', async ({ page }) => {
-  await page.addInitScript(() => localStorage.clear());
   await page.goto('/product-details.html?id=beam');
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
 
   await page.getByRole('button', { name: /add to cart/i }).click();
   await page.goto('/buy.html');

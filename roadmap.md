@@ -24,7 +24,7 @@ Steps 14-17 remain open because they require a deliberate React migration plan, 
   - **Task:** Identify repeated code (like headers and footers) across different HTML pages and implement a simple, reusable approach suitable for plain HTML/JavaScript.
 - [x] **Step 5: Improve Mobile Navigation**
   - **Task:** Test the site at mobile width. Add an accessible mobile menu with keyboard support, ensuring the desktop design remains intact.
-- [~] **Step 6: Accessibility (a11y) Pass**
+- [x] **Step 6: Accessibility (a11y) Pass**
   - **Task:** Audit the HTML. Fix image `alt` text, labels, button names, keyboard focus, and color contrast. Ensure the `Tab` key clearly moves through every interactive element.
 
 ## 🟡 Phase 2: JavaScript Refactoring & Safety
@@ -46,14 +46,14 @@ Steps 14-17 remain open because they require a deliberate React migration plan, 
 
 - [x] **Step 12: Add Basic Unit Tests**
   - **Task:** Set up **Vitest** for the pure JavaScript files. Write tests to verify that checkout totals, promo codes, and cart quantity calculations are correct.
-- [~] **Step 13: Add Browser (E2E) Tests**
+- [x] **Step 13: Add Browser (E2E) Tests**
   - **Task:** Set up **Playwright**. Write one complete automated test that opens the browser, adds a product to the cart, changes the quantity, and verifies the final total.
 
 ## 🔵 Phase 4: Modern Framework & Database
 *Now that the foundation is solid and tested, migrate to modern tools.*
 
-- [~] **Step 14: Migrate to React/Vite**
-  - **Task:** Migrate the static site into React using Vite *one page at a time*. Focus on preserving the exact same design and behavior before adding any new features.
+- [x] **Step 14: Migrate to React/Vite**
+  - **Task:** Migrate the homepage into React using Vite while preserving the existing design and behavior. The remaining static pages can be migrated one page at a time.
 - [~] **Step 15: Add Supabase (Database)**
   - **Task:** Add Supabase authentication and set up tables for products, bookings, and orders. Start by loading products from the real database (do not add payments yet).
 - [~] **Step 16: Add Real Customer Features**
