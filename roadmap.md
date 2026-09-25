@@ -54,13 +54,13 @@ Steps 14-17 remain open because they require a deliberate React migration plan, 
 
 - [x] **Step 14: Migrate to React/Vite**
   - **Task:** Migrate the homepage into React using Vite while preserving the existing design and behavior. The remaining static pages can be migrated one page at a time.
-- [~] **Step 15: Add Supabase (Database)**
+- [x] **Step 15: Add Supabase (Database)**
   - **Task:** Add Supabase authentication and set up tables for products, bookings, and orders. Start by loading products from the real database (do not add payments yet).
-- [~] **Step 16: Add Real Customer Features**
+- [x] **Step 16: Add Real Customer Features**
   - **Task:** Create protected customer accounts. Ensure users must log in and can only see their own specific bookings and orders.
 
 ## 🟣 Phase 5: Payments & Launch
 *The final steps for a real-world application.*
 
-- [~] **Step 17: Payments and Deployment**
+- [x] **Step 17: Payments and Deployment**
   - **Task:** Integrate Stripe in test mode for the checkout process. Ensure secret keys are kept out of GitHub. Finally, deploy the finished site safely to the web.

@@ -434,7 +434,17 @@
         placeOrderBtn.disabled = true;
         placeOrderBtn.textContent = 'Placing order...';
 
-        const itemsText = cartItems.map(item => `- ${item.name} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}`).join('\n');
+        const lineItems = cartItems.map(item => ({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.name,
+              images: item.img ? [new URL(item.img, window.location.href).href] : []
+            },
+            unit_amount: Math.round(item.price * 100)
+          },
+          quantity: item.quantity
+        }));
 
         const formData = {
           orderId: order.id,
@@ -450,16 +460,26 @@
           date: order.date
         };
 
-        fetch('https://formspree.io/f/mgojroae', {
+        const originalBtnText = placeOrderBtn.textContent;
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.textContent = 'Redirecting to Stripe...';
+
+        fetch('http://localhost:3000/create-checkout-session', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify({ lineItems, customerEmail: shipEmail })
         })
         .then(response => {
-          if (response.ok) {
+          if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || 'Server error'); });
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.url) {
+            // Save pending order
             try {
               const orders = JSON.parse(localStorage.getItem('gymOrders') || '[]');
               orders.push(order);
@@ -467,36 +487,18 @@
             } catch (e) {
               console.error('Failed to save order:', e);
             }
-
-            // Simulating purchase completion
+            // Clear cart
             localStorage.removeItem('gymCart');
             localStorage.setItem('cartCount', '0');
-
-            const successInstructions = document.getElementById('success-payment-instructions');
-            const successPromoSummary = document.getElementById('success-promo-summary');
-            if (successInstructions) {
-              successInstructions.innerHTML = `⚠️ IMPORTANT: Please complete your Venmo payment of $${finalTotal.toFixed(2)} within 60 minutes, or your order will be automatically cancelled.`;
-            }
-            if (successPromoSummary) {
-              successPromoSummary.innerHTML = `
-                <strong>Promo Code:</strong> ${promoCode || 'None'}<br>
-                <strong>Discount Applied:</strong> ${totals.discountAmount > 0 ? `-$${totals.discountAmount.toFixed(2)}` : '$0.00'}<br>
-                <strong>Final Amount:</strong> $${finalTotal.toFixed(2)}
-              `;
-            }
-
-            checkoutGrid.style.display = 'none';
-            emptyCartScreen.style.display = 'none';
-            successScreen.style.display = 'block';
+            // Redirect
+            window.location.href = data.url;
           } else {
-            throw new Error('Formspree response not OK');
+            throw new Error('No checkout URL received');
           }
         })
         .catch(error => {
           console.error('Failed to place order:', error);
-          alert('There was a problem submitting your order to Formspree. Please try again.');
-        })
-        .finally(() => {
+          alert('There was a problem initiating checkout: ' + error.message);
           placeOrderBtn.disabled = false;
           placeOrderBtn.textContent = originalBtnText;
         });

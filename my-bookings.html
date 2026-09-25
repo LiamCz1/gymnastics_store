@@ -36,110 +36,78 @@
 
   <script src="src/templates.js"></script>
   <script src="src/script.js"></script>
-  <script>
-    (function () {
-      function getBookedSlots() {
-        try {
-          return JSON.parse(localStorage.getItem('bookedLessonSlots') || '[]');
-        } catch (e) {
-          return [];
-        }
+  <script type="module">
+    import { loadMyBookings, loadMyOrders } from './src/supabase-data.js';
+    import { supabase } from './src/supabase-client.js';
+
+    async function renderDashboard() {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const listEl = document.getElementById('bookings-list');
+      const lookupDiv = document.getElementById('booking-lookup');
+
+      if (lookupDiv) lookupDiv.style.display = 'none';
+      listEl.innerHTML = '<p>Loading your data...</p>';
+
+      if (authError || !user) {
+        listEl.innerHTML = '<p class="no-bookings">You must be logged in to view your bookings and orders. <a href="login.html">Log in here</a>.</p>';
+        return;
       }
 
-      function setBookedSlots(slots) {
-        localStorage.setItem('bookedLessonSlots', JSON.stringify(slots));
-      }
+      try {
+        const [bookings, orders] = await Promise.all([
+          loadMyBookings(),
+          loadMyOrders()
+        ]);
 
-      function renderSlotsFor(reference, email) {
-        const listEl = document.getElementById('bookings-list');
-        listEl.innerHTML = '';
-        if (!reference || !email) {
-          listEl.innerHTML = '<p class="no-bookings">Please enter your booking reference and email.</p>';
-          return;
-        }
-        const normalizedReference = reference.trim().toUpperCase();
-        const normalizedEmail = email.trim().toLowerCase();
-        const slots = getBookedSlots();
-        const matches = slots.map((s, i) => ({ s, i })).filter(({ s }) =>
-          (s.reference || '').toUpperCase() === normalizedReference &&
-          (s.bookerEmail || '').toLowerCase() === normalizedEmail
-        );
-        if (matches.length === 0) {
-          listEl.innerHTML = '<p class="no-bookings">No bookings found for that reference and email.</p>';
-          return;
-        }
-
-        matches.forEach(({ s, i }) => {
-          const item = document.createElement('div');
-          item.className = 'owner-booking-item';
-          const lessonPrice = (s.price !== undefined) ? Number(s.price) : 0;
-          const totalPrice = (lessonPrice * (s.numPeople || 1)).toFixed(2);
-          item.innerHTML = `
-            <div class="owner-booking-info">
-              <strong>${escapeHtml(s.lesson || 'Lesson')}</strong>
-              <p>Booking reference: ${escapeHtml(s.reference || 'Unavailable for older booking')}</p>
-              <p>${escapeHtml(s.date || '')} &middot; ${escapeHtml(s.time || '')}</p>
-              <p>Booked by: ${escapeHtml(s.bookerName || '')}</p>
-              <p>Email: ${escapeHtml(s.bookerEmail || 'N/A')} &middot; Phone: ${escapeHtml(s.bookerPhone || 'N/A')}</p>
-              <p><strong>Format:</strong> ${s.delivery === 'in-person' ? 'In Person' : 'Online'}</p>
-              ${s.location ? `<p><strong>Location:</strong> ${escapeHtml(s.location)}</p>` : ''}
-              <p><strong>Total Price:</strong> $${totalPrice}</p>
-            </div>
-            <div style="margin-top:0.5rem;"><button class="owner-cancel-booking-btn" data-index="${i}" type="button">Cancel Booking</button></div>
-          `;
-          listEl.appendChild(item);
-        });
-
-        // wire cancel buttons
-        listEl.querySelectorAll('.owner-cancel-booking-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const idx = parseInt(btn.dataset.index, 10);
-            const all = getBookedSlots();
-            const booking = all[idx];
-            if (!booking) return alert('Booking not found.');
-            if (!confirm(`Cancel booking for ${booking.lesson} on ${booking.date} at ${booking.time}?`)) return;
-            all.splice(idx, 1);
-            setBookedSlots(all);
-            renderSlotsFor(
-              document.getElementById('lookup-reference').value || '',
-              document.getElementById('lookup-email').value || ''
-            );
+        let html = '<h2>My Bookings</h2>';
+        if (!bookings || bookings.length === 0) {
+          html += '<p class="no-bookings">You have no bookings.</p>';
+        } else {
+          bookings.forEach((s) => {
+            html += `
+              <div class="owner-booking-item">
+                <div class="owner-booking-info">
+                  <strong>${s.lesson || 'Lesson'}</strong>
+                  <p>Booking reference: ${s.reference || 'N/A'}</p>
+                  <p>${s.date || ''} &middot; ${s.time || ''}</p>
+                  <p>Email: ${s.email || 'N/A'}</p>
+                  <p><strong>Total Price:</strong> $${(s.details?.totalPrice || 0).toFixed(2)}</p>
+                </div>
+              </div>
+            `;
           });
-        });
-      }
-
-      function escapeHtml(str) {
-        return String(str || '').replace(/[&<>"]/g, function (m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]); });
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        if (window.renderHeader) renderHeader();
-        if (window.renderFooter) renderFooter();
-
-        const params = new URLSearchParams(window.location.search);
-        const referenceParam = params.get('reference') || '';
-        const emailParam = params.get('email') || '';
-        const referenceInput = document.getElementById('lookup-reference');
-        const emailInput = document.getElementById('lookup-email');
-        const btn = document.getElementById('lookup-btn');
-
-        if (referenceParam || emailParam) {
-          referenceInput.value = referenceParam;
-          emailInput.value = emailParam;
-          renderSlotsFor(referenceParam, emailParam);
         }
 
-        btn.addEventListener('click', () => {
-          const reference = referenceInput.value.trim().toUpperCase();
-          const email = emailInput.value.trim().toLowerCase();
-          if (!reference || !email) return alert('Please enter your booking reference and email.');
-          // update URL without reloading
-          const newUrl = 'my-bookings.html?reference=' + encodeURIComponent(reference) + '&email=' + encodeURIComponent(email);
-          history.replaceState(null, '', newUrl);
-          renderSlotsFor(reference, email);
-        });
-      });
-    })();
+        html += '<h2 style="margin-top: 2rem;">My Orders</h2>';
+        if (!orders || orders.length === 0) {
+          html += '<p class="no-bookings">You have no orders.</p>';
+        } else {
+          orders.forEach((o) => {
+            html += `
+              <div class="owner-booking-item">
+                <div class="owner-booking-info">
+                  <strong>Order ID: ${o.id.substring(0,8)}</strong>
+                  <p>Status: ${o.status}</p>
+                  <p>Total: $${(Number(o.total) || 0).toFixed(2)}</p>
+                  <p>Items: ${Array.isArray(o.items) ? o.items.length : 0}</p>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        listEl.innerHTML = html;
+
+      } catch (err) {
+        listEl.innerHTML = `<p class="no-bookings">Error loading data: ${err.message}</p>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderHeader) renderHeader();
+      if (window.renderFooter) renderFooter();
+      renderDashboard();
+    });
   </script>
 </body>
 </html>

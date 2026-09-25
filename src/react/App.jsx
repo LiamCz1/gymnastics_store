@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { loadProducts } from '../supabase-data.js';
 
 const stats = [
   ['98%', 'Satisfaction Rate'],
@@ -27,7 +28,9 @@ const collections = {
 export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [collection, setCollection] = useState('gear');
+  const [collection, setCollection] = useState('equipment');
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const [contactOpen, setContactOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
 
@@ -43,6 +46,20 @@ export default function App() {
     } catch {
       setCartCount(0);
     }
+  }, []);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const data = await loadProducts();
+        setProducts(data || []);
+      } catch (err) {
+        console.error('Failed to load products:', err);
+      } finally {
+        setLoadingProducts(false);
+      }
+    }
+    fetchProducts();
   }, []);
 
   useEffect(() => {
@@ -122,14 +139,22 @@ export default function App() {
           <div className="collection-header-row">
             <div className="collection-titles"><p className="hero-overline">THE COLLECTION</p><h2 id="collection-title">Shop by Category</h2></div>
             <div className="collection-tabs" role="tablist" aria-label="Product categories">
-              {Object.keys(collections).map((category) => <button className={`collection-tab-btn${collection === category ? ' active' : ''}`} type="button" role="tab" aria-selected={collection === category} key={category} onClick={() => setCollection(category)}>{category[0].toUpperCase() + category.slice(1)}</button>)}
+              {['equipment', 'apparel', 'packages'].map((category) => <button className={`collection-tab-btn${collection === category ? ' active' : ''}`} type="button" role="tab" aria-selected={collection === category} key={category} onClick={() => setCollection(category)}>{category[0].toUpperCase() + category.slice(1)}</button>)}
             </div>
           </div>
           <div className="collection-grid">
-            {collections[collection].map(([name, description, image]) => <article className="collection-card" key={name}>
-              <div className="collection-card-image"><img src={image} alt={name} loading="lazy" /></div>
-              <div className="collection-card-info"><h3>{name}</h3><p>{description}</p><a className="btn collection-card-btn" href="product.html">View Details</a></div>
-            </article>)}
+            {loadingProducts ? (
+              <p>Loading products...</p>
+            ) : products.filter(p => p.category === collection).length > 0 ? (
+              products.filter(p => p.category === collection).map((p) => (
+                <article className="collection-card" key={p.id}>
+                  <div className="collection-card-image"><img src={p.image} alt={p.name} loading="lazy" /></div>
+                  <div className="collection-card-info"><h3>{p.name}</h3><p>{p.description}</p><a className="btn collection-card-btn" href={`product-details.html?id=${p.id}`}>View Details</a></div>
+                </article>
+              ))
+            ) : (
+              <p>No products found in this category.</p>
+            )}
           </div>
         </section>
 
