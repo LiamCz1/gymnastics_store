@@ -69,10 +69,12 @@
     <section id="my-bookings">
       <h2>My Bookings</h2>
       <div id="booking-login" class="booking-login">
-        <label for="verify-reference">Enter your booking reference and email to view your bookings:</label>
+        <p id="booking-lookup-help">Enter your booking reference and email to view your bookings:</p>
         <div class="verify-name-group">
-          <input type="text" id="verify-reference" placeholder="Booking reference" autocomplete="off">
-          <input type="email" id="verify-email" placeholder="Email address" autocomplete="email">
+          <label for="verify-reference">Booking reference</label>
+          <input type="text" id="verify-reference" placeholder="Booking reference" autocomplete="off" aria-describedby="booking-lookup-help">
+          <label for="verify-email">Email address</label>
+          <input type="email" id="verify-email" placeholder="Email address" autocomplete="email" aria-describedby="booking-lookup-help">
           <button id="verify-name-btn" class="verify-btn" type="button">View Now</button>
         </div>
       </div>
@@ -83,9 +85,10 @@
 
     <section id="owner-access" class="booking-login" style="margin-top: 2rem;">
       <h2>Owner Access</h2>
-      <label for="owner-code">Enter the owner code to open the owner area:</label>
+        <p id="owner-access-help">Enter the owner code to open the owner area:</p>
       <div class="verify-name-group">
-        <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off">
+          <label for="owner-code">Owner code</label>
+          <input type="password" id="owner-code" placeholder="Enter owner code" autocomplete="off" aria-describedby="owner-access-help">
         <button id="owner-view-btn" class="verify-btn" type="button">Owner Login</button>
       </div>
     </section>
@@ -107,7 +110,7 @@
   <!-- Booking Modal -->
   <div id="booking-modal" class="modal" style="display: none;">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <button class="close" type="button" aria-label="Close booking form">&times;</button>
       <h2 id="modal-title">Book Your Lesson</h2>
       <input type="hidden" id="lesson-name" name="lesson-name">
 
@@ -134,7 +137,8 @@
       <input type="hidden" id="num-people" name="num-people" value="1">
 
       <div class="booking-type-selector">
-        <label>Booking Type:</label>
+          <fieldset>
+            <legend>Booking Type</legend>
         <div class="booking-options">
           <label class="booking-option">
             <input type="radio" name="booking-type" value="one-time" checked>
@@ -144,6 +148,7 @@
             <input type="radio" name="booking-type" value="weekly">
             Every Week
           </label>
+          </fieldset>
         </div>
         <div id="weeks-selector" class="weeks-selector" style="display: none;">
           <label for="num-weeks">Number of Weeks:</label>
@@ -153,9 +158,9 @@
 
       <div class="calendar-wrapper">
         <div class="calendar-header">
-          <button id="prev-week" class="nav-btn">&lt;</button>
-          <span id="week-display"></span>
-          <button id="next-week" class="nav-btn">&gt;</button>
+          <button id="prev-week" class="nav-btn" type="button" aria-label="Show previous week">&lt;</button>
+          <span id="week-display" aria-live="polite"></span>
+          <button id="next-week" class="nav-btn" type="button" aria-label="Show next week">&gt;</button>
         </div>
         <div id="calendar-slots" class="calendar-slots"></div>
       </div>
@@ -168,7 +173,7 @@
   <!-- Success Modal -->
   <div id="success-modal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 500px; text-align: center;">
-      <span class="close-success close">&times;</span>
+      <button class="close-success close" type="button" aria-label="Close booking confirmation">&times;</button>
       <div style="font-size: 4rem; color: #28a745; margin-bottom: 1rem;">✓</div>
       <h2>Booking Confirmed!</h2>
       <div id="success-details"

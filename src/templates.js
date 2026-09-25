@@ -6,12 +6,14 @@
       APEX<span>GYM</span>
     </a>
     <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <nav aria-label="Primary navigation">
     <ul id="primary-navigation" class="nav-links" aria-hidden="true">
       <li><a href="index.html">Home</a></li>
       <li><a href="product.html">Shop</a></li>
       <li><a href="lessons.html">Lessons</a></li>
       <li><a href="my-bookings.html">My Bookings</a></li>
     </ul>
+    </nav>
     <div class="nav-actions">
       <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
       <a href="buy.html" class="cart-nav-btn" aria-label="View Cart">
@@ -43,6 +45,7 @@
       APEX<span>GYM</span> <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted); margin-left: 0.5rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 4px; vertical-align: middle; border: 1px solid rgba(225, 29, 72, 0.15);">Owner Portal</span>
     </a>
     <button id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    <nav aria-label="Owner portal navigation">
     <ul id="primary-navigation" class="nav-links" aria-hidden="true">
       <li><a href="admin-bookings.html">Bookings Calendar</a></li>
       <li><a href="admin-lessons.html">Owner Lessons</a></li>
@@ -52,6 +55,7 @@
       <li><a href="admin-subscribers.html">Subscribers</a></li>
       <li><a href="product.html" style="color: var(--accent);">Front Store</a></li>
     </ul>
+    </nav>
     <div class="nav-actions">
       <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle Theme"></button>
     </div>
